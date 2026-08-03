@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>從 Prompt 到 Enterprise Skill · Enterprise Skill Engineering Workshop · 上半場講義(重構版)</title>
+<style>
+
+:root{
+  --accent:#4338A6; --accent-2:#1E2761; --accent-soft:#ECEBF8;
+  --bg:#ffffff; --bg-side:#f8f8fb; --text:#222a35; --muted:#5b6472;
+  --border:#e4e3ee; --code-bg:#f4f4f9; --code-text:#1f2733;
+  --th-bg:#eeeef6; --stripe:#fafafd; --kbd-bg:#fff; --kbd-border:#cfceda;
+  --sidebar-w:310px;
+}
+:root[data-theme="dark"]{
+  --accent:#9b8fe6; --accent-2:#9fb0e6; --accent-soft:#1e1b33;
+  --bg:#16161b; --bg-side:#1b1b22; --text:#d7dce3; --muted:#8a93a1;
+  --border:#2e2c3a; --code-bg:#0e0e13; --code-text:#d7dce3;
+  --th-bg:#222231; --stripe:#1a1a22; --kbd-bg:#222231; --kbd-border:#3a3a4c;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",-apple-system,"Segoe UI",sans-serif;
+  font-size:16px;line-height:1.78;-webkit-font-smoothing:antialiased}
+#progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:60;transition:width .1s linear}
+.layout{display:flex;min-height:100vh}
+nav.sidebar{width:var(--sidebar-w);flex:0 0 var(--sidebar-w);background:var(--bg-side);
+  border-right:1px solid var(--border);position:sticky;top:0;height:100vh;overflow-y:auto;padding:18px 10px 40px;transition:width .2s ease}
+nav.sidebar.collapsed{width:0;flex-basis:0;padding:0;overflow:hidden;border:none}
+.toc-title{display:flex;align-items:center;justify-content:space-between;font-weight:700;color:var(--accent-2);padding:4px 12px 12px;font-size:15px}
+.sidebar-collapse-btn{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;line-height:1}
+.toc-links{display:flex;flex-direction:column}
+.toc-links a{text-decoration:none;color:var(--muted);font-size:13.5px;padding:5px 12px;border-radius:6px;border-left:3px solid transparent;transition:.12s}
+.toc-links a.toc-h3{padding-left:26px;font-size:12.5px}
+.toc-links a:hover{background:var(--accent-soft);color:var(--text)}
+.toc-links a.active{color:var(--accent);background:var(--accent-soft);border-left-color:var(--accent);font-weight:700}
+main.content{flex:1;min-width:0;padding:34px 48px 100px;max-width:980px}
+.topbar{display:flex;gap:8px;align-items:center;margin-bottom:14px}
+.icon-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:13px}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent)}
+.hero{border-bottom:1px solid var(--border);padding-bottom:22px;margin-bottom:8px}
+.hero-eyebrow{color:var(--accent);font-weight:700;letter-spacing:.04em;font-size:13.5px}
+.hero-title{font-size:38px;margin:6px 0 8px;color:var(--accent-2);line-height:1.18}
+.hero-sub{color:var(--muted);font-size:16.5px;max-width:800px;margin:0 0 16px}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px}
+.badge{display:inline-block;font-size:12.5px;font-weight:700;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.badge-time{background:var(--accent-soft);color:var(--accent)}
+.badge-lab,.badge-l{background:var(--accent-soft);color:var(--accent)}
+.badge-aud,.badge-env,.badge-g{background:#eef1f6;color:var(--accent-2)}
+[data-theme="dark"] .badge-aud,[data-theme="dark"] .badge-env,[data-theme="dark"] .badge-g{background:#222a3f;color:#9fb0e6}
+h2{font-size:25px;color:var(--accent-2);margin:42px 0 12px;padding-top:8px;border-top:1px solid var(--border)}
+h3{font-size:18.5px;color:var(--text);margin:26px 0 8px}
+h2:first-of-type{border-top:none}
+p{margin:10px 0}ul,ol{margin:10px 0;padding-left:24px}li{margin:5px 0}
+a{color:var(--accent)}
+strong{color:var(--text);font-weight:700}
+[data-theme="dark"] strong{color:#f0f3fa}
+code{background:var(--code-bg);color:#3f33a0;font-family:"Cascadia Code",Consolas,"Courier New",monospace;font-size:.88em;padding:1.5px 6px;border-radius:5px}
+[data-theme="dark"] code{color:#b3a8f0}
+.code-block{margin:14px 0;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.code-head{display:flex;justify-content:space-between;align-items:center;background:var(--th-bg);padding:6px 12px;font-size:12px;color:var(--muted)}
+.code-lang{font-family:Consolas,monospace}
+.copy-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:2px 10px;font-size:12px;cursor:pointer}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+.code-block pre{margin:0;padding:14px 16px;overflow-x:auto;background:var(--code-bg)}
+.code-block code{background:none;color:var(--code-text);padding:0;font-size:13px;line-height:1.6}
+.diagram-block{margin:14px 0;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.diagram-head{display:flex;justify-content:space-between;align-items:center;background:var(--th-bg);padding:6px 12px;font-size:12px;color:var(--muted)}
+.diagram-body{padding:16px;overflow-x:auto;background:var(--bg)}
+.diagram-body .mermaid{display:flex;justify-content:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{border:1px solid var(--border);padding:9px 12px;text-align:left;vertical-align:top}
+th{background:var(--th-bg);color:var(--accent-2);font-weight:700}
+tbody tr:nth-child(even){background:var(--stripe)}
+td code,th code{font-size:.85em}
+.adm{margin:16px 0;border:1px solid var(--border);border-left-width:4px;border-radius:8px;padding:12px 16px;background:var(--bg-side)}
+.adm-head{display:flex;align-items:center;gap:8px;font-weight:700;margin-bottom:4px}
+.adm-ico{font-size:16px}
+.adm-body p:first-child{margin-top:0}.adm-body p:last-child{margin-bottom:0}
+.adm-key{border-left-color:var(--accent);background:var(--accent-soft)}.adm-key .adm-title{color:var(--accent)}
+.adm-quote{border-left-color:#9B2D5E;background:#f8eaf0}.adm-quote .adm-title{color:#9B2D5E}
+[data-theme="dark"] .adm-quote{background:#2a1620}[data-theme="dark"] .adm-quote .adm-title{color:#e07aa6}
+.adm-warn{border-left-color:#c0392b;background:#fbeae8}.adm-warn .adm-title{color:#a5342a}
+[data-theme="dark"] .adm-warn{background:#2c1816}[data-theme="dark"] .adm-warn .adm-title{color:#e88a7e}
+.adm-check{border-left-color:#1f8a4c;background:#e9f6ee}.adm-check .adm-title{color:#1f7a44}
+[data-theme="dark"] .adm-check{background:#13261a}[data-theme="dark"] .adm-check .adm-title{color:#5fce8a}
+.adm-note{border-left-color:#1E2761;background:#eef1f8}.adm-note .adm-title{color:#1E2761}
+[data-theme="dark"] .adm-note{background:#1d2236}[data-theme="dark"] .adm-note .adm-title{color:#9fb0e6}
+ol.steps{counter-reset:step;list-style:none;padding-left:0;margin:14px 0}
+ol.steps>li{position:relative;padding:6px 0 6px 40px;margin:4px 0}
+ol.steps>li::before{counter-increment:step;content:counter(step);position:absolute;left:0;top:6px;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+.labchip{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0;padding:8px 12px;background:var(--accent-soft);border:1px dashed var(--accent);border-radius:8px;font-size:14px}
+.labchip code{background:transparent;color:var(--accent);font-weight:700}
+.labchip-desc{color:var(--muted);font-size:13px}
+kbd{background:var(--kbd-bg);border:1px solid var(--kbd-border);border-bottom-width:2px;border-radius:5px;padding:1px 7px;font-family:Consolas,monospace;font-size:12.5px;color:var(--text)}
+.menu-btn{display:none}
+details{margin:14px 0;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+summary{padding:10px 16px;cursor:pointer;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:7px;list-style:none;display:flex;align-items:center;gap:6px;user-select:none}
+details[open]>summary{border-bottom-left-radius:0;border-bottom-right-radius:0}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▶";font-size:11px;transition:transform .15s;margin-right:2px}
+details[open]>summary::before{transform:rotate(90deg)}
+details>ol,details>ul,details>p{padding:4px 16px 0;margin-bottom:12px}
+blockquote{margin:12px 0;padding:10px 16px;border-left:4px solid var(--accent);background:var(--bg-side);border-radius:0 8px 8px 0}
+blockquote p{margin:0;color:var(--muted)}
+@media(max-width:880px){
+  nav.sidebar{position:fixed;z-index:50;box-shadow:2px 0 12px rgba(0,0,0,.15)}
+  nav.sidebar.collapsed{width:0}
+  main.content{padding:24px 20px 80px}
+  .menu-btn{display:inline-block}.hero-title{font-size:30px}
+}
+@media print{
+  nav.sidebar,.topbar,#progress,.copy-btn{display:none!important}
+  main.content{max-width:none;padding:0}
+  .adm,.code-block,.diagram-block,table{break-inside:avoid}
+  a{color:var(--text);text-decoration:none}h2{break-after:avoid}
+}
+
+
+h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
+.adm-tip{border-left-color:#b8860b;background:#fbf6e9}.adm-tip .adm-title{color:#a97b00}
+[data-theme="dark"] .adm-tip{background:#241f10}[data-theme="dark"] .adm-tip .adm-title{color:#e6c458}
+.labchip-desc{margin-left:2px}
+
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div class="layout">
+<nav class="sidebar" id="sidebar">
+<div class="toc-title">目錄<button class="sidebar-collapse-btn" id="collapseBtn" title="收合">&#171;</button></div>
+<div class="toc-links">
+<a href="#sec1" data-target="sec1" class="">學習目標</a>
+<a href="#sec2" data-target="sec2" class="">今日故事線</a>
+<a href="#sec3" data-target="sec3" class="">課程時間表(上半場)</a>
+<a href="#sec4" data-target="sec4" class="">M0 · 開場:Portal Live Demo + 一個關鍵提問</a>
+<a href="#sec5" data-target="sec5" class="">M1 · 四種資產分工:Prompt File / Custom Agent / Skill / MCP(＋ copilot-instructions 底層規則)</a>
+<a href="#sec5-1" data-target="sec5-1" class="toc-h3">四個最像的:x vs y 逐對拆解</a>
+<a href="#sec5-2" data-target="sec5-2" class="toc-h3">進 Lab 前,先自我檢測一下</a>
+<a href="#sec6" data-target="sec6" class="">M2a · 翻車①:漂移實驗——同一句 prompt,N 種輸出</a>
+<a href="#sec7" data-target="sec7" class="">M2b · SKILL.md 四區塊解剖 + Lab 2:meeting-summary</a>
+<a href="#sec7-1" data-target="sec7-1" class="toc-h3">四區塊解剖</a>
+<a href="#sec7-2" data-target="sec7-2" class="toc-h3">設計方法:Scope / IO</a>
+<a href="#sec7-3" data-target="sec7-3" class="toc-h3">Lab 2:建立 Meeting Notes Skill (Lab ★)</a>
+<a href="#sec8" data-target="sec8" class="">M3 · 兩種技術路徑:WBS Generator + Weekly Follow-up Planner</a>
+<a href="#sec8-1" data-target="sec8-1" class="toc-h3">Lab 3A:WBS Generator (Lab ★)</a>
+<a href="#sec8-2" data-target="sec8-2" class="toc-h3">Lab 3B:Weekly Follow-up Planner (Lab ★)</a>
+<a href="#sec9" data-target="sec9" class="">M3c · 翻車②:誤觸發實測——三個 Skill 互相干擾</a>
+<a href="#sec10" data-target="sec10" class="">M3d · 翻車③:Custom Agent——把三個 Skill 組裝成一個會議助手</a>
+<a href="#sec10-1" data-target="sec10-1" class="toc-h3">先撞一次:預設 Agent Mode 的「編排失控」</a>
+<a href="#sec10-2" data-target="sec10-2" class="toc-h3">提出解法前的誠實時刻:Custom Agent 鎖得住什麼、鎖不住什麼</a>
+<a href="#sec10-3" data-target="sec10-3" class="toc-h3">提出解法:一個「編排型」Custom Agent</a>
+<a href="#sec10-4" data-target="sec10-4" class="toc-h3">01 / 05 — .agent.md 放哪裡、怎麼命名</a>
+<a href="#sec10-5" data-target="sec10-5" class="toc-h3">02 / 05 — description 這行字,到底寫給誰看?</a>
+<a href="#sec10-6" data-target="sec10-6" class="toc-h3">03 / 05 — 你的 agent 會不會被拉去當 subagent?</a>
+<a href="#sec10-7" data-target="sec10-7" class="toc-h3">04 / 05 — tools 白名單:不要背拼法,用工具選單勾</a>
+<a href="#sec10-8" data-target="sec10-8" class="toc-h3">05 / 05 — 操作步驟</a>
+<a href="#sec11" data-target="sec11" class="">M4 · OpenAPI → FastAPI Scaffolding + 翻車④:覆蓋事故</a>
+<a href="#sec11-1" data-target="sec11-1" class="toc-h3">Lab 4:產生後端骨架,然後親手撞一次覆蓋事故 (Lab ★)</a>
+<a href="#sec12" data-target="sec12" class="">上半場收尾 + 下半場預告</a>
+</div>
+</nav>
+<main class="content">
+<div class="topbar">
+<button class="icon-btn menu-btn" id="menuBtn" title="目錄">&#9776; 目錄</button>
+<button class="icon-btn" id="themeBtn" title="切換亮/暗">&#9680; 亮 / 暗</button>
+<button class="icon-btn" onclick="window.print()" title="列印 / 存 PDF">&#128424; 列印</button>
+</div>
+<header class="hero" id="intro">
+<div class="hero-eyebrow">GitHub Copilot · Enterprise Skill Engineering Workshop　·　上半場(M0–M4)重構版</div>
+<h1 class="hero-title">從 Prompt 到 Enterprise Skill</h1>
+<p class="hero-sub">今天一整天,我們只做一件事:把「AI Meeting Intelligence Portal」這個產品做出來。上半場結束時,你手上會有:三個親手寫出來、被實測驗證過的 Skill,以及一份 Portal 的 FastAPI 後端骨架。</p>
+<div class="hero-meta"><span class="badge badge-time">⏱ 上半場約 5 小時</span><span class="badge badge-lab">🧪 三個實作 Lab + 四個翻車實驗</span><span class="badge badge-aud">🎯 對象:已用 Copilot 一段時間的開發者</span><span class="badge badge-env">💻 React + FastAPI</span></div>
+</header>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">講義設計原則</span></div><div class="adm-body">
+<p>「先定終點,再把技術主題掛在功能上」——<strong>每個重要觀念,都先讓你親眼看到沒有它會出什麼事,再教你解法。</strong> 全天有三次刻意安排的「踩坑」:</p>
+<ol type="1">
+<li><strong>M2a ·翻車實驗</strong>:同一句 prompt,全班跑出來的結果長得都不一樣 → 這就是為什麼需要 Skill。</li>
+<li><strong>M3c · 誤觸發實測</strong>:環境裡有三個 Skill 之後,刻意用模糊指令看它選錯 → 這就是為什麼 description 要寫對比句。</li>
+<li><strong>M3d · 編排失控</strong>:三個 Skill 都在,但一句複合指令下去,誰先跑、跑不跑、會不會越權動你的檔案,每次都不一樣 → 這就是為什麼要用 Custom Agent 把能力與工具權限收斂成一個角色。</li>
+<li><strong>M4 · 純手刻漂移</strong>:同一份規格純手刻兩次,型別合約長得不一樣 → 這就是為什麼 scaffolding Skill 要包決定性工具。</li>
+</ol>
+<p>「照著步驟做完」的記憶兩週就淡了;「親眼看到它出事」的記憶會跟著你回到自己的專案裡。</p>
+</div></div>
+<h2 id="sec1">學習目標</h2>
+<ul>
+<li>用白話說清楚 Skill / Prompt File / Custom Agent / MCP 的分工,並判斷一件事什麼時候「值得」封裝成 Skill。</li>
+<li>親身體驗「沒有 Skill 時輸出如何翻車」,再逐塊掌握 SKILL.md 的四個核心區塊（適用範圍、輸入、步驟、輸出格式）。</li>
+<li>親手完成三個技術路徑不同的 Skill:會議紀錄整理(meeting-summary)、檔案產出(wbs-generator,code execution)、多來源整合(weekly-followup-planner,MCP),理解三種不同的品質風險與對應的規則設計。</li>
+<li>在「多個相似 Skill 並存」的環境裡實測誤觸發,學會用 description 對比句收斂 selection。</li>
+<li>掌握「包裝既有工具」這個最穩定的 scaffolding 做法,並親手對照純手刻與包工具的產出穩定度。</li>
+</ul>
+<h2 id="sec2">今日故事線</h2>
+<p>今天的終點,是把下面這張手繪 mockup 變成真正做得出來的東西:</p>
+<div class="code-block"><div class="code-head"><span class="code-lang">AI Meeting Intelligence Portal (今天的終點畫面)</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>╔══════════════════════════════════════════════════════════╗
+║              AI Meeting Intelligence Portal              ║
+╠══════════════════════════════════════════════════════════╣
+║  [ ⬆ Upload Transcript ]                    🔍 [ Search ]║
+╠══════════════════════════════════════════════════════════╣
+║                                                          ║
+║  ┌─── Meeting Summary ──────────────────────────────┐    ║
+║  │  專案進度正常,本週如期推進。                      │    ║
+║  └──────────────────────────────────────────────────┘    ║
+║                                                          ║
+║  ┌─── Decisions ──────────┐  ┌─── Risks ───────────┐     ║
+║  │  1. 採用 Azure OpenAI   │  │  ⚠ Token Cost       │     ║
+║  │  2. 下週進行 PoC        │  │  ⚠ Data Residency   │     ║
+║  └────────────────────────┘  └─────────────────────┘     ║
+║                                                          ║
+║  ┌─── Action Items ─────────────────────────────────┐    ║
+║  │  ☐ David  →  PoC 架構設計                          │    ║
+║  │  ☐ Mary   →  成本評估                             │    ║
+║  │  ☐ George →  資安需求確認                          │    ║
+║  └──────────────────────────────────────────────────┘    ║
+║                                                          ║
+╚══════════════════════════════════════════════════════════╝</code></pre></div>
+<div class="diagram-block"><div class="diagram-head"><span class="code-lang">上半場故事線</span></div><div class="diagram-body"><div class="mermaid" id="mmd1"></div><script type="text/plain" id="mmd1-src">flowchart TD
+  M0["<b>M0</b> · Portal Live Demo:終點長什麼樣<br/>+ 一個關鍵提問"]
+  M1["<b>M1</b> · 四種資產分工:Prompt File / Custom Agent / Skill / MCP"]
+  M2a["<b>M2a · 翻車①</b><br/>漂移實驗:同一句 prompt,N 種輸出"]
+  M2b["<b>M2b · Lab2</b><br/>SKILL.md 四區塊 + meeting-summary"]
+  M3["<b>M3 · Lab3</b><br/>兩種技術路徑:WBS Excel(code exec)<br/>+ Weekly Follow-up Planner(MCP)"]
+  M3c["<b>M3c · 翻車②</b><br/>誤觸發實測:三個 Skill 互相干擾"]
+  M3d["<b>M3d · 翻車③</b><br/>Custom Agent:三個 Skill 組裝成 @meeting-ops"]
+  M4["<b>M4 · Lab4 · 翻車④</b><br/>OpenAPI → FastAPI scaffold<br/>+ 純手刻 vs 包工具對決"]
+  BREAK(("午休 / 下半場"))
+  M0-->M1-->M2a-->M2b-->M3-->M3c-->M3d-->M4-->BREAK</script></div></div>
+<h2 id="sec3">課程時間表(上半場)</h2>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>時段</th>
+<th>模組</th>
+<th>形式</th>
+<th>分鐘</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>00:00</td>
+<td>M0 開場:Portal Live Demo + 本堂地圖</td>
+<td>講師 demo</td>
+<td>25</td>
+</tr>
+<tr>
+<td>00:25</td>
+<td>M1 四種資產分工 + 自我檢測</td>
+<td>講解</td>
+<td>25</td>
+</tr>
+<tr>
+<td>00:50</td>
+<td>M2a 翻車①:漂移實驗</td>
+<td>全班實驗</td>
+<td>15</td>
+</tr>
+<tr>
+<td>01:05</td>
+<td>M2b SKILL.md 四區塊解剖 + Lab 2(meeting-summary)</td>
+<td>講解+Lab</td>
+<td>65</td>
+</tr>
+<tr>
+<td>02:10</td>
+<td>☕ 休息</td>
+<td>—</td>
+<td>10</td>
+</tr>
+<tr>
+<td>02:20</td>
+<td>M3 Lab 3A WBS Generator + Lab 3B Weekly Follow-up Planner</td>
+<td>Lab</td>
+<td>55</td>
+</tr>
+<tr>
+<td>03:15</td>
+<td>M3c 翻車②:誤觸發實測</td>
+<td>全班實驗</td>
+<td>15</td>
+</tr>
+<tr>
+<td>03:30</td>
+<td>M3d 翻車③:Custom Agent 組裝(@meeting-ops)</td>
+<td>講解+Lab</td>
+<td>25</td>
+</tr>
+<tr>
+<td>03:55</td>
+<td>☕ 休息</td>
+<td>—</td>
+<td>10</td>
+</tr>
+<tr>
+<td>04:05</td>
+<td>M4 Lab 4:scaffold + 翻車④ 純手刻 vs 包工具對決</td>
+<td>講解+Lab</td>
+<td>50</td>
+</tr>
+<tr>
+<td>04:55</td>
+<td>上半場收尾 + 下半場預告</td>
+<td>講解</td>
+<td>10</td>
+</tr>
+</tbody>
+</table></div>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">Lab 之間的可獨立進行性</span></div><div class="adm-body">
+<p>課程依故事線安排順序，但每個 Lab 都有自己的素材或完成版，不會因為少做前一個而無法開始：</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>段落</th>
+<th>建議前置</th>
+<th>未完成前一段時怎麼做</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>M2a 漂移實驗</td>
+<td>無</td>
+<td>直接用 <code>lab2-meeting-summary-skill/sample-transcript.txt</code> 。</td>
+</tr>
+<tr>
+<td>Lab 2 meeting-summary</td>
+<td>M2a（強烈建議，那是這個 Lab 存在的理由）</td>
+<td>素材同上，可獨立進行。</td>
+</tr>
+<tr>
+<td>Lab 3A wbs-generator</td>
+<td>可選：Lab 2 的 Action Items</td>
+<td>改用 <code>lab3-wbs-and-prep-brief-skill/sample-transcript.txt</code> 當輸入。</td>
+</tr>
+<tr>
+<td>Lab 3B weekly-followup-planner</td>
+<td>無</td>
+<td>沒有 CalendarTools 權限時走 B0-Fallback（<code>sample-calendar-week.json</code> 或「假設有空」）。</td>
+</tr>
+<tr>
+<td>M3c 誤觸發實測</td>
+<td>Lab 2 + Lab 3（需要三個 Skill 同時存在）</td>
+<td>沒寫完自己版本的，暫時把三份完成版 SKILL.md 放進 <code>.github/skills/</code> 即可參加。</td>
+</tr>
+<tr>
+<td>M3d Custom Agent</td>
+<td>Lab 2 + Lab 3（同樣需要三個 Skill 都在）</td>
+<td>同上，把三份完成版 SKILL.md 放進 <code>.github/skills/</code> 即可參加，再對照完成版 <code>meeting-ops.agent.md</code>。</td>
+</tr>
+<tr>
+<td>Lab 4 scaffold</td>
+<td>無</td>
+<td>直接使用 <code>lab4-openapi-fastapi-scaffold/openapi/meeting-portal-api.yaml</code> 。</td>
+</tr>
+</tbody>
+</table></div>
+</div></div>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">課前準備</span></div><div class="adm-body">
+<ul>
+<li>VS Code + GitHub Copilot,Agent mode 可用。</li>
+<li>Python 3.10+(Lab 3A / Lab 4 用);Node.js 18+(只有想自己重跑 Portal 前端的人才需要)。</li>
+<li>下載並解壓本堂 Lab 素材壓縮檔;各 Lab 資料夾獨立。</li>
+<li>Lab 4 先裝好:<code>pip install -r lab4-openapi-fastapi-scaffold/requirements.txt</code></li>
+</ul>
+</div></div>
+<h2 id="sec4">M0 · 開場:Portal Live Demo + 一個關鍵提問</h2>
+<ol class="steps" type="1">
+<li><strong>跑給你看終點</strong>:打開完成版 Portal(<code>npm run dev</code>),六個區塊——Upload Transcript / Meeting Summary / Decisions / Action Items / Risks / Search——全部用假資料動起來。今天所有 Skill 的產出,最終都對應到這個畫面上的某一塊。</li>
+<li><strong>示範它是怎麼來的</strong>:把 <code>lab1-portal-scaffold/prompt.md</code> 的整段 prompt 貼進 Agent mode,讓大家看 Copilot 拆檔、寫檔、組裝的過程(不等它跑完,看個開頭就切回完成版)。</li>
+</ol>
+<p>然後是今天最重要的一個提問,先留著,下課前會回來收:</p>
+<blockquote>
+<p><strong>「你剛剛看到,一段夠詳細的 prompt 可以生出一整個專案。那——如果你的同事明天也要做出結構一模一樣的東西,靠什麼保證他做出來的跟你一致?」</strong></p>
+</blockquote>
+<p>「把 prompt 傳給他」是多數人的第一直覺。M2a 會讓你親眼看到這個答案為什麼不夠。</p>
+<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">今天的核心命題</span></div><div class="adm-body">
+<p>從 <strong>Prompt Engineering</strong>(每次都重新想怎麼下指令),進化到 <strong>Enterprise Skill Engineering</strong>(把「怎麼做」寫下來一次,團隊每個人、每個專案用起來結果一致)。</p>
+</div></div>
+<h2 id="sec5">M1 · 四種資產分工:Prompt File / Custom Agent / Skill / MCP(＋ copilot-instructions 底層規則)</h2>
+<p>這四個是你實際會「建立、存成檔案」的資產,最容易混淆;再加上 <code>copilot-instructions</code> 這一層「一直都在」的規則,構成整組客製化的地基。先用一句話分清楚:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>它是什麼</th>
+<th>用一句話說</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Prompt File</strong></td>
+<td>存成檔案、可重複叫用的指令範本</td>
+<td>你把常用的「幫這個 PR 產生 release notes」指令存成 <code>.prompt.md</code>,之後每次直接 <code>/release-notes</code> 叫出來,不用重打</td>
+</tr>
+<tr>
+<td><strong>Custom Agent</strong></td>
+<td>一個聚焦、限縮工具的「人設」</td>
+<td>用 <code>@</code> 明確叫出來的角色,只給它特定工具跟特定指令,讓它專心做一件事(例如只做安全審查、不能改檔案)</td>
+</tr>
+<tr>
+<td><strong>Skill</strong></td>
+<td>把成熟做法包成能力模組</td>
+<td>「某類任務的標準做法」,可重複用,不容易走鐘,不同人、不同專案做出來的結果都差不多</td>
+</tr>
+<tr>
+<td><strong>MCP</strong></td>
+<td>外部系統的標準化連接介面</td>
+<td>「我跟 Outlook 日曆、Jira 溝通的插頭規格」——把外部系統的功能包成 Agent/Skill 可以呼叫的工具,本身不帶團隊的判斷邏輯</td>
+</tr>
+<tr>
+<td><strong>copilot-instructions</strong></td>
+<td>一直都在、自動注入的專案層級規則</td>
+<td>不用叫、每次請求都自動套用的「repo 預設規矩」——命名規範、安全預設、語言/風格慣例都寫這裡,是上面四種資產共用的底層基準</td>
+</tr>
+</tbody>
+</table></div>
+<h3 id="sec5-1">四個最像的:x vs y 逐對拆解</h3>
+<p>這四種資產之所以最難分,是因為它們<strong>兩兩之間</strong>都有一段模糊地帶。以下由「<strong>最像</strong>」排到「比較好分」,一次看懂邊界。分辨時只要問兩件事:<strong>是我喊、還是它自己判斷?</strong> 以及 <strong>它在管動作、身分、做法、還是連線?</strong></p>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">①</span><span class="adm-title">Prompt File vs. Skill 〈最像〉</span></div><div class="adm-body">
+<p>兩者都是「可重複使用的工作流」,這是最像的地方。差別在<strong>誰觸發</strong>與<strong>帶不帶附件</strong>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Prompt File</th>
+<th>Skill</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>觸發</td>
+<td>你<strong>手動</strong> 打 <code>/指令</code></td>
+<td>模型<strong>自動發現</strong>、按需載入</td>
+</tr>
+<tr>
+<td>載入方式</td>
+<td>整份一次注入</td>
+<td>漸進式:先讀 name+description,相關時才讀全文,附件再按需取用</td>
+</tr>
+<tr>
+<td>帶附件</td>
+<td>✗ 就是一段文字(可帶 <code>${input:xxx}</code> 變數)</td>
+<td>✓ 資料夾可含 scripts / templates / 參考檔</td>
+</tr>
+<tr>
+<td>檔案</td>
+<td><code>.github/prompts/*.prompt.md</code></td>
+<td><code>.github/skills/&lt;name&gt;/SKILL.md</code></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>一句話:</strong>要一個「你自己喊、單檔、輕量」的招式 → Prompt File;要一個「模型自己判斷該用、還帶腳本範本」的完整 runbook → Skill。</p>
+</div></div>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">②</span><span class="adm-title">Prompt File vs. Custom Agent</span></div><div class="adm-body">
+<p>兩者都在 <code>.github/</code> 下、都能綁 tools/model——差別在<strong>生命週期</strong>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Prompt File</th>
+<th>Custom Agent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>本質</td>
+<td><strong>動詞</strong>(做這件事)</td>
+<td><strong>身分</strong>(你現在是誰)</td>
+</tr>
+<tr>
+<td>生命週期</td>
+<td>跑一次就結束</td>
+<td>切進去後,<strong>整段對話</strong>都是它</td>
+</tr>
+<tr>
+<td>管什麼</td>
+<td>這次的任務內容</td>
+<td>人設 + <strong>能碰哪些工具</strong>(可設唯讀)</td>
+</tr>
+<tr>
+<td>進階</td>
+<td>可用 <code>agent:</code> 指定跑在某個 Agent 裡</td>
+<td>可串 handoff:Plan → Implement → Review</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>一句話:</strong>Prompt 是「做這件事」,Agent 是「你現在以什麼身分、能碰什麼」。</p>
+</div></div>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">③</span><span class="adm-title">Skill vs. Custom Agent</span></div><div class="adm-body">
+<p>兩個都是「事先寫好、之後重複用」,差別在定義的<strong>層面</strong>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Custom Agent</th>
+<th>Skill</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>定義層面</td>
+<td><strong>誰 + 能碰什麼</strong>(人設、限定工具集、模型)</td>
+<td><strong>怎麼做</strong>(步驟、判斷邏輯、輸出格式)</td>
+</tr>
+<tr>
+<td>觸發</td>
+<td>你主動切換成這個角色</td>
+<td>模型判斷相關時自動翻開</td>
+</tr>
+<tr>
+<td>關係</td>
+<td><strong>上下游,不是二選一</strong>:一個被限定角色的員工(Custom Agent),做事時依然要照公司的 SOP(Skill)走。</td>
+<td></td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>一句話:</strong>Agent 決定「以什麼身分、可以做什麼」;Skill 提供「這件事該怎麼做」的手冊。</p>
+</div></div>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">④</span><span class="adm-title">Skill vs. MCP</span></div><div class="adm-body">
+<p>兩個常被當成同一類,其實本質相反——一個是「怎麼做」,一個是「連到哪」:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>Skill</th>
+<th>MCP</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>負責</td>
+<td>這件事該怎麼做的<strong>團隊 SOP</strong>(判斷層)</td>
+<td>怎麼<strong>連上外部系統</strong>的工具(協定層)</td>
+</tr>
+<tr>
+<td>本質</td>
+<td>知識/程序 + 本地腳本</td>
+<td>運行中的伺服器,提供活的工具/資料</td>
+</tr>
+<tr>
+<td>帶團隊判斷?</td>
+<td>Skill 是 SOP,照著這份共識做,結果才會一致</td>
+<td>MCP 是插頭規格——誰都能插,插了之後要幹嘛它不管</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>一句話 +</strong> Lab 3B 的 <code>weekly-followup-planner</code> 就是搭配使用:MCP 負責讀到你本週行事曆的忙碌與空檔;Skill 負責讀到之後——挑出可用空檔、把未結的 Action Item 排進去、決定輸出格式。</p>
+</div></div>
+<h3 id="sec5-2">進 Lab 前,先自我檢測一下</h3>
+<p>以下情境,各屬於 Prompt File / Custom Agent / Skill / MCP / copilot-instructions / Agent Mode 中的哪一個?</p>
+<ol class="steps" type="1">
+<li>每週要摘要 10 場會議,輸出格式要一致,不管誰觸發結果都一樣。</li>
+<li>只是這次臨時想把這段文字翻譯成英文,之後應該不會再用到。</li>
+<li>需要讀取 Outlook 日曆上的會議資訊,這是跟外部系統對接的介面。</li>
+<li>你想要一個「security reviewer」角色,只能讀程式碼、跑 linter,不能改檔案,之後用 <code>@</code> 明確叫出來。</li>
+<li>你在 chat 裡切成 Agent,讓 Copilot 自己規劃步驟、改檔案、跑測試直到完成——這個「自己規劃執行」的能力本身是什麼?</li>
+<li>你常常要產生 PR 的 release notes,格式固定,於是存成範本,之後直接用 <code>/release-notes</code> 叫出來。</li>
+<li>你希望這個 repo 每次請求都自動套用團隊命名規範與安全預設,不用任何人記得去啟用。</li>
+</ol>
+<details>
+<summary>點我看答案</summary>
+<ol type="1">
+<li>Skill(重複發生、要求一致性)</li>
+<li>一次性提問,連 Prompt File 都不用建立</li>
+<li>MCP(協定層,對接外部系統)</li>
+<li>Custom Agent(限定工具、固定人設、明確叫用)</li>
+<li>Agent Mode(執行引擎本身,不是你建立的資產)</li>
+<li>Prompt File(存起來的範本,重複叫用)</li>
+<li>copilot-instructions(一直都在的規則,每次自動套用)</li>
+</ol>
+</details>
+<h2 id="sec6">M2a · 翻車①:漂移實驗——同一句 prompt,N 種輸出</h2>
+<p><strong>在學任何 SKILL.md 語法之前,先做這個 15 分鐘的實驗。</strong></p>
+<div class="labchip"><span class="labchip-ico">📄</span><code>lab2-meeting-summary-skill/sample-transcript.txt</code><span class="labchip-desc">— 全班共用的同一份逐字稿</span></div>
+<p>操作(每個人都做,不要跳過):</p>
+<ol class="steps" type="1">
+<li>開一個<strong>乾淨的環境</strong>——確認 <code>.github/skills/</code> 底下沒有任何 Skill、沒有特別的 instructions。</li>
+<li>把 <code>sample-transcript.txt</code> 內容貼進 Copilot Chat,只下這一句:<strong>「幫我整理這場會議的紀錄」</strong>。一字不多、一字不少,全班用同一句。</li>
+<li>跑完後不要修、不要重跑,保留第一次的輸出。</li>
+<li>講師現場抽 3-4 位學員,把輸出投影並排比對。</li>
+</ol>
+<p>比對時盯著這四個點看:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>檢查點</th>
+<th>你會看到的漂移</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>輸出結構</td>
+<td>有人被分成摘要/決議/待辦,有人是一大段流水帳,有人多了「討論重點」這種自創區塊</td>
+</tr>
+<tr>
+<td>Due Date</td>
+<td>逐字稿裡 David 說「這週五前」、George 說「下週三前」——有人換算成實際日期,有人照抄相對用詞,有人乾脆沒抓到期限</td>
+</tr>
+<tr>
+<td>Decisions 判定</td>
+<td>「跟 SAP 整合」在逐字稿裡明講「先不排進 PoC 範圍」——有人正確排除,有人把它列成決議或待辦</td>
+</tr>
+<tr>
+<td>Owner 欄位</td>
+<td>有人寫姓名(David / Mary / George),有人寫職稱(架構師 / 財務窗口)</td>
+</tr>
+</tbody>
+</table></div>
+<p>然後回到 M0 留下的那個提問:「把 prompt 傳給同事」為什麼不夠?——你們剛剛全班用的是<strong>同一句 prompt、同一份輸入</strong>,輸出還是長得不一樣。這不是誰的 prompt 寫得不好,是 LLM 生成本質上的 sampling variance:沒有被固定下來的判斷(什麼算決議、日期怎麼換算、欄位長怎樣),每次都會重新被「發明」一次。</p>
+<p><strong>這就是 Consistency Gap 的長相。接下來 65 分鐘,我們把它收斂掉——收斂完之後,你會用同一句指令再跑一次,親眼對比前後差異。</strong></p>
+<h2 id="sec7">M2b · SKILL.md 四區塊解剖 + Lab 2:meeting-summary</h2>
+<h3 id="sec7-1">四區塊解剖</h3>
+<p>一個 SKILL.md = <strong>YAML frontmatter</strong> + <strong>Markdown 內文</strong>。四個區塊職責不同,而且分成兩種完全不同的「被讀取時機」——這個時機差異,是能不能寫對的關鍵:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>區塊</th>
+<th>作用</th>
+<th>寫不好會怎樣(對照你剛剛在 M2a 看到的)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>frontmatter <code>description</code></td>
+<td><strong>選前讀</strong>:決定「要不要選中這個 Skill」。要同時寫清楚「做什麼 + 何時用 + 不是什麼」的對比句 + 關鍵詞</td>
+<td>太泛 → 亂觸發或不觸發;跟其他 Skill 描述太像 → 選錯(M3c 會實測這件事)</td>
+</tr>
+<tr>
+<td>① 適用範圍 / 不適用時改用</td>
+<td><strong>選後讀</strong>:被選中之後再次確認「這次任務真的歸我管嗎」,不歸我管該轉去哪</td>
+<td>誤以為這裡也在做觸發判斷,同一件事寫兩次、兩次還不一致</td>
+</tr>
+<tr>
+<td>② 需要的輸入</td>
+<td>來源、格式、必填項;缺了要反問</td>
+<td>M2a 裡「沒抓到會議日期就無法換算 Due Date」——自己亂假設,輸出歪掉</td>
+</tr>
+<tr>
+<td>③ 步驟</td>
+<td>一步步怎麼做</td>
+<td>M2a 裡的結構漂移——純靠 LLM 自由發揮,每次不一樣</td>
+</tr>
+<tr>
+<td>④ 輸出格式</td>
+<td>格式、結構要可驗收</td>
+<td>M2a 裡有人表格有人流水帳——每次長得不一樣,沒人敢直接拿來用</td>
+</tr>
+</tbody>
+</table></div>
+<div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title">為什麼需要「① 適用範圍 / 不適用時改用」</span></div><div class="adm-body">
+<p>它的角色是 <strong>recovery</strong>(選錯之後給 Copilot 一條回頭路),不是 <strong>prevention</strong>(選前防呆,那是 description 的工作)。</p>
+</div></div>
+<div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title">③ 步驟只寫文字敘述,收斂力有限</span></div><div class="adm-body">
+<p>純文字描述仍需經過模型「理解 → 重新生成」的轉譯,還是有 sampling variance。若步驟牽涉精確格式(API 呼叫順序、參數細節),應直接嵌入固定程式碼片段當範本——Lab 3A 的 openpyxl 固定腳本就是這個原則的實作。</p>
+</div></div>
+<p>最小骨架(這正是等下 Lab 2 要填的模板):</p>
+<div class="code-block"><div class="code-head"><span class="code-lang">SKILL.md(四區塊骨架)</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>---
+name: my-skill            # 小寫、連字號
+description: 這個 skill 做什麼 + 何時用 + 不是什麼(對比句)+ 觸發關鍵詞   # ← 選前讀,決定選不選你
+disable-model-invocation: false   # true = 只能手動 /skill-name 呼叫,不會被自動語意選中(官方欄位)
+user-invocable: true              # 是否出現在 / 選單、允許手動呼叫(官方欄位)
+version: 0.1.0                    # 團隊治理慣例欄位:工具不讀它、會被忽略,但 M6 版本治理靠它
+---
+# 標題
+
+## ① 適用範圍 / 不適用時改用
+## ② 需要的輸入
+## ③ 步驟
+## ④ 輸出格式
+- [ ] ...</code></pre></div>
+<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">description 是整個 Skill 最關鍵的一行</span></div><div class="adm-body">
+<p>Copilot 靠 <code>description</code> 判斷「這件事我有沒有 SOP」。它要同時回答<strong>做什麼、何時用、不是什麼、有哪些關鍵詞</strong>。寫得準,命中率就高;寫得泛,不是亂觸發就是不觸發。位置放在 <code>.github/skills/&lt;name&gt;/SKILL.md</code>,Chat 打 <code>/skills</code> 可確認被偵測到。多 Skill 並存時 description 怎麼互相干擾,M3c 會實測,這裡先埋一句:<strong>description 用對比句法(「是 X,不是 Y」),不要只堆關鍵詞。</strong></p>
+</div></div>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">disable-model-invocation / user-invocable:兩個常被忽略的開關</span></div><div class="adm-body">
+<ul>
+<li><code>disable-model-invocation: true</code> —— 這個 Skill 不會被自動語意觸發,只能手動 <code>/skill-name</code> 呼叫。</li>
+<li><code>user-invocable</code> —— 決定能不能被使用者手動叫用,預設 true。</li>
+</ul>
+<p>今天的 Lab 只讀不寫,先認識這兩個欄位存在、記得它們的作用。什麼情況下「值得」把一個 Skill 鎖成只能手動呼叫?先放著——下半場你會撞到一個讓你自己想清楚答案的場景。</p>
+</div></div>
+<h3 id="sec7-2">設計方法:Scope / IO</h3>
+<h4 id="h4-1">Scope 怎麼抓——優先權判斷,不是只看一句話長短</h4>
+<ol class="steps" type="1">
+<li><strong>工具/寫入權限邊界是否不同</strong>(有沒有副作用、要不要額外認證)→ 不同就該拆,不管兩件事是不是永遠一起發生。</li>
+<li><strong>是否永遠嚴格共同觸發、有強依賴順序</strong> → 傾向合併成一個 Skill 裡的多步驟。</li>
+<li><strong>未來會不會被其他情境單獨呼叫</strong> → 前兩者都中性時的 tie-breaker。</li>
+</ol>
+<p>用 <code>meeting-summary</code> 實際套一次:</p>
+<ul>
+<li>權限邊界:「產生摘要」跟「抽取待辦」都是唯讀逐字稿、不寫外部系統——邊界一樣,不構成拆開理由。</li>
+<li>共同觸發:拿到逐字稿,PM 通常同時要摘要(報告用)也要待辦清單(追蹤用)——成立,指向合併。</li>
+<li>單獨呼叫:目前看不出來——中性。</li>
+</ul>
+<p>所以 <code>meeting-summary</code> 一次輸出四個區塊:摘要、決議、風險、待辦。「一句話講得完」可以當直覺起手式,但不是唯一判準——如果兩件事永遠綁在一起(例如摘要完順便建 Jira 票),句子只是變長,測試照樣通過,卻掩蓋了權限邊界不同的事實。這也是為什麼 M5 的 Jira 整合是獨立 Skill:建票要寫入外部系統、要額外認證,第一條判準就把它擋在外面。</p>
+<h4 id="h4-2">IO 怎麼定</h4>
+<ul>
+<li>輸入:講清楚來源、格式、必填項;缺了要反問,不要自己假設。這個 Skill 因為要換算待辦到期日,<strong>會議日期是必要輸入</strong>——「這週五」「下週三」這種相對日期,沒有基準日無法換算(M2a 你已經看過沒有這條規則時會發生什麼事)。</li>
+<li>輸出:要可驗收——指定哪些區塊、什麼格式。模糊的輸出等於每次都不一樣,團隊沒辦法把它當「資產」用。</li>
+</ul>
+<h3 id="sec7-3">Lab 2:建立 Meeting Notes Skill <em>(Lab ★)</em></h3>
+<p>目標:做出今天第一個 Skill,把 M2a 那句「幫我整理這場會議的紀錄」收斂成穩定輸出四個區塊:Meeting Summary / Decisions / Risks / Action Items,直接對應 Portal 上的面板。</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>設計題</th>
+<th>我們的決定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scope(一句話)</td>
+<td>「給我一份會議逐字稿,我給你摘要、決議、風險、待辦四個區塊」;權限邊界:只讀逐字稿,不寫外部系統</td>
+</tr>
+<tr>
+<td>輸入</td>
+<td>逐字稿全文(必要);會議日期(必要,換算 Due Date 用);與會人員名單(選)</td>
+</tr>
+<tr>
+<td>輸出</td>
+<td>Markdown 四區塊,Action Items 為表格</td>
+</tr>
+</tbody>
+</table></div>
+<div class="labchip"><span class="labchip-ico">📄</span><code>lab2-meeting-summary-skill/skills/meeting-summary/SKILL.md</code><span class="labchip-desc">— 完成版(先自己寫,再對照)</span></div>
+<div class="labchip"><span class="labchip-ico">📄</span><code>lab2-meeting-summary-skill/sample-transcript.txt</code><span class="labchip-desc">— M2a 用過的同一份逐字稿</span></div>
+<ol class="steps" type="1">
+<li>建立 <code>.github/skills/meeting-summary/SKILL.md</code>,對照四區塊骨架<strong>自己動手寫</strong>(不要直接複製完成版——寫的過程本身就是在練 Scope / IO 的設計判斷)。寫的時候,把 M2a 觀察到的每一種漂移,對應成一條明確規則:什麼算決議、日期怎麼換算、Owner 用姓名不用職稱、四區塊即使為空也要寫「無」。</li>
+<li>存檔後,Chat 輸入 <code>/skills</code> 確認被偵測到。</li>
+<li><strong>關鍵一步:用跟 M2a 一模一樣的方式再跑一次</strong>——貼同一份逐字稿、下同一句「幫我整理這場會議的紀錄」(逐字稿開頭已標註會議日期 2026-07-08),不要點名 Skill 名稱,觀察它有沒有自動選中。</li>
+<li>把這次輸出跟你 M2a 保留的第一次輸出並排比對——這是今天第一次「before / after」,也是你之後回公司推 Skill 時最有說服力的一張圖。</li>
+<li>檢查 Due Date:David「這週五前」、Mary「下週會議前」、George「下週三前」,都要換算成 YYYY-MM-DD 實際日期。</li>
+<li>對照完成版 SKILL.md,檢查差異——特別是 description 的寫法,以及「什麼才算真正的決議」「Due Date 怎麼換算」這兩種容易含糊的判斷邏輯怎麼寫清楚。</li>
+</ol>
+<div class="code-block"><div class="code-head"><span class="code-lang">skills/meeting-summary/SKILL.md(完成版)</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>---
+name: meeting-summary
+description: 從會議逐字稿一次產生四個區塊:專案進度摘要(Meeting Summary)、決議事項(Decisions)、風險項目(Risks)、待辦事項(Action Items,含 Owner/Due Date/Priority)。是「讀逐字稿產生結構化會議紀錄」,不是會前準備,也不會寫入任何外部系統。當使用者提供會議逐字稿、會議紀錄,並要求「摘要」「整理這次會議」「這場會議的決議/風險/待辦」時使用。關鍵詞:會議紀錄、逐字稿、摘要、summary、決議、decision、風險、risk、待辦、action item。
+disable-model-invocation: false
+user-invocable: true
+version: 0.2.0
+---
+# 會議逐字稿整理 Skill(Meeting Notes Skill)
+
+## ① 適用範圍 / 不適用時改用
+- 適用:使用者提供一份會議逐字稿或會議紀錄全文,並要求產生摘要、決議、風險、或待辦事項——四項只要要求其中任何一項,都由這個 Skill 一次處理。
+- 不適用:使用者只是「討論某個主題」、沒有提供實際逐字稿內容——直接對話回答就好。
+- 不適用:使用者要的是看本週空檔、把未結事項排進去跟進 → 改用 weekly-followup-planner。
+
+## ② 需要的輸入
+1. 會議逐字稿全文(必要)。
+2. 會議日期(必要)。逐字稿裡的期限常是「這週五」「下週三」這種相對日期,沒有基準日無法換算,缺少時要先反問使用者。
+3. (選)與會人員名單。沒有名單對照時,保留逐字稿原始代稱,不要自己編造人名。
+
+## ③ 步驟
+1. 通讀全文,辨識主要議題。
+2. 萃取「目前狀態」,合併成 3-4 句話的專案進度摘要。
+3. 找出所有「明確被拍板同意」的事項列為 Decisions——只有真正拍板的才算,單純討論或提議不算。
+4. 找出所有被明確提及、可能影響進度或合規的疑慮,列為 Risks——每一項要對應具體發言,不能是自己推論。
+5. 找出所有「A 對 B 明確指派任務」或「某人主動承諾要做某件事」的語句。
+6. 對每一筆任務萃取 Owner(實際姓名,不用職稱)、Action(具體動詞+受詞)、Due Date(依②的會議日期換算成 YYYY-MM-DD,完全沒提到期限則標記「未訂」)、Priority(沒有語氣線索一律 Medium)。
+7. 同一人多筆任務分開列出,不要合併成一筆。
+8. 依 ④ 的格式整理輸出。
+
+## ④ 輸出格式
+```markdown
+## Meeting Summary
+&lt;一段 3-4 句話的專案進度摘要&gt;
+
+## Decisions
+1. &lt;決議事項一&gt;
+...
+
+## Risks
+- &lt;風險項目一&gt;
+...
+
+## Action Items
+| Owner | Action | Due Date | Priority |
+|---|---|---|---|
+| &lt;姓名&gt; | &lt;具體任務&gt; | &lt;YYYY-MM-DD 或「未訂」&gt; | &lt;High/Medium/Low&gt; |
+```
+四個區塊都要有,即使某區塊為空也要明確寫「無」,不要省略整個區塊。</code></pre></div>
+<div class="adm adm-check"><div class="adm-head"><span class="adm-ico">✅</span><span class="adm-title">完成檢核</span></div><div class="adm-body">
+<ul>
+<li><code>/skills</code> 偵測得到 meeting-summary;沒點名 Skill 名稱有自動選用。</li>
+<li>跟 M2a 的第一次輸出並排比對,四種漂移(結構/日期/決議判定/Owner)都被收斂。</li>
+<li>Decisions 沒有把「討論中」內容誤判成決議;SAP 整合沒有被列進任何區塊(逐字稿明講「先不排進 PoC 範圍」)。</li>
+<li>Action Items 的 Due Date 都是換算後的實際日期,沒有殘留「這週五」「下週三」。</li>
+</ul>
+</div></div>
+<h2 id="sec8">M3 · 兩種技術路徑:WBS Generator + Weekly Follow-up Planner</h2>
+<p>這個模組一次帶兩個 Skill,刻意選了兩種<strong>技術路徑完全不同</strong>的任務——一個靠 Agent mode 內建的 code execution 產出檔案,一個靠 MCP 接外部工具。兩者的「最大風險」也完全不同,這正是要對照的重點:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>wbs-generator</th>
+<th>weekly-followup-planner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>性質</td>
+<td>結構化生成 + 檔案輸出(code execution)</td>
+<td>多來源工具整合(MCP)</td>
+</tr>
+<tr>
+<td>技術路徑</td>
+<td>Agent mode 內建檔案編輯 + 終端機執行工具</td>
+<td>MCP server(CalendarTools)+ 內部資料查詢</td>
+</tr>
+<tr>
+<td>輸出</td>
+<td>Excel WBS(大綱階層 + 篩選)</td>
+<td>本週跟進規劃 Markdown</td>
+</tr>
+</tbody>
+</table></div>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">🧪</span><span class="adm-title">延伸(選做):只給半句 prompt,自己抓轉換漏了什麼</span></div><div class="adm-body">
+<p>如果班上有 .NET 背景的學員,可以在這裡加碼一個練習:把完成版 SKILL.md 貼給 Copilot,只下這句 prompt——刻意不提 ClosedXML 的 API 細節該怎麼對應:</p>
+<div class="code-block"><div class="code-head"><span class="code-lang">prompt</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>請把附件 SKILL.md 的技術實作部分,從 Python(openpyxl)移植成 C#(使用 ClosedXML NuGet 套件),
+完整保留 SKILL.md 的四區塊結構與所有商業邏輯(①②③④⑤的判斷規則、品質自檢項目一律不變),
+只轉換第③步驟裡的「固定參考腳本」與跟該實作語言相關的敘述。</code></pre></div>
+<p>轉出來的 C# 版本,拿原本 ⑤ 品質自檢的後三項親自驗一次(不是看它有沒有編譯成功):</p>
+<ol class="steps" type="1">
+<li>打開產出的 .xlsx,實際點左側大綱群組的摺疊按鈕——確認階層真的能收合。</li>
+<li>實際用篩選按鈕篩一次——確認涵蓋到最後一列,沒有漏尾端幾筆。</li>
+<li>捲動確認標題列真的凍結——ClosedXML 用列數設定,跟 openpyxl 用儲存格座標字串不是同一種寫法,最容易在轉換時出錯。</li>
+</ol>
+</div></div>
+<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">這個練習要抓的,是「有參考代碼」跟「有參考知識」的差距</span></div><div class="adm-body">
+<p>Python 版本能讓 Copilot 照抄的,只有<strong>流程邏輯</strong>(先分組、再建階層、再寫欄位這個順序)——這部分轉換通常很穩。但 <code>outline_level</code>、<code>auto_filter.ref</code>、<code>freeze_panes</code> 這幾個 openpyxl <strong>特有</strong>的 API 寫法,原始碼裡沒有任何東西可以讓它「照抄」到 ClosedXML,它得重新生成,而 ClosedXML 有自己一套容易寫錯又不報錯的細節。三個檢查項如果有沒過的,不是練習失敗——那正是「有得抄不等於全部都穩」最直接的證據。</p>
+</div></div>
+
+<h3 id="sec8-2">Lab 3B:Weekly Follow-up Planner <em>(Lab ★)</em></h3>
+<p>故事線:<strong>「幫我看本週行事曆哪些時段有空,並把還沒結案的 Action Item 列出來,我想挑個空檔把它們清一清。」</strong> 空檔來自行事曆(CalendarTools MCP),未結事項來自內部 Action Item 記錄——兩個來源各自獨立、不需互相對齊。</p>
+<div class="labchip"><span class="labchip-ico">📄</span><code>lab3-wbs-and-prep-brief-skill/skills/weekly-followup-planner/SKILL.md</code><span class="labchip-desc">— 完成版</span></div>
+<div class="labchip"><span class="labchip-ico">🔌</span><code>CalendarTools</code></div>
+<div class="labchip"><span class="labchip-ico">📄</span><code>lab3-wbs-and-prep-brief-skill/data/sample-calendar-week.json</code><span class="labchip-desc">— Fallback 用本週行事曆(週三刻意排滿)</span></div>
+<div class="labchip"><span class="labchip-ico">📄</span><code>lab3-wbs-and-prep-brief-skill/data/past-action-items.json</code><span class="labchip-desc">— 模擬內部 Action Item 記錄</span></div>
+<div class="labchip"><span class="labchip-ico">📄</span><code>lab3-wbs-and-prep-brief-skill/mcp/mcp-config-example.jsonc</code><span class="labchip-desc">— MCP 設定範例</span></div>
+<h4 id="h4-3">B0. MCP 路徑選擇(三選一,都不影響 B1 之後的練習)</h4>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">誠實面對 MCP 的可用性問題</span></div><div class="adm-body">
+<p>CalendarTools 是 Agent365 底下的功能,不是每個租戶都已開通。上一版的做法是「沒權限就用 fallback 資料」,但這樣走 fallback 的人整場沒摸到真的 MCP(mcp.json、OAuth、工具清單),學到的其實是「貼一份 JSON 假裝是 MCP 結果」。這一版把路徑攤開講清楚,<strong>至少確保每個人都完成過一次真實的 MCP 設定體驗</strong>:</p>
+</div></div>
+<ul>
+<li><strong>路徑一(有M365 Copilot授權 使用者)</strong>:設定 CalendarTools,走真行事曆。
+<ol type="1">
+<li>先查租戶 ID(不需登入或任何權限): 回傳 <code>issuer</code> 中間那段 GUID 就是 <code>tenant_id</code>。
+<div class="code-block"><div class="code-head"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>(Invoke-RestMethod "https://login.microsoftonline.com/&lt;你的公司網域&gt;/v2.0/.well-known/openid-configuration").issuer</code></pre></div></li>
+<li>在專案根目錄建立 <code>.vscode/mcp.json</code>,內容參考 <code>mcp/mcp-config-example.jsonc</code>;VS Code 提示時貼上 tenant_id。</li>
+<li>首次呼叫會跳瀏覽器 OAuth,同意授權後,Chat 輸入 <code>/mcp</code> 確認看得到 CalendarTools 的工具。</li>
+</ol></li>
+<li><strong>路徑二(沒授權,但有GitHub 帳號)</strong>:改設定 <strong>GitHub remote MCP server</strong>——只要你有 GitHub 帳號就能用,體驗跟 CalendarTools 完全同構(mcp.json → OAuth → <code>/mcp</code> 看工具清單): 設定完成後隨口試一句「用 GitHub MCP 幫我列出我最近的 repo」,確認工具真的被呼叫——<strong>這 5 分鐘的目的只是讓「MCP 設定」這件事在你手上發生過一次</strong>,行事曆資料仍走下面的 fallback。
+<div class="code-block"><div class="code-head"><span class="code-lang">jsonc</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>// .vscode/mcp.json
+{
+  "servers": {
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/"
+    }
+  }
+}</code></pre></div></li>
+<li><strong>路徑三(連 GitHub 帳號都不方便用,但想摸到真 MCP)</strong>:改設定 <strong>Microsoft Learn MCP server</strong>——完全免登入、免 OAuth,是門檻最低的真 MCP。設定完成後試一句「用 Microsoft Learn MCP 查一下 Azure Container Apps 的 ingress 怎麼設定」,確認 <code>/mcp</code> 看得到工具、工具真的被呼叫。行事曆資料同樣走 fallback。
+<div class="code-block"><div class="code-head"><span class="code-lang">jsonc</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>// .vscode/mcp.json
+{
+  "servers": {
+    "microsoft-learn": {
+      "type": "http",
+      "url": "https://learn.microsoft.com/api/mcp"
+    }
+  }
+}</code></pre></div></li>
+</ul>
+<div class="adm adm-tip"><div class="adm-head"><span class="adm-ico">🛠️</span><span class="adm-title">OAuth 卡住時的排障(路徑一/二共用)</span></div><div class="adm-body">
+<p>授權流程失敗或想換帳號重來時:</p>
+<ol type="1">
+<li>按 <code>Ctrl+Shift+P</code> 開啟 <strong>Command Palette</strong></li>
+<li>輸入並執行:<code>Authentication: Remove Dynamic Authentication Providers</code></li>
+<li>重新執行 MCP 工具、重新走一次 OAuth</li>
+</ol>
+</div></div>
+<h4 id="h4-4">B1. 建立 Skill</h4>
+<p>建立 <code>.github/skills/weekly-followup-planner/SKILL.md</code>,對照完成版自己寫。description 記得寫成對比句:不是逐字稿摘要(那是 meeting-summary),也不是專案範圍分解(那是 wbs-generator)——<strong>這兩句對比句等一下 M3c 會被實際拿來考驗,現在寫得越含糊,等一下誤觸發越精彩。</strong></p>
+<h4 id="h4-5">B2. 觸發 Skill</h4>
+<p>把 <code>data/past-action-items.json</code> 提供給 Copilot,再視你 B0 走的路:</p>
+<ul>
+<li>有 CalendarTools:「幫我看本週哪些時段有空,並把還沒結案的 Action Item 列出來,我想挑空檔跟進」,觀察 Agent 有沒有先呼叫 CalendarTools。</li>
+<li>走 fallback:連同 <code>sample-calendar-week.json</code> 一起提供(或「假設我本週下午都有空」),下同樣的指令。</li>
+</ul>
+<h4 id="h4-6">B3. 檢查來源標註</h4>
+<p>「待跟進的未結事項」要列出 <code>past-action-items.json</code> 裡<strong>所有</strong> <code>status: "open"</code> 的項目、每筆標來源 id,而且<strong>沒有</strong>把已 <code>done</code> 的 <code>AI-2026-06-20-01</code> 列進去。「可用空檔」要標明來源是 calendar,不是憑空生出的時段。</p>
+<h4 id="h4-7">B4. 刻意測試「排滿、沒有空檔」的情境</h4>
+<p>用 <code>sample-calendar-week.json</code> 走一次,問「週三幫我排時間跟進」——週三被刻意排滿整天,確認 Copilot 誠實回報「週三無可用空檔」而不是硬生一個時段。這裡的幻覺風險比 WBS 更隱蔽:錯誤可能藏在 MCP 查詢、內部資料查詢,或 LLM 整合多來源時自己腦補,任何一環沒把關,都會排出一個根本不存在的空檔。</p>
+<div class="adm adm-check"><div class="adm-head"><span class="adm-ico">✅</span><span class="adm-title">完成檢核(M3 整體)</span></div><div class="adm-body">
+<ul>
+<li>WBS Excel 有大綱群組、篩選、凍結窗格,且沒有把 SAP 整合列進去。</li>
+<li>每個人都完成過至少一次真實 MCP 設定(CalendarTools 或 GitHub MCP),<code>/mcp</code> 看得到工具清單。</li>
+<li>weekly-followup-planner 列出所有 open 項目、每筆標來源 id,done 項目沒被誤列。</li>
+<li>排滿情境誠實回報「無可用空檔」,沒有硬生時段。</li>
+</ul>
+</div></div>
+<h2 id="sec9">M3c · 翻車②:誤觸發實測——三個 Skill 互相干擾</h2>
+<p><strong>現在你的 <code>.github/skills/</code> 裡有三個 Skill 了。這是今天第一次、也是企業場景裡每天都在發生的情境:selection 不再只有一個候選。</strong></p>
+<p>GitHub Copilot 的 Skill selection 是<strong>機率性語意匹配</strong>——description 不夠具體、沒有清楚的對比詞,多個 Skill 之間就會互相干擾、選錯或選不到。理論講完了,接下來 15 分鐘直接測。</p>
+<p>操作(每一句都是新開對話,避免上下文污染):</p>
+<ol class="steps" type="1">
+<li><strong>模糊指令一</strong>:附上 <code>past-action-items.json</code>,只說:「幫我看一下這些 action item」。——三個 Skill 的 description 裡都有 "action item" 這個詞。觀察選中了誰?還是誰都沒選、直接回答?</li>
+<li><strong>模糊指令二</strong>:附上 <code>sample-transcript.txt</code>,說:「幫我把會議裡的待辦整理一下,排個計畫」。——「整理待辦」指向 meeting-summary,「排個計畫」同時沾到 wbs-generator(拆解)跟 weekly-followup-planner(排程)。</li>
+<li><strong>模糊指令三</strong>:「我下週要跟進這個專案,幫我準備一下」。——沒有任何一個 Skill 的關鍵詞被直接命中,看它會硬選一個、還是不觸發。</li>
+<li>講師收集現場結果:<strong>同一句指令,不同人的機器選中的 Skill 很可能不一樣</strong>——這本身就是最重要的觀察:selection 是機率性的,description 的工作是把機率分佈收窄,不是給出保證。</li>
+<li><strong>修復回合</strong>:挑一句你這邊選錯(或不觸發)的指令,回頭改對應 Skill 的 description——加對比句、加關鍵詞、或把容易誤導的詞拿掉——再測一次,確認行為改變。</li>
+</ol>
+<p>改完之後,養成兩個帶得走的習慣:</p>
+<ul>
+<li>description 用對比句法,不是只堆關鍵詞:「是逐字稿產出的結構化紀錄,不是排程規劃」,而不是單純寫「摘要、逐字稿、summary」。</li>
+<li>新增 Skill 時,把新舊 description 一起丟給 Copilot,問「這兩個會不會混淆、什麼情況下會選錯」——不需要自動化互斥檢查,但至少人工過一次這道關。</li>
+</ul>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">這個實驗跟下半場的關係</span></div><div class="adm-body">
+<p>企業內部很快會累積 5-10 個以上相似的 Skill,誤觸發從「偶發」變「日常」。M6 的品質治理會把今天這 15 分鐘的手動測試,升級成有版本紀錄、有回歸測試觀念的治理流程——你現在做的,就是那套流程的最小可行版。</p>
+</div></div>
+<h2 id="sec10">M3d · 翻車③:Custom Agent——把三個 Skill 組裝成一個會議助手</h2>
+<p><strong>四種資產(Prompt File / Custom Agent / Skill / MCP)裡,到現在只有 Custom Agent 你還沒動手做過。這不是漏掉——是刻意留到這裡:Custom Agent 的價值是「把能力組裝起來、鎖住工具邊界」,一定要先有能力可組裝才示範得出來。你現在剛好有三個。</strong></p>
+<p>M3c 讓你看到三個 Skill 並存時 selection 會互相干擾;這一段給第二帖藥。</p>
+<h3 id="sec10-1">先撞一次:預設 Agent Mode 的「編排失控」</h3>
+<p>操作(乾淨對話,三個 Skill 都在):</p>
+<ol class="steps" type="1">
+<li>附上 <code>sample-transcript.txt</code>,下一句刻意複合又有點模糊的指令:<strong>「這是這場會議的逐字稿,幫我把該做的都做一做。」</strong></li>
+<li>現場收集結果,盯這兩點看:
+<ul>
+<li><strong>編排漂移</strong>:有人只拿到摘要、有人摘要+WBS、有人三個全跑、有人順序顛倒——同一句指令,不同人跑出不同的「做了哪些事」。這是 M2a/M3c 的漂移升級到「多 Skill 編排」這一層。</li>
+<li><strong>越權風險</strong>:預設 Agent Mode 手上有完整的檔案編輯與終端機執行工具、以及未來任何有寫入副作用的 Skill。你沒有任何結構上的保證它不會「順手」動到不該動的東西。</li>
+</ul></li>
+<li>記住這次的行為,等一下用 @meeting-ops 跑同一句對比。</li>
+</ol>
+<h3 id="sec10-2">提出解法前的誠實時刻:Custom Agent 鎖得住什麼、鎖不住什麼</h3>
+<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">一護欄一行為準則:兩種完全不同強度的收斂</span></div><div class="adm-body">
+<p>依照目前 GitHub Copilot 的 <code>.agent.md</code> 規格,Custom Agent 給你的是<strong>兩種強度不同</strong>的收斂手段,千萬不要混為一談:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>工具邊界(護欄)</th>
+<th>Skill 路由(行為準則)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>靠什麼</td>
+<td>frontmatter 的 <code>tools</code> 白名單</td>
+<td>body 裡的路由指令(instructions)</td>
+</tr>
+<tr>
+<td>強度</td>
+<td><strong>結構保證</strong>:不在清單上的工具,物理上叫不到</td>
+<td><strong>機率收斂</strong>:大幅縮小注意力範圍,但不是白名單</td>
+</tr>
+<tr>
+<td>管什麼</td>
+<td>危險的(寫檔、跑終端、外部系統)</td>
+<td>選擇的(該用哪個 Skill、什麼順序)</td>
+</tr>
+<tr>
+<td>失效模式</td>
+<td>填錯工具名 → <strong>被靜默忽略、不報錯</strong>(以為有護欄其實沒護欄)</td>
+<td>指令寫得含糊 → 路由照樣漂</td>
+</tr>
+</tbody>
+</table></div>
+<p>重點來了:<code>tools</code> 欄位<strong>只收工具名</strong>(內建工具、tool sets、MCP 工具)——frontmatter 裡<strong>沒有任何「Skill 白名單」欄位</strong>。Skill 的觸發永遠走 description 語意匹配(M3c 練的那一層),Custom Agent 改變的是「以什麼人設、帶著哪些工具」去做匹配,而不是把其他 Skill 從選單上拿掉。</p>
+<p>那 Skill 層有沒有「護欄」?有——但它<strong>長在 SKILL.md 自己身上</strong>,就是 M2b 認識過的 <code>disable-model-invocation: true</code>(該 Skill 從此只能手動 <code>/skill-name</code> 叫用,不會被任何 agent 自動選中)。<strong>所以完整的治理拼圖是:工具的護欄蓋在 agent 上,Skill 的護欄蓋在 Skill 上,行為準則寫在 agent 的 body 裡。</strong>記住這張拼圖——下半場你會遇到一個 tools 白名單管不到、只能靠 Skill 自己這道護欄的場景。</p>
+</div></div>
+<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">這一帖藥跟 M3c 的差別</span></div><div class="adm-body">
+<p>M3c 的 description 對比句,收的是「<strong>哪個 Skill 被選中</strong>」的機率。Custom Agent 的路由規則,收的是「<strong>這個角色會怎麼編排</strong>」的機率——固定人設 + 明確路由,讓同一句複合指令每次走同一條路。而 <code>tools</code> 白名單處理的是另一個維度:就算路由漂了,<strong>它能造成的傷害被護欄限制住</strong>。三個槓桿疊加使用——description(M3c)、路由指令(現在)、工具邊界(現在)——不是三選一。</p>
+</div></div>
+<h3 id="sec10-3">提出解法:一個「編排型」Custom Agent</h3>
+<p>設計原則直接沿用 M1 立好的兩句話:<strong>Custom Agent 定義「誰+能碰什麼」,Skill 定義「怎麼做」</strong>;而且 <strong>Agent 只做薄路由,真正怎麼做的邏輯留在 Skill</strong>。所以這個 agent 刻意<strong>不含任何 SOP</strong>——它只判斷該叫哪個 Skill、補齊缺的必要輸入、守住工具邊界。</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>預設 Agent Mode</th>
+<th>@meeting-ops(Custom Agent)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Skill 編排</td>
+<td>語意匹配自由發揮,順序隨機</td>
+<td>路由規則明確點名三個會議 Skill 與順序(指示層收斂,<strong>非白名單</strong>)</td>
+</tr>
+<tr>
+<td>工具權限</td>
+<td>全開</td>
+<td><code>tools</code> 白名單(結構保證):檔案編輯 + 終端機(WBS 用)+ CalendarTools MCP,其他一律叫不到</td>
+</tr>
+<tr>
+<td>人設</td>
+<td>通用</td>
+<td>固定:「會議逐字稿的下游營運助手」</td>
+</tr>
+<tr>
+<td>叫用方式</td>
+<td>直接對話,誰都可能被選中</td>
+<td><code>@meeting-ops</code> 明確叫出</td>
+</tr>
+</tbody>
+</table></div>
+<div class="labchip"><span class="labchip-ico">📄</span><code>lab3d-meeting-ops-agent/agents/meeting-ops.agent.md</code><span class="labchip-desc">— 完成版(先自己寫,再對照)</span></div>
+<div class="code-block"><div class="code-head"><span class="code-lang">.github/agents/meeting-ops.agent.md(完成版骨架)</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>---
+name: meeting-ops
+description: 會議逐字稿的下游營運助手。給它逐字稿要摘要/決議/風險/待辦,或問「本週要跟進什麼」,它依路由規則使用三個會議 Skill,並被限制在會議相關工具內。不自己產出、不改應用程式原始碼。用 @meeting-ops 明確叫用。
+argument-hint: 會議逐字稿(請附上會議日期)，或提問本週待跟進事項
+tools: [edit_file, run_in_terminal, 'CalendarTools/*']   # 工具白名單:實際名稱請用 VS Code 的 tools 選單勾選確認,填錯會被靜默忽略
+model: &lt;你的模型&gt;
+---
+
+# 會議營運助手(Meeting Ops Agent)
+
+你是會議逐字稿的下游營運助手。你**不自己發明「怎麼做」**——所有實際產出都交給對應的
+Skill,你只負責路由、補齊必要輸入、守住邊界。
+
+## 路由規則(薄路由,不重寫 SOP)
+你只使用以下三個 Skill,除此之外的 Skill 一律不採用:
+- 給逐字稿、要摘要/決議/風險/待辦 → 使用 meeting-summary
+- 要把範圍拆成 WBS / Excel          → 使用 wbs-generator
+- 問「本週哪些時段有空、把未結事項排進去」→ 使用 weekly-followup-planner
+- 一句話同時要「整理+排計畫」時,先做 meeting-summary,再把產出的 Action Items
+  交給 weekly-followup-planner,並向使用者說明你的順序。
+- 缺會議日期時先反問(延續 meeting-summary ② 的必要輸入),不要自己假設。
+
+## 邊界(能碰什麼/不能碰什麼)
+- 只在會議產出範圍內工作;不修改 Portal 應用程式原始碼。
+- 需要寫入外部系統(例如建 Jira 票)時,明講超出範圍、交還使用者,不要自己找工具硬做。</code></pre></div>
+<p>@meeting-ops 從骨架到能用，中間有五個容易踩空的細節——存哪裡、叫誰、description 寫給誰看、tools 怎麼填才不會蓋出「假護欄」。以下把後半段拆成五個決策點,並用兩個符號貫穿全程。</p>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📐</span><span class="adm-title">圖例:兩種收斂強度</span></div><div class="adm-body">
+<ul>
+<li>🧱 <strong>護欄</strong> · 結構保證,錯了會被靜默忽略</li>
+<li>🪧 <strong>行為準則</strong> · 指示層收斂,靠寫清楚不靠鎖死</li>
+</ul>
+</div></div>
+<h3 id="sec10-4">01 / 05 — <code>.agent.md</code> 放哪裡、怎麼命名</h3>
+<p>你剛剛寫的這個檔案該存到哪、<code>@</code> 後面那個名字又是從哪來的？兩件事都有固定規則——但「放哪裡」這一步還藏著一個 UI 當下就會問你、選錯了自己完全感受不到的分岔路口。</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>預設位置</th>
+<th>生效範圍</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Workspace</strong><br>專案內,可隨 git 共享</td>
+<td><code>.github/agents/</code></td>
+<td>只在這個 repo</td>
+</tr>
+<tr>
+<td><strong>User profile</strong><br>個人設定檔,跨 workspace</td>
+<td><code>~/.copilot/agents/</code><br>例:<code>C:\Users\geoliang\.copilot\agents</code></td>
+<td>你機器上的所有 workspace</td>
+</tr>
+</tbody>
+</table></div>
+<h4 id="h4-8">命名規則</h4>
+<ul>
+<li>副檔名固定 <code>.agent.md</code>。</li>
+<li>去掉 <code>.agent.md</code> 後的檔名,就是這個 agent 的識別名稱(也就是 <code>@meeting-ops</code> 裡 <code>@</code> 後面那串);frontmatter 沒填 <code>name</code> 時,就直接拿檔名當顯示名稱。</li>
+</ul>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">🪧</span><span class="adm-title">建立當下就要選對,不是建完再搬</span></div><div class="adm-body">
+<p>用 Agent Customizations editor 建立新 agent 時,下拉選單會直接問你「New Agent (Workspace)」還是「New Agent (User)」——兩個當下都能正常運作、<code>@meeting-ops</code> 都叫得出來,差別只在同事那邊看不看得到,而這件事你自己完全感受不到。<strong>團隊要共用,建立當下就選 Workspace</strong>,之後 git commit 照平常流程走就好,不需要「建完再搬進 repo」。</p>
+</div></div>
+
+<h3 id="sec10-5">02 / 05 — description 這行字,到底寫給誰看?</h3>
+<p>meeting-ops 是 <code>@</code> 手動叫出來的,這種情況下 description 的閱聽眾是<strong>人</strong>——它只出現在下拉選單、輸入框的 placeholder 文字裡,幫你或同事判斷「這是不是我要的角色」,寫成人話就好,不用刻意塞觸發關鍵詞。</p>
+<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🧱</span><span class="adm-title">但如果哪天它被掛進更大的編排,閱聽眾會換人</span></div><div class="adm-body">
+<p>Custom Agent 可以被另一個 agent 當成 <strong>subagent</strong> 呼叫。這種情境下,決定「該不該選中它」的不再是人眼掃過下拉選單,而是<strong>模型讀 description 來判斷</strong>——跟 SKILL.md 的 description 是同一種機制:要包含「做什麼、何時該選我」。今天的骨架只走純手動叫用這條路,所以現在不用改寫法;但理解這個切換點,是看懂下一節「subagent 授權」在防什麼的前提。</p>
+</div></div>
+<h3 id="sec10-6">03 / 05 — 你的 agent 會不會被拉去當 subagent?</h3>
+<p>一個常見誤解:「我的 <code>.agent.md</code> 裡沒寫 <code>agents</code> 欄位,所以沒有人可以呼叫到我」——<strong>方向反了</strong>。<code>agents</code> 欄位是寫在<strong>呼叫者</strong>身上的允許清單,不是寫在<strong>被呼叫者</strong>身上的門禁。</p>
+<div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title">預設值是開放的</span></div><div class="adm-body">
+<p>只要你沒有主動設 <code>disable-model-invocation: true</code>,你的 agent 就<strong>預設可以</strong>被任何有 <code>agent</code> tool、且把它列進自己 <code>agents</code> 陣列(或用 <code>*</code>)的 coordinator agent 當成 subagent 呼叫。「沒寫 agents 欄位」跟「不會被呼叫」完全是兩件事。</p>
+</div></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>你想要的結果</th>
+<th>該怎麼設</th>
+<th>設在誰身上</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>預設行為:可以被任何 coordinator 呼叫</td>
+<td>什麼都不用寫</td>
+<td>—</td>
+</tr>
+<tr>
+<td>完全不能被當 subagent,只能 <code>@</code> 手動叫</td>
+<td><code>disable-model-invocation: true</code></td>
+<td>寫在<strong>自己</strong>的 <code>.agent.md</code></td>
+</tr>
+<tr>
+<td>平常鎖死,但某個信任的 coordinator 仍可呼叫</td>
+<td>自己設 <code>disable-model-invocation: true</code>,coordinator 的 <code>agents</code> 陣列明確列出你的名字</td>
+<td>兩邊都要設</td>
+</tr>
+</tbody>
+</table></div>
+<p>最後一列的關鍵細節:被明確列進 <code>agents</code> 陣列,會<strong>覆蓋</strong>它自己的 <code>disable-model-invocation: true</code>——這是「預設鎖死、對信任對象開白名單放行」的設計,跟今天 tools 白名單的邏輯是同一種精神,只是防的方向不同:tools 防「meeting-ops 能碰什麼工具」,這裡防「meeting-ops 會不會被其他 agent 拉去用」。</p>
+<h3 id="sec10-7">04 / 05 — tools 白名單:不要背拼法,用工具選單勾</h3>
+<p><code>tools</code> 的合法值是內建工具、tool sets、MCP 工具(整個 MCP server 用 <code>&lt;server 名&gt;/*</code>)。<strong>填了不存在的名稱不會報錯,只會被靜默忽略</strong>——這是最危險的失效模式:你以為蓋了護欄,其實沒有。</p>
+<p>正確做法不是背拼法,而是在 Agent Customizations editor(Chat 齒輪 → Agents)裡編輯 agent 時,用工具勾選清單產生名稱;骨架裡的 <code>'edit'</code>、<code>'runCommands'</code> 以你環境實際顯示的為準。</p>
+<div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title">tools 裡的 MCP 工具名 = mcp.json 的 server key,不是工具本身的名字</span></div><div class="adm-body">
+<p>最容易對不到的就是 MCP 工具。<code>tools</code> 認的是你 <code>mcp.json</code> 裡 <code>servers</code> 底下那個 key,命名慣例是 <code>&lt;server-name&gt;/&lt;tool-name&gt;</code>(整個 server 全放行就用 <code>&lt;server-name&gt;/*</code>)。</p>
+</div></div>
+<div class="code-block"><div class="code-head"><span class="code-lang">jsonc</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>// .vscode/mcp.json
+"servers": {
+  "agent365-calendartools": { /* ... */ },   // ← server-name 就是這個 key
+  "microsoft-learn":         { /* ... */ },
+  "github":                  { /* ... */ }
+}</code></pre></div>
+<p>要放行整個行事曆 server,寫的是 <code>agent365-calendartools/*</code>。若只寫 <code>agent365-calendartools</code>(少了 <code>/</code>),就不符合 <code>server/tool</code> 慣例——就算它剛好跟某個工具同名,也對不到任何「內建工具、別名、或 server/tool pattern」,一樣被靜默忽略。這正是「假護欄」:名字沒填對,護欄根本沒蓋起來,而且不會報錯。<strong>實務上別手打,用 VS Code 的工具勾選清單產生名稱。</strong></p>
+<h3 id="sec10-8">05 / 05 — 操作步驟</h3>
+<ol class="steps" type="1">
+<li>建立 <code>.github/agents/meeting-ops.agent.md</code>,對照骨架自己寫一版——特別是 <code>description</code>(這是 agent 被 <code>@</code> 叫用時的自我說明)與路由規則。<code>tools</code> 用工具選單勾選確認名稱。</li>
+<li>用 <code>@meeting-ops</code> 重跑剛剛翻車那一句:<strong>「這是這場會議的逐字稿,幫我把該做的都做一做。」</strong> 這是今天第二次 before/after(第一次是 M2a→Lab 2)。</li>
+<li>對比兩點:行為是不是收斂了(每次路由到同一組 Skill、順序一致)、以及它有沒有守在會議範圍內、沒去動不相關的檔案。</li>
+<li>刻意測一次邊界:叫它「順便幫我把這些 Action Item 開成 Jira 票」——確認它<strong>拒絕並交還</strong>,而不是硬找工具做。順帶想一下:它現在拒絕,靠的是行為準則(body 指令)還是護欄(tools 白名單)?——兩者都有:Jira 工具不在白名單裡(護欄),邊界規則也叫它交還(行為準則)。但這道 tools 護欄只攔得住「透過獨立工具」的寫入——如果哪天有個 Skill 是靠你已經放行的工具(例如終端機)去打外部系統,這道護欄還擋得住嗎?先想著,下半場會給你一個答案。</li>
+</ol>
+<h4 id="h4-9">三個最容易踩的雷</h4>
+<ul>
+<li><strong>別把 SOP 抄進 agent</strong>:一旦把「怎麼做」複製進 <code>.agent.md</code>,就跟 Skill 重複、日後兩邊不同步——正是 M1 警告過的反例。Agent 裡只放路由,不放步驟。</li>
+<li><strong>別以為沒寫 <code>agents</code> 欄位就沒人能呼叫你</strong>:<code>agents</code> 欄位是呼叫者的允許清單,不是你的門禁。真的要防被拉去當 subagent,得自己設 <code>disable-model-invocation: true</code>。</li>
+<li><strong>Custom Agent 不是 selection 正確性的保證</strong>:路由規則是強力行為準則,但 description 對比句(M3c 練的)還是要寫好——行為準則與機率收斂疊加,才有穩定行為。</li>
+</ul>
+<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">一句話帶走</span></div><div class="adm-body">
+<p>護欄(🧱 結構保證)與行為準則(🪧 指示收斂)兩層心智模型,貫穿存放位置、subagent 授權、tools 白名單三個決策點——這三個決策點,就是上面五個 topic 的骨幹。</p>
+</div></div>
+
+<div class="adm adm-check"><div class="adm-head"><span class="adm-ico">✅</span><span class="adm-title">完成檢核</span></div><div class="adm-body">
+<ul>
+<li><code>.github/agents/meeting-ops.agent.md</code> 存在,<code>@meeting-ops</code> 叫得出來。</li>
+<li>同一句複合指令,預設 Agent Mode 跑出來會漂,<code>@meeting-ops</code> 跑出來行為穩定、路由一致。</li>
+<li>叫它建 Jira 票時,它明確回報超出範圍、交還使用者,沒有自己硬做;而且你說得出這次是護欄還是行為準則在起作用。</li>
+<li>agent 檔案裡<strong>沒有</strong>任何「怎麼做」的 SOP——那些仍然只存在於三個 Skill 裡。</li>
+<li>你能用一句話向同事解釋:「工具邊界是護欄,Skill 路由是行為準則;Skill 自己的護欄是 <code>disable-model-invocation</code>。」</li>
+</ul>
+</div></div>
+
+
+<h2 id="sec11">M4 · OpenAPI → FastAPI Scaffolding + 翻車④:純手刻漂移</h2>
+<p>這是今天技術密度最高的一段,對應企業導入 Copilot 最常見的具體需求:「從 API Spec 產生 Controller 骨架」。而這份規格<strong>就是 Portal 自己的後端 API</strong>——做完這一步,M0 demo 裡的前端終於有真正的後端可以接,故事線閉環。</p>
+<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">本堂最重要的一個觀念(不踩雷的關鍵)</span></div><div class="adm-body">
+<p>最穩的 scaffolding Skill,<strong>通常不是叫 LLM 純手寫,而是讓步驟去「包一個既有的決定性工具」、再疊上團隊規範與品質自檢</strong>。這裡用 <code>datamodel-codegen</code> 從 OpenAPI 規格產生 Pydantic model,Skill 負責「呼叫工具 + 套 router 慣例 + 自檢」。</p>
+<p>這句話今天不用你相信——Lab 4 第一輪就是讓你親手做對照組:同一份規格純手刻兩次,再用包工具的 Skill 跑兩次,把四份輸出攤開來 diff。你在 M2a 已經看過漂移這個模式,只是這次漂移換了一個層次:<strong>輕則類別命名、enum member 大小寫不一致(換一次產出,呼叫端的 <code>Sentiment.positive</code> 可能直接 <code>AttributeError</code>),重則型別本身對不上</strong>——不是格式難看那種一眼看得出來的漂移,是「兩份看起來都對,但兜不起來」的漂移。</p>
+<p><strong>適用前提</strong>:這個做法假設 OpenAPI spec <strong>已經定案</strong>(治理委員會審過、或對外合約規格)。如果你們內部服務本來就是 FastAPI code-first(spec 是自動產生的副產品),不需要為了套流程硬做這一步。</p>
+</div></div>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">跟「Spec-Driven Development(SDD)」是同一件事嗎?</span></div><div class="adm-body">
+<p>不是同一個量級。今天只處理「規格 → 介面骨架」這一段轉譯,規格已定案、不涉及協商。GitHub Spec Kit、Amazon Kiro 這類 SDD 工具鏈管的是規格從模糊需求到定案的全流程(constitution → specify → plan → tasks → implement),範圍大得多。兩者不是替代關係——今天教的是規格定案後怎麼穩定落地。</p>
+</div></div>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>設計題</th>
+<th>我們的決定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scope(一句話)</td>
+<td>「給我 OpenAPI 規格,我給你 FastAPI 的 router 骨架 + Pydantic model」</td>
+</tr>
+<tr>
+<td>輸入</td>
+<td>OpenAPI yaml/json 檔路徑;輸出目錄</td>
+</tr>
+<tr>
+<td>輸出</td>
+<td><code>app/models/schemas.py</code> + <code>app/routers/&lt;tag&gt;.py</code> + <code>app/main.py</code></td>
+</tr>
+<tr>
+<td>步驟核心</td>
+<td><strong>包工具</strong>:datamodel-codegen 產 model → 依 tag 分 router → 每個 operationId 一個函式骨架</td>
+</tr>
+<tr>
+<td>品質規則</td>
+<td>endpoint 無遺漏、response_model 對齊、骨架內不可夾帶幻覺商業邏輯、uvicorn 能啟動、<strong>重跑不覆蓋已有實作</strong></td>
+</tr>
+</tbody>
+</table></div>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">品質規則最後一條為什麼存在(講給你聽,今天不撞)</span></div><div class="adm-body">
+<p>「重跑不覆蓋已有實作」防的是另一種真實事故:spec 改版後重跑 scaffold,把同事上週手寫好的商業邏輯<strong>靜默蓋回骨架</strong>,而且 git diff 裡看起來就像一次普通的重新生成。今天篇幅只夠撞一次護欄,我們把實測留給漂移;但請記住這條規則的來歷——<strong>Skill 的品質規則,最有價值的那幾條,往往來自事故,不是來自想像</strong>。下半場 M6 的「品質規則硬化與版本升級」講的就是怎麼把這件事制度化。</p>
+</div></div>
+<h3 id="sec11-1">Lab 4:純手刻 vs 包工具——同一份規格,四份輸出攤開比 <em>(Lab ★)</em></h3>
+<p>這個 Lab 跟前兩個結構不同:<strong>不要求你從頭手寫 SKILL.md</strong>(今天已經寫過三份,第四份的邊際學習有限),而是把時間花在「先看純手刻怎麼翻車,再看包工具為什麼穩」。這裡的翻車跟覆蓋不同,它是<strong>機率性</strong>的——單看一份純手刻的輸出,常常「看起來還不錯」,所以我們的比法不是比對錯,而是比<strong>兩次跑得一不一樣</strong>:同一份規格、同一句指令,跑兩次長得不一樣,就代表你不能把它當可靠的工程步驟。</p>
+<div class="labchip"><span class="labchip-ico">📄</span><code>lab4-openapi-fastapi-scaffold/openapi/meeting-portal-api.yaml</code><span class="labchip-desc">— Portal 的 OpenAPI 規格</span></div>
+<div class="labchip"><span class="labchip-ico">📄</span><code>lab4-openapi-fastapi-scaffold/skills/openapi-to-fastapi-scaffold/SKILL.md</code><span class="labchip-desc">— 完成版</span></div>
+<div class="labchip"><span class="labchip-ico">📄</span><code>lab4-openapi-fastapi-scaffold/requirements.txt</code><span class="labchip-desc">— openapi-fastapi-scaffold/requirements.txt</span></div>
+<h4 id="h4-10">第一輪:純手刻,跑兩次</h4>
+<ol class="steps" type="1">
+<li><strong>先不要</strong>複製任何 SKILL.md,也不要裝工具。開一個新的 Agent mode session,提供 <code>meeting-portal-api.yaml</code>,下指令(為了時間,只做兩個 endpoint):
+<blockquote>
+<p>依照這份 OpenAPI 規格,不要使用任何 code generation 工具,直接手寫 <code>getMeetingSummary</code> 和 <code>getActionItems</code> 這兩個 endpoint 的 FastAPI router 跟對應的 Pydantic model,輸出到 app_llm_run1/ 目錄下。</p>
+</blockquote></li>
+<li><strong>開一個全新的 chat session</strong>(這步很關鍵——同一個 session 重跑,它會參考自己剛剛的輸出,漂移會被遮住),把同一份規格、同一句指令原封不動再下一次,只把輸出目錄改成 <code>app_llm_run2/</code>。</li>
+<li>(選做,想眼見為憑再做)分別啟動兩份輸出,確認兩份都真的能跑——<strong>注意 module path 要對到資料夾名稱,而且兩個不能同時佔用同一個 port</strong>:
+<div class="code-block"><div class="code-head"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>python -m uvicorn app_llm_run1.main:app --reload</code></pre></div>
+<div class="code-block"><div class="code-head"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>python -m uvicorn app_llm_run2.main:app --reload --port 8001</code></pre></div>
+<p>如果噴 <code>ModuleNotFoundError</code>,通常是資料夾裡缺 <code>__init__.py</code>(純手刻沒有固定的專案結構,這本身也是一種漂移),補一個空檔案上去即可。<strong>這步位可以省略</strong>,診斷的重點在下一步的 diff,不是「能不能跑」。</p></li>
+<li>把兩次輸出互 diff(建議加 <code>--no-pager</code>,不然 PowerShell 預設會丟進 <code>less</code>,卡住要按 <code>q</code> 才能跳出,不是當機):
+<div class="code-block"><div class="code-head"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>git --no-pager diff --no-index app_llm_run1 app_llm_run2</code></pre></div>
+<p>看到一堆 <code>__pycache__</code> 的 binary diff 不用管,那是啟動過 uvicorn 留下的快取,不是 LLM 產出的內容;真正要看的是 <code>.py</code> 檔案本身。如果想單獨聚焦在型別合約,直接只 diff model 檔(通常叫 <code>models.py</code>,依 LLM 這次怎麼命名而定):</p>
+<div class="code-block"><div class="code-head"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>git --no-pager diff --no-index app_llm_run1/models.py app_llm_run2/models.py</code></pre></div>
+<p><strong>為什麼特別挑 model 檔看?</strong> 因為 <code>main.py</code>(組裝 app)、<code>routers.py</code>(串接哪個 model)差異多半只是措辭、命名習慣這種風格層,不痛不癢;只有 model 檔承載<strong>型別合約</strong>本身——<code>Optional</code>、<code>Enum</code>、<code>alias</code> 這些欄位定義才是「接前端的人要相信哪一份」的核心。</p></li>
+<li>全班對答案:實測下來,兩次純手刻<strong>保證會</strong>踩到的是命名層級的不一致——例如 enum 類別名一次叫 <code>SentimentEnum</code> 一次叫 <code>Sentiment</code>,member 一次是小寫 <code>positive</code> 一次是大寫 <code>POSITIVE</code>。這聽起來像風格問題,但<strong>如果任何一支呼叫端程式碼寫了 <code>Sentiment.positive</code>,換到另一次產出就會直接 <code>AttributeError</code></strong>——兩份「看起來都對」的 model,彼此就是兜不起來。
+<p>規格裡還埋了幾顆型別地雷,運氣不好會直接踩到:</p>
+<ul>
+<li>nullable(<code>ActionItem.dueDate</code>):<code>Optional[date]</code> / <code>date | None</code> / 直接漏掉;</li>
+<li>enum(<code>sentiment</code>、<code>priority</code>):一次被做成 <code>Enum</code> class、一次被做成裸 <code>str</code>;</li>
+<li>date-time(<code>generatedAt</code>):一次是 <code>datetime</code>、一次是 <code>str</code>;</li>
+<li>camelCase 欄位(<code>meetingId</code>、<code>dueDate</code>):一次有 <code>alias</code> 一次沒有。</li>
+</ul>
+<p>這次班上不一定每組都會踩到全部四類——<strong>踩到多少純粹看運氣,但命名不一致這一項幾乎每次都會出現</strong>。這正是重點:純手刻連「這次剛好對了」都不能保證下次一樣,不需要每次都翻車,只要有機率翻車,就不該是穩定的工程步驟。</p></li>
+</ol>
+<h4 id="h4-11">第二輪:包工具的 Skill,也跑兩次</h4>
+<ol class="steps" type="1">
+<li>安裝工具(課前沒裝的現在裝):
+<div class="code-block"><div class="code-head"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>pip install -r requirements.txt</code></pre></div></li>
+<li>把完成版 SKILL.md 複製到 <code>.github/skills/openapi-to-fastapi-scaffold/SKILL.md</code>,快速讀一遍它的步驟:model 那一段不是「請產生 Pydantic model」,而是明確指定呼叫 <code>datamodel-codegen</code>(注意步驟裡帶了 <code>--disable-timestamp</code>——沒有它,產出檔頭會有時間戳,等下的 diff 就不乾淨了)。</li>
+<li>開新 session,下指令(這次做完整規格):
+<blockquote>
+<p>依照這份 OpenAPI 規格,幫我產生 FastAPI 的 router 骨架跟 Pydantic model,輸出到 app/ 目錄下。</p>
+</blockquote></li>
+<li>驗證:啟動後開 <code>http://127.0.0.1:8000/docs</code>,確認 spec 裡所有 endpoint 都在,呼叫任一 endpoint 得到 <code>NotImplementedError</code>(預期行為——骨架正確、邏輯留白):
+<div class="code-block"><div class="code-head"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>python -m uvicorn app.main:app --reload</code></pre></div></li>
+<li>再開一個新 session,同一句指令重跑到 <code>app_verify/</code>,然後 diff 兩次的 model。<strong>注意路徑</strong>:工具版的 model 檔固定叫 <code>schemas.py</code>,放在 <code>app/models/</code> 子目錄下,不是 <code>app/models.py</code>(這跟第一輪純手刻的檔案結構不一樣,是刻意的對照——第一輪連檔案結構都可能每次不同,第二輪連子目錄結構都固定):
+<div class="code-block"><div class="code-head"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>git --no-pager diff --no-index app/models/schemas.py app_verify/models/schemas.py</code></pre></div>
+<p><strong>這次指令跑完畫面上什麼都不會印出來——這正是預期結果,不是指令下錯。</strong> 同一份規格,跑一百次,<code>schemas.py</code> byte-level 一致,連類別名稱、enum member 大小寫都不會像第一輪那樣漂移——因為型別轉換這一段根本不是 LLM 在做,是決定性工具在做;LLM 負責的是流程編排跟 router 慣例,那才是它擅長且風險可控的部分。</p></li>
+<li>回頭抽查第一輪的地雷:對照 <code>app/models/schemas.py</code>,看 <code>sentiment</code> enum、<code>generatedAt</code> date-time、<code>dueDate</code> nullable 在工具版裡是怎麼被正確處理的,再看你純手刻兩份各自錯在哪。</li>
+<li>最後檢查骨架紀律:有沒有哪個函式被「順手」補上看似合理其實沒根據的邏輯——骨架就該是乾淨的 <code>NotImplementedError</code>,這是這個 Skill 的核心紀律。</li>
+</ol>
+<div class="adm adm-check"><div class="adm-head"><span class="adm-ico">✅</span><span class="adm-title">完成檢核</span></div><div class="adm-body">
+<ul>
+<li>第一輪:兩份純手刻輸出的 <code>models.py</code> diff 出至少一處<strong>命名不一致</strong>(類別名或 enum member 大小寫);能說出為什麼這種「看起來都對」的差異,換到呼叫端會直接炸開(<code>AttributeError</code>)。</li>
+<li>第一輪(加分):有踩到 nullable / enum 型別 / date-time / camelCase alias 其中一類<strong>型別合約</strong>差異——沒踩到也沒關係,這代表這次運氣好,不代表下次也會好。</li>
+<li>第二輪:Swagger UI 看得到所有 endpoint;所有函式是乾淨骨架;uvicorn 正常啟動;兩次工具版 <code>schemas.py</code> 的 diff 為<strong>空</strong>。</li>
+<li>能用一句話回答:「這個 Skill 裡,哪些部分交給決定性工具、哪些部分交給 LLM,為什麼這樣切?」</li>
+</ul>
+<p>帶走的觀念:<strong>Skill 不是把 prompt 寫長,而是把「不該生成的部分」從生成裡拿掉。</strong> 型別轉換有現成的決定性工具,就包工具;LLM 只做工具做不了的編排與慣例。純手刻不需要「每次都錯」才算不可靠——只要存在「這次跟下次長得不一樣」的機率,它就不該是你信任的工程步驟。M2a 你看到的是格式漂移,今天看到的是同一個模式換了個層次:輕則命名對不上、重則型別對不上——解法同源:把可決定的事變成決定的。</p>
+</div></div>
+<h2 id="sec12">上半場收尾 + 下半場預告</h2>
+<p>到這裡,你手上有:</p>
+<ul>
+<li>三個親手設計、實測驗證過的 Skill:meeting-summary、wbs-generator、weekly-followup-planner——而且每一個都經歷過至少一次「刻意讓它出錯」的測試。</li>
+<li>一個把這三個 Skill 組裝起來、用 <code>@meeting-ops</code> 明確叫用的編排型 Custom Agent——四種資產至此全部動手做過。</li>
+<li>一份 Portal 的 OpenAPI 規格、依此產生的 FastAPI 後端骨架。</li>
+<li>四次翻車的一手經驗:輸出漂移(M2a)、誤觸發(M3c)、型別漂移(M4)——它們分別對應 Skill 的三個層次:<strong>內容品質、selection 治理、生成邊界</strong>。</li>
+</ul>
+<p>以及一組完整的 before/after 素材:M2a 的漂移輸出 vs Lab 2 收斂後的輸出——回公司要說服團隊導入 Skill 時,這比任何簡報都有用。</p>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">下半場會接著做什麼</span></div><div class="adm-body">
+<ul>
+<li>M5:把 meeting-summary 產出的 Action Items 接上企業既有系統(Jira)建票——今天第一個「有寫入副作用」的 Skill。你會先用一個刻意天真的版本撞三次事故,再自己動手補齊今天還沒用到的那道防線,並回頭檢查 @meeting-ops 擋不擋得住它(呼應 M1 的 security-reviewer 原型)。</li>
+<li>M6:用今天四次翻車的實際結果,練習品質規則的硬化與版本升級。</li>
+<li>M7:把這些 Skill 連同 @meeting-ops <strong>當成一組 bundle</strong> 正式歸檔成團隊的 Skill Bank,建立命名、版本、共用規範——並且每個人為<strong>自己團隊的一個真實痛點</strong>寫出 Skill description 草稿,現場互做混淆檢查。</li>
+</ul>
+</div></div>
+<p>休息之後,下半場見。</p>
+
+</main>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+<script>
+function mermaidVars(theme){
+  if(theme==='dark'){
+    return {background:'#16161b',primaryColor:'#1e1b33',primaryTextColor:'#d7dce3',
+      primaryBorderColor:'#9b8fe6',lineColor:'#9b8fe6',secondaryColor:'#222231',
+      tertiaryColor:'#1a1a22',fontFamily:'"Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif'};
+  }
+  return {background:'#ffffff',primaryColor:'#ECEBF8',primaryTextColor:'#222a35',
+    primaryBorderColor:'#4338A6',lineColor:'#4338A6',secondaryColor:'#f8f8fb',
+    tertiaryColor:'#eeeef6',fontFamily:'"Microsoft JhengHei","PingFang TC","Noto Sans TC",sans-serif'};
+}
+function renderMermaid(){
+  if(typeof mermaid==='undefined')return;
+  var theme=document.documentElement.getAttribute('data-theme')||'light';
+  mermaid.initialize({startOnLoad:false,theme:'base',themeVariables:mermaidVars(theme),flowchart:{curve:'basis'},securityLevel:'loose'});
+  var els=document.querySelectorAll('.mermaid');
+  els.forEach(function(el){
+    var src=document.getElementById(el.id+'-src');
+    if(src){el.removeAttribute('data-processed');el.innerHTML=src.textContent;
+      try{mermaid.run({nodes:[el]});}catch(e){}}
+  });
+}
+window.renderMermaidDiagrams=renderMermaid;
+document.addEventListener('DOMContentLoaded',renderMermaid);
+
+(function(){var root=document.documentElement;
+function set(t){root.setAttribute('data-theme',t);try{localStorage.setItem('hb2-theme',t)}catch(e){}
+  if(window.renderMermaidDiagrams)window.renderMermaidDiagrams();}
+var saved;try{saved=localStorage.getItem('hb2-theme')}catch(e){}
+if(!saved){saved=window.matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';}
+set(saved);
+document.getElementById('themeBtn').addEventListener('click',function(){set(root.getAttribute('data-theme')==='dark'?'light':'dark');});})();
+
+(function(){var sb=document.getElementById('sidebar');function t(){sb.classList.toggle('collapsed');}
+var cb=document.getElementById('collapseBtn');if(cb)cb.addEventListener('click',t);
+var mb=document.getElementById('menuBtn');if(mb)mb.addEventListener('click',t);})();
+
+function copyCode(btn){var code=btn.closest('.code-block').querySelector('code');
+navigator.clipboard.writeText(code.innerText).then(function(){var o=btn.textContent;btn.textContent='已複製';setTimeout(function(){btn.textContent=o},1200);});}
+
+(function(){var links=[].slice.call(document.querySelectorAll('nav.sidebar a[data-target]'));
+var map={};links.forEach(function(l){map[l.getAttribute('data-target')]=l;});
+var heads=[].slice.call(document.querySelectorAll('main.content h2[id],main.content h3[id]'));
+function onScroll(){var cur=null;for(var i=0;i<heads.length;i++){if(heads[i].getBoundingClientRect().top<=120){cur=heads[i].id;}else{break;}}
+links.forEach(function(l){l.classList.remove('active')});if(cur&&map[cur]){map[cur].classList.add('active');}
+var h=document.documentElement;var sc=h.scrollTop||document.body.scrollTop;var max=(h.scrollHeight-h.clientHeight)||1;
+document.getElementById('progress').style.width=(sc/max*100)+'%';}
+window.addEventListener('scroll',onScroll,{passive:true});window.addEventListener('resize',onScroll);onScroll();
+links.forEach(function(l){l.addEventListener('click',function(){if(window.innerWidth<=880){document.getElementById('sidebar').classList.add('collapsed');}})});})();
+
+</script>
+</body>
+</html>
