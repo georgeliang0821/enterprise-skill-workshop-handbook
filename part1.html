@@ -181,7 +181,7 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
 <li><strong>M2a ·翻車實驗</strong>:同一句 prompt,全班跑出來的結果長得都不一樣 → 這就是為什麼需要 Skill。</li>
 <li><strong>M3c · 誤觸發實測</strong>:環境裡有三個 Skill 之後,刻意用模糊指令看它選錯 → 這就是為什麼 description 要寫對比句。</li>
 <li><strong>M3d · 編排失控</strong>:三個 Skill 都在,但一句複合指令下去,誰先跑、跑不跑、會不會越權動你的檔案,每次都不一樣 → 這就是為什麼要用 Custom Agent 把能力與工具權限收斂成一個角色。</li>
-<li><strong>M4 · 純手刻漂移</strong>:同一份規格純手刻兩次,型別合約長得不一樣 → 這就是為什麼 scaffolding Skill 要包決定性工具。</li>
+<li><strong>M4 · 純手刻漂移</strong>:同一份規格純手刻兩次,資料結構長得不一樣 → 這就是為什麼 scaffolding Skill 要包決定性工具。</li>
 </ol>
 <p>「照著步驟做完」的記憶兩週就淡了;「親眼看到它出事」的記憶會跟著你回到自己的專案裡。</p>
 </div></div>
@@ -367,7 +367,7 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
 <h2 id="sec4">M0 · 開場:Portal Live Demo + 一個關鍵提問</h2>
 <ol class="steps" type="1">
 <li><strong>跑給你看終點</strong>:打開完成版 Portal(<code>npm run dev</code>),六個區塊——Upload Transcript / Meeting Summary / Decisions / Action Items / Risks / Search——全部用假資料動起來。今天所有 Skill 的產出,最終都對應到這個畫面上的某一塊。</li>
-<li><strong>示範它是怎麼來的</strong>:把 <code>lab1-portal-scaffold/prompt.md</code> 的整段 prompt 貼進 Agent mode,讓大家看 Copilot 拆檔、寫檔、組裝的過程(不等它跑完,看個開頭就切回完成版)。</li>
+<li><strong>示範它是怎麼來的</strong>:把 <code>lab1-portal-scaffold/prompt.md</code> 的整段 prompt 貼進 Agent mode,讓大家看 Copilot 拆檔、寫檔、組裝的過程。</li>
 </ol>
 <p>然後是今天最重要的一個提問,先留著,下課前會回來收:</p>
 <blockquote>
@@ -479,9 +479,9 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
 <td>人設 + <strong>能碰哪些工具</strong>(可設唯讀)</td>
 </tr>
 <tr>
-<td>進階</td>
-<td>可用 <code>agent:</code> 指定跑在某個 Agent 裡</td>
-<td>可串 handoff:Plan → Implement → Review</td>
+<td>agent: 的位置</td>
+<td>頂層欄位:我(這個 prompt)要用哪個 agent 的身分執行</td>
+<td>巢狀在 handoffs裡:對話結束後可以交接給哪個 agent</td>
 </tr>
 </tbody>
 </table></div>
@@ -510,8 +510,8 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
 </tr>
 <tr>
 <td>關係</td>
-<td><strong>上下游,不是二選一</strong>:一個被限定角色的員工(Custom Agent),做事時依然要照公司的 SOP(Skill)走。</td>
-<td></td>
+<td><strong>上游:</strong>一個被限定角色的員工(Custom Agent)</td>
+<td><strong>下游:</strong>做事時依然要照公司的 SOP(Skill)走</td>
 </tr>
 </tbody>
 </table></div>
@@ -623,7 +623,7 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
 <tbody>
 <tr>
 <td>frontmatter <code>description</code></td>
-<td><strong>選前讀</strong>:決定「要不要選中這個 Skill」。要同時寫清楚「做什麼 + 何時用 + 不是什麼」的對比句 + 關鍵詞</td>
+<td><strong>選前讀</strong>:決定「要不要選中這個 Skill」。要同時寫清楚「做什麼 + 何時用 + 不是什麼」的<strong>對比句</strong> + 關鍵詞</td>
 <td>太泛 → 亂觸發或不觸發;跟其他 Skill 描述太像 → 選錯(M3c 會實測這件事)</td>
 </tr>
 <tr>
@@ -679,8 +679,8 @@ version: 0.1.0                    # 團隊治理慣例欄位:工具不讀它、�
 </ul>
 <p>今天的 Lab 只讀不寫,先認識這兩個欄位存在、記得它們的作用。什麼情況下「值得」把一個 Skill 鎖成只能手動呼叫?先放著——下半場你會撞到一個讓你自己想清楚答案的場景。</p>
 </div></div>
-<h3 id="sec7-2">設計方法:Scope / IO</h3>
-<h4 id="h4-1">Scope 怎麼抓——優先權判斷,不是只看一句話長短</h4>
+<h3 id="sec7-2">設計方法:SKill邊界</h3>
+<h4 id="h4-1">Skill邊界 怎麼抓——優先權判斷,不是只看一句話長短</h4>
 <ol class="steps" type="1">
 <li><strong>工具/寫入權限邊界是否不同</strong>(有沒有副作用、要不要額外認證)→ 不同就該拆,不管兩件事是不是永遠一起發生。</li>
 <li><strong>是否永遠嚴格共同觸發、有強依賴順序</strong> → 傾向合併成一個 Skill 裡的多步驟。</li>
@@ -727,8 +727,8 @@ version: 0.1.0                    # 團隊治理慣例欄位:工具不讀它、�
 <ol class="steps" type="1">
 <li>建立 <code>.github/skills/meeting-summary/SKILL.md</code>,對照四區塊骨架<strong>自己動手寫</strong>(不要直接複製完成版——寫的過程本身就是在練 Scope / IO 的設計判斷)。寫的時候,把 M2a 觀察到的每一種漂移,對應成一條明確規則:什麼算決議、日期怎麼換算、Owner 用姓名不用職稱、四區塊即使為空也要寫「無」。</li>
 <li>存檔後,Chat 輸入 <code>/skills</code> 確認被偵測到。</li>
-<li><strong>關鍵一步:用跟 M2a 一模一樣的方式再跑一次</strong>——貼同一份逐字稿、下同一句「幫我整理這場會議的紀錄」(逐字稿開頭已標註會議日期 2026-07-08),不要點名 Skill 名稱,觀察它有沒有自動選中。</li>
-<li>把這次輸出跟你 M2a 保留的第一次輸出並排比對——這是今天第一次「before / after」,也是你之後回公司推 Skill 時最有說服力的一張圖。</li>
+<li><strong>關鍵一步:用跟 M2a 一模一樣的方式再跑一次</strong>——貼同一份逐字稿、下同一句<strong>幫我整理這場會議的紀錄</strong> 不要點名 Skill 名稱,觀察它有沒有自動選中。</li>
+<li>把這次輸出跟你 M2a 保留的第一次輸出並排比對——這是今天第一次「before / after」,也是你之後推 Skill 時最有說服力的一張圖。</li>
 <li>檢查 Due Date:David「這週五前」、Mary「下週會議前」、George「下週三前」,都要換算成 YYYY-MM-DD 實際日期。</li>
 <li>對照完成版 SKILL.md,檢查差異——特別是 description 的寫法,以及「什麼才算真正的決議」「Due Date 怎麼換算」這兩種容易含糊的判斷邏輯怎麼寫清楚。</li>
 </ol>
@@ -789,7 +789,7 @@ version: 0.2.0
 </ul>
 </div></div>
 <h2 id="sec8">M3 · 兩種技術路徑:WBS Generator + Weekly Follow-up Planner</h2>
-<p>這個模組一次帶兩個 Skill,刻意選了兩種<strong>技術路徑完全不同</strong>的任務——一個靠 Agent mode 內建的 code execution 產出檔案,一個靠 MCP 接外部工具。兩者的「最大風險」也完全不同,這正是要對照的重點:</p>
+<p>這個模組一次帶兩個 Skill,刻意選了兩種<strong>技術路徑完全不同</strong>的任務——一個靠 Agent mode 內建的 code execution 產出檔案,一個靠 MCP 接外部工具。</p>
 <div class="table-wrap"><table>
 <thead>
 <tr>
@@ -816,7 +816,7 @@ version: 0.2.0
 </tr>
 </tbody>
 </table></div>
-<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">🧪</span><span class="adm-title">延伸(選做):只給半句 prompt,自己抓轉換漏了什麼</span></div><div class="adm-body">
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">🧪</span><span class="adm-title">延伸(Optional):給沒有Python執行環境的同仁</span></div><div class="adm-body">
 <p>如果班上有 .NET 背景的學員,可以在這裡加碼一個練習:把完成版 SKILL.md 貼給 Copilot,只下這句 prompt——刻意不提 ClosedXML 的 API 細節該怎麼對應:</p>
 <div class="code-block"><div class="code-head"><span class="code-lang">prompt</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>請把附件 SKILL.md 的技術實作部分,從 Python(openpyxl)移植成 C#(使用 ClosedXML NuGet 套件),
 完整保留 SKILL.md 的四區塊結構與所有商業邏輯(①②③④⑤的判斷規則、品質自檢項目一律不變),
@@ -835,13 +835,12 @@ version: 0.2.0
 <h3 id="sec8-2">Lab 3B:Weekly Follow-up Planner <em>(Lab ★)</em></h3>
 <p>故事線:<strong>「幫我看本週行事曆哪些時段有空,並把還沒結案的 Action Item 列出來,我想挑個空檔把它們清一清。」</strong> 空檔來自行事曆(CalendarTools MCP),未結事項來自內部 Action Item 記錄——兩個來源各自獨立、不需互相對齊。</p>
 <div class="labchip"><span class="labchip-ico">📄</span><code>lab3-wbs-and-prep-brief-skill/skills/weekly-followup-planner/SKILL.md</code><span class="labchip-desc">— 完成版</span></div>
-<div class="labchip"><span class="labchip-ico">🔌</span><code>CalendarTools</code></div>
 <div class="labchip"><span class="labchip-ico">📄</span><code>lab3-wbs-and-prep-brief-skill/data/sample-calendar-week.json</code><span class="labchip-desc">— Fallback 用本週行事曆(週三刻意排滿)</span></div>
 <div class="labchip"><span class="labchip-ico">📄</span><code>lab3-wbs-and-prep-brief-skill/data/past-action-items.json</code><span class="labchip-desc">— 模擬內部 Action Item 記錄</span></div>
 <div class="labchip"><span class="labchip-ico">📄</span><code>lab3-wbs-and-prep-brief-skill/mcp/mcp-config-example.jsonc</code><span class="labchip-desc">— MCP 設定範例</span></div>
 <h4 id="h4-3">B0. MCP 路徑選擇(三選一,都不影響 B1 之後的練習)</h4>
-<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">誠實面對 MCP 的可用性問題</span></div><div class="adm-body">
-<p>CalendarTools 是 Agent365 底下的功能,不是每個租戶都已開通。上一版的做法是「沒權限就用 fallback 資料」,但這樣走 fallback 的人整場沒摸到真的 MCP(mcp.json、OAuth、工具清單),學到的其實是「貼一份 JSON 假裝是 MCP 結果」。這一版把路徑攤開講清楚,<strong>至少確保每個人都完成過一次真實的 MCP 設定體驗</strong>:</p>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">MCP 的可用性問題</span></div><div class="adm-body">
+<p>CalendarTools 是 Agent365 底下的功能,不是每個學員都有授權。提供三個路徑<strong>至少確保每個人都完成過一次真實的 MCP 設定體驗</strong>:</p>
 </div></div>
 <ul>
 <li><strong>路徑一(有M365 Copilot授權 使用者)</strong>:設定 CalendarTools,走真行事曆。
@@ -921,7 +920,7 @@ version: 0.2.0
 </div></div>
 <h2 id="sec10">M3d · 翻車③:Custom Agent——把三個 Skill 組裝成一個會議助手</h2>
 <p><strong>四種資產(Prompt File / Custom Agent / Skill / MCP)裡,到現在只有 Custom Agent 你還沒動手做過。這不是漏掉——是刻意留到這裡:Custom Agent 的價值是「把能力組裝起來、鎖住工具邊界」,一定要先有能力可組裝才示範得出來。你現在剛好有三個。</strong></p>
-<p>M3c 讓你看到三個 Skill 並存時 selection 會互相干擾;這一段給第二帖藥。</p>
+<p>M3c 讓你看到三個 Skill 並存時 selection 會互相干擾;這一段給第二解法。</p>
 <h3 id="sec10-1">先撞一次:預設 Agent Mode 的「編排失控」</h3>
 <p>操作(乾淨對話,三個 Skill 都在):</p>
 <ol class="steps" type="1">
@@ -970,7 +969,7 @@ version: 0.2.0
 <p>重點來了:<code>tools</code> 欄位<strong>只收工具名</strong>(內建工具、tool sets、MCP 工具)——frontmatter 裡<strong>沒有任何「Skill 白名單」欄位</strong>。Skill 的觸發永遠走 description 語意匹配(M3c 練的那一層),Custom Agent 改變的是「以什麼人設、帶著哪些工具」去做匹配,而不是把其他 Skill 從選單上拿掉。</p>
 <p>那 Skill 層有沒有「護欄」?有——但它<strong>長在 SKILL.md 自己身上</strong>,就是 M2b 認識過的 <code>disable-model-invocation: true</code>(該 Skill 從此只能手動 <code>/skill-name</code> 叫用,不會被任何 agent 自動選中)。<strong>所以完整的治理拼圖是:工具的護欄蓋在 agent 上,Skill 的護欄蓋在 Skill 上,行為準則寫在 agent 的 body 裡。</strong>記住這張拼圖——下半場你會遇到一個 tools 白名單管不到、只能靠 Skill 自己這道護欄的場景。</p>
 </div></div>
-<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">這一帖藥跟 M3c 的差別</span></div><div class="adm-body">
+<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">這一解法跟 M3c 的差別</span></div><div class="adm-body">
 <p>M3c 的 description 對比句,收的是「<strong>哪個 Skill 被選中</strong>」的機率。Custom Agent 的路由規則,收的是「<strong>這個角色會怎麼編排</strong>」的機率——固定人設 + 明確路由,讓同一句複合指令每次走同一條路。而 <code>tools</code> 白名單處理的是另一個維度:就算路由漂了,<strong>它能造成的傷害被護欄限制住</strong>。三個槓桿疊加使用——description(M3c)、路由指令(現在)、工具邊界(現在)——不是三選一。</p>
 </div></div>
 <h3 id="sec10-3">提出解法:一個「編排型」Custom Agent</h3>
@@ -1077,7 +1076,7 @@ Skill,你只負責路由、補齊必要輸入、守住邊界。
 <p>Custom Agent 可以被另一個 agent 當成 <strong>subagent</strong> 呼叫。這種情境下,決定「該不該選中它」的不再是人眼掃過下拉選單,而是<strong>模型讀 description 來判斷</strong>——跟 SKILL.md 的 description 是同一種機制:要包含「做什麼、何時該選我」。今天的骨架只走純手動叫用這條路,所以現在不用改寫法;但理解這個切換點,是看懂下一節「subagent 授權」在防什麼的前提。</p>
 </div></div>
 <h3 id="sec10-6">03 / 05 — 你的 agent 會不會被拉去當 subagent?</h3>
-<p>一個常見誤解:「我的 <code>.agent.md</code> 裡沒寫 <code>agents</code> 欄位,所以沒有人可以呼叫到我」——<strong>方向反了</strong>。<code>agents</code> 欄位是寫在<strong>呼叫者</strong>身上的允許清單,不是寫在<strong>被呼叫者</strong>身上的門禁。</p>
+<p>一個常見誤解:「我的 <code>.agent.md</code> 裡沒寫 <code>agents</code> 欄位,所以沒有人可以呼叫到我」——<strong>方向反了</strong>。<code>agents</code> 欄位是寫在<strong>呼叫者</strong>身上的允許清單(主動把子任務發派給其他 agent 處理),不是寫在<strong>被呼叫者</strong>身上的門禁。</p>
 <div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title">預設值是開放的</span></div><div class="adm-body">
 <p>只要你沒有主動設 <code>disable-model-invocation: true</code>,你的 agent 就<strong>預設可以</strong>被任何有 <code>agent</code> tool、且把它列進自己 <code>agents</code> 陣列(或用 <code>*</code>)的 coordinator agent 當成 subagent 呼叫。「沒寫 agents 欄位」跟「不會被呼叫」完全是兩件事。</p>
 </div></div>
@@ -1153,8 +1152,8 @@ Skill,你只負責路由、補齊必要輸入、守住邊界。
 <p>這是今天技術密度最高的一段,對應企業導入 Copilot 最常見的具體需求:「從 API Spec 產生 Controller 骨架」。而這份規格<strong>就是 Portal 自己的後端 API</strong>——做完這一步,M0 demo 裡的前端終於有真正的後端可以接,故事線閉環。</p>
 <div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">本堂最重要的一個觀念(不踩雷的關鍵)</span></div><div class="adm-body">
 <p>最穩的 scaffolding Skill,<strong>通常不是叫 LLM 純手寫,而是讓步驟去「包一個既有的決定性工具」、再疊上團隊規範與品質自檢</strong>。這裡用 <code>datamodel-codegen</code> 從 OpenAPI 規格產生 Pydantic model,Skill 負責「呼叫工具 + 套 router 慣例 + 自檢」。</p>
-<p>這句話今天不用你相信——Lab 4 第一輪就是讓你親手做對照組:同一份規格純手刻兩次,再用包工具的 Skill 跑兩次,把四份輸出攤開來 diff。你在 M2a 已經看過漂移這個模式,只是這次漂移換了一個層次:<strong>輕則類別命名、enum member 大小寫不一致(換一次產出,呼叫端的 <code>Sentiment.positive</code> 可能直接 <code>AttributeError</code>),重則型別本身對不上</strong>——不是格式難看那種一眼看得出來的漂移,是「兩份看起來都對,但兜不起來」的漂移。</p>
-<p><strong>適用前提</strong>:這個做法假設 OpenAPI spec <strong>已經定案</strong>(治理委員會審過、或對外合約規格)。如果你們內部服務本來就是 FastAPI code-first(spec 是自動產生的副產品),不需要為了套流程硬做這一步。</p>
+<p>Lab 4 第一輪就是讓你親手做對照組:同一份規格純手刻兩次,再用包工具的 Skill 跑兩次,把四份輸出攤開來 diff。你在 M2a 已經看過漂移這個模式,只是這次漂移換了一個層次:<strong>輕則類別命名、enum member 大小寫不一致(換一次產出,呼叫端的 <code>Sentiment.positive</code> 可能直接 <code>AttributeError</code>),重則型別本身對不上</strong>——不是格式難看那種一眼看得出來的漂移,是「兩份看起來都對,但兜不起來」的漂移。</p>
+<p><strong>適用前提</strong>:這個做法假設 OpenAPI spec <strong>已經定案</strong>(治理委員會審過、或對外合約規格)。</p>
 </div></div>
 <div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">跟「Spec-Driven Development(SDD)」是同一件事嗎?</span></div><div class="adm-body">
 <p>不是同一個量級。今天只處理「規格 → 介面骨架」這一段轉譯,規格已定案、不涉及協商。GitHub Spec Kit、Amazon Kiro 這類 SDD 工具鏈管的是規格從模糊需求到定案的全流程(constitution → specify → plan → tasks → implement),範圍大得多。兩者不是替代關係——今天教的是規格定案後怎麼穩定落地。</p>
@@ -1210,9 +1209,9 @@ Skill,你只負責路由、補齊必要輸入、守住邊界。
 <p>如果噴 <code>ModuleNotFoundError</code>,通常是資料夾裡缺 <code>__init__.py</code>(純手刻沒有固定的專案結構,這本身也是一種漂移),補一個空檔案上去即可。<strong>這步位可以省略</strong>,診斷的重點在下一步的 diff,不是「能不能跑」。</p></li>
 <li>把兩次輸出互 diff(建議加 <code>--no-pager</code>,不然 PowerShell 預設會丟進 <code>less</code>,卡住要按 <code>q</code> 才能跳出,不是當機):
 <div class="code-block"><div class="code-head"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>git --no-pager diff --no-index app_llm_run1 app_llm_run2</code></pre></div>
-<p>看到一堆 <code>__pycache__</code> 的 binary diff 不用管,那是啟動過 uvicorn 留下的快取,不是 LLM 產出的內容;真正要看的是 <code>.py</code> 檔案本身。如果想單獨聚焦在型別合約,直接只 diff model 檔(通常叫 <code>models.py</code>,依 LLM 這次怎麼命名而定):</p>
+<p>看到一堆 <code>__pycache__</code> 的 binary diff 不用管,那是啟動過 uvicorn 留下的快取,不是 LLM 產出的內容;真正要看的是 <code>.py</code> 檔案本身。如果想單獨聚焦在資料結構,直接只 diff model 檔(通常叫 <code>models.py</code>,依 LLM 這次怎麼命名而定):</p>
 <div class="code-block"><div class="code-head"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>git --no-pager diff --no-index app_llm_run1/models.py app_llm_run2/models.py</code></pre></div>
-<p><strong>為什麼特別挑 model 檔看?</strong> 因為 <code>main.py</code>(組裝 app)、<code>routers.py</code>(串接哪個 model)差異多半只是措辭、命名習慣這種風格層,不痛不癢;只有 model 檔承載<strong>型別合約</strong>本身——<code>Optional</code>、<code>Enum</code>、<code>alias</code> 這些欄位定義才是「接前端的人要相信哪一份」的核心。</p></li>
+<p><strong>為什麼特別挑 model 檔看?</strong> 因為 <code>main.py</code>(組裝 app)、<code>routers.py</code>(串接哪個 model)差異多半只是措辭、命名習慣這種風格層,不痛不癢;只有 model 檔承載<strong>資料結構</strong>本身——<code>Optional</code>、<code>Enum</code>、<code>alias</code> 這些欄位定義才是「接前端的人要相信哪一份」的核心。</p></li>
 <li>全班對答案:實測下來,兩次純手刻<strong>保證會</strong>踩到的是命名層級的不一致——例如 enum 類別名一次叫 <code>SentimentEnum</code> 一次叫 <code>Sentiment</code>,member 一次是小寫 <code>positive</code> 一次是大寫 <code>POSITIVE</code>。這聽起來像風格問題,但<strong>如果任何一支呼叫端程式碼寫了 <code>Sentiment.positive</code>,換到另一次產出就會直接 <code>AttributeError</code></strong>——兩份「看起來都對」的 model,彼此就是兜不起來。
 <p>規格裡還埋了幾顆型別地雷,運氣不好會直接踩到:</p>
 <ul>
@@ -1243,7 +1242,7 @@ Skill,你只負責路由、補齊必要輸入、守住邊界。
 <div class="adm adm-check"><div class="adm-head"><span class="adm-ico">✅</span><span class="adm-title">完成檢核</span></div><div class="adm-body">
 <ul>
 <li>第一輪:兩份純手刻輸出的 <code>models.py</code> diff 出至少一處<strong>命名不一致</strong>(類別名或 enum member 大小寫);能說出為什麼這種「看起來都對」的差異,換到呼叫端會直接炸開(<code>AttributeError</code>)。</li>
-<li>第一輪(加分):有踩到 nullable / enum 型別 / date-time / camelCase alias 其中一類<strong>型別合約</strong>差異——沒踩到也沒關係,這代表這次運氣好,不代表下次也會好。</li>
+<li>第一輪(加分):有踩到 nullable / enum 型別 / date-time / camelCase alias 其中一類<strong>資料結構</strong>差異——沒踩到也沒關係,這代表這次運氣好,不代表下次也會好。</li>
 <li>第二輪:Swagger UI 看得到所有 endpoint;所有函式是乾淨骨架;uvicorn 正常啟動;兩次工具版 <code>schemas.py</code> 的 diff 為<strong>空</strong>。</li>
 <li>能用一句話回答:「這個 Skill 裡,哪些部分交給決定性工具、哪些部分交給 LLM,為什麼這樣切?」</li>
 </ul>
