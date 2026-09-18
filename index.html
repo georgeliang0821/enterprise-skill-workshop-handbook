@@ -158,16 +158,16 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:20px;border-t
         </div>
         <div class="setup-block">
           <div class="setup-label">上課當天安裝課程套件</div>
-          <pre>cd C:\ghcp-workshop
-.\.venv\Scripts\python.exe -m pip install --no-cache-dir -r .\labs-part1\lab4-openapi-fastapi-scaffold\requirements.txt
-.\.venv\Scripts\python.exe -m pip install --no-cache-dir -r .\labs-part2\lab5-jira-integration-skill\requirements.txt</pre>
+          <pre>cd C:\ghcp-workshop\labs-part1
+..\.venv\Scripts\python.exe -m pip install -r requirements.txt</pre>
         </div>
       </div>
       <ul class="setup-checks">
         <li><code>labs-part1</code> 與 <code>labs-part2</code> 必須並排在同一個父資料夾下,而且同一層要有自檢表建立的 <code>.venv</code>。</li>
         <li>若還沒建立 <code>.venv</code>,請先照「開課前環境自檢表」的步驟在父資料夾執行 <code>python -m venv .venv</code>。</li>
-        <li>上課當天才安裝課程套件;安裝時請使用 <code>.venv</code> 裡的 Python,不要裝到全域 Python。</li>
-        <li>用 VS Code 開啟 <code>labs-part1</code> 或 <code>labs-part2</code> 資料夾本身,需要跑 Python 時請選用父資料夾的 <code>.venv</code>。</li>
+        <li><code>labs-part1/requirements.txt</code> 與 <code>labs-part2/requirements.txt</code> 內容相同,只需在其中一邊安裝一次。</li>
+        <li>安裝時請使用 <code>..\.venv\Scripts\python.exe</code>,不要裝到全域 Python。</li>
+        <li>用 VS Code 開啟 <code>labs-part1</code> 或 <code>labs-part2</code> 資料夾本身,讓內建 <code>.vscode/settings.json</code> 指到父資料夾的共用 <code>.venv</code>。</li>
       </ul>
       <p class="setup-note">課前只建立並測試 <code>.venv</code>,不要先安裝 FastAPI、openpyxl 或其他課程套件;套件安裝等上課當天依講師指示執行。</p>
     </div>

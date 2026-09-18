@@ -61,3 +61,10 @@ GitHub Copilot 的 Skill selection 是**機率性語意匹配**——description
 - [ ] 完成至少一次 description 修改 → 重測 → 行為改變的迴圈
 
 > 📌 **跟下半場的關係**:企業內部很快會累積 5-10 個以上相似的 Skill,誤觸發從偶發變日常。M6 的品質治理會把這 15 分鐘的手動測試,升級成有版本紀錄、有回歸測試觀念的治理流程——你剛做的,就是那套流程的最小可行版。
+
+
+## 對照組——Prompt File 為什麼永遠不會誤觸發
+
+三句模糊指令跑完後,再做一件事:附上逐字稿、打 `/meeting-quickcheck`(Lab 1B 建的)。它每次都準確執行、每次都只做它那兩件事——因為它根本沒有參與 selection,是你喊它才出現。
+
+所以當一個能力「一定要人明確叫、不能被語意猜中」時,你有兩個選擇:寫成 prompt file,或寫成 Skill 但設 `disable-model-invocation: true`。差別只在要不要帶附件與腳本。下半場的寫入型 Skill 會用到後者。

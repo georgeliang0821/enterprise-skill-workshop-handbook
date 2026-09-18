@@ -1,0 +1,6 @@
+{
+  // 共用 venv 位於 labs-part1 / labs-part2 的共同父資料夾;請開啟本資料夾本身,不要開父資料夾。
+  "python.defaultInterpreterPath": "${workspaceFolder}/../.venv/Scripts/python.exe",
+  "python.venvPath": "${workspaceFolder}/..",
+  "python.terminal.activateEnvironment": true
+}

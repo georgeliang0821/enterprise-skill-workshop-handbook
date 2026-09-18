@@ -16,13 +16,16 @@
 
 ## 第零步:啟動 Mock Jira Server
 
-```cmd
-pip install -r requirements.txt
-set JIRA_API_TOKEN=mock-jira-token-classroom-only
+套件已由共用 venv 裝好,**不需要 `pip install`**。在本資料夾開一個終端機,確認提示字元有 `(.venv)`,然後:
+
+```powershell
+$env:JIRA_API_TOKEN = "mock-jira-token-classroom-only"
 python -m uvicorn mock_jira_server:app --reload --port 9000
 ```
 
 開 `http://127.0.0.1:9000/docs` 確認 Swagger UI 正常。token 之後由 Skill 從環境變數讀,不寫死在任何檔案裡。
+
+> 環境變數只在這個終端機視窗有效——之後要在別的視窗跑 Skill 的話,那個視窗也要設一次。
 
 ## 第一輪:用(naive 版跑起來,看似正常)
 
@@ -81,23 +84,35 @@ curl.exe -X POST http://127.0.0.1:9000/debug/reset
 
 現在你手上有:上半場 M3d 的編排型 `@meeting-ops`,跟一個剛硬化完、**會真的寫入**的 Skill。設計題:要不要讓 `@meeting-ops` 叫得動它?
 
-答案是**不要**,用兩層獨立防線:
+這題有三個選項——**它們都合法,差別在你們願意讓誰決定「開不開」**:
 
-| 防線 | 在哪一層 | 擋掉什麼 |
-|---|---|---|
-| `disable-model-invocation: true` | Skill 層 | 任何自動語意觸發(含在別的 agent 底下被順勢選中)——你第三輪剛做的 |
-| 從 tools 允許清單**排除** `skill:action-item-to-jira` | Agent 層 | 連手動 `@meeting-ops` 的情境,這個角色都碰不到寫入型 Skill |
+| 選項 | 做法 | 方便 | 風險 | 誰決定 |
+|---|---|---|---|---|
+| A 放進路由 | body 加「要開單用 action-item-to-jira」,Skill 不鎖 | 最方便 | 踩 C 看過:隨口一句就可能開單;開單靠終端機打 REST,`@meeting-ops` 若還留著 `runCommands`(沒做 M3d 05b),tools 牆完全攔不住 | 模型 |
+| B 完全排除 | Skill `disable-model-invocation: true`;body 排除;使用者自己 `/action-item-to-jira` | 最不方便 | 最低 | 人,但沒人提醒 |
+| C handoff 按鈕 | Skill 同 B 硬鎖;另建只有 Jira 工具的 `@jira-clerk`;`@meeting-ops` 用 `handoffs:` 給一顆「建立 Jira 工單」按鈕,`send: false` | 整理完就看到按鈕 | 低:沒人按不會發生;按了也在最小工具邊界內 | 人,而且在對的時機被提醒 |
+
+今天做 **C**。完成版在 `agents/`:
+
+- `agents/jira-clerk.agent.md`:只做開單、tools 只有 `runCommands` + 讀檔、不給 edit、`disable-model-invocation: true`(不讓別的 agent 把它當 subagent)。
+- `agents/meeting-ops.agent.md`:新增第二個 handoff。
 
 操作:
 
-1. 確認 `meeting-ops.agent.md` 的 tools 允許清單裡**只有**會議三個 Skill,**沒有** `action-item-to-jira`。
-2. 用 `@meeting-ops` 下一句故意踩線的指令:「幫我把這些 Action Item 整理好,順便開成 Jira 票」。
-3. 確認它做了前半(整理),但對「開 Jira 票」明確回報**超出範圍、交還你手動處理**,而不是自己找工具硬做。
+1. 確認 `action-item-to-jira/SKILL.md` 的 `disable-model-invocation: true`(第三輪加的)在。
+2. 建 `.github/agents/jira-clerk.agent.md`(對照完成版自己寫;tools 用工具選單勾)。
+3. 改 `.github/agents/meeting-ops.agent.md`:加第二個 handoff;body 的排除語句照留;確認 tools 沒有 `runCommands`、`agents:` 只有 `wbs-builder`(jira-clerk 不在裡面)。
+4. 踩線:`@meeting-ops`「幫我把這些 Action Item 整理好,順便開成 Jira 工單」→ 整理照做、開單明講交還、**出現「建立 Jira 工單」按鈕**;它沒有終端機(05b),也不該把開單包成任務丟給 wbs-builder。
+5. 按下去 → `@jira-clerk` 先列「將建立 / 已存在略過 / 無法對照 owner」三個清單 → 你說「確認」→ `curl.exe http://127.0.0.1:9000/debug/issues` 驗證。
+6. 對照組:同一句丟預設 Agent Mode——硬鎖仍在所以不會自動開單,但沒有按鈕、沒有排除語句。
+
+## 決策點 ③(填進 M9 決策表)
+寫入型 Skill 上線前誰要看過?不用 / PR review 順便看 / 指定 Owner + 狀態欄(附錄 A)。
 
 ## 完成檢核
 
 - [ ] 撞 A/B 都親眼看過(重複票、姓名 assignee 都出現在 `debug/issues` 裡)
-- [ ] 撞 C 測過語意觸發(不論這次有沒有觸發,能說出「為什麼寫入型不能賭這個機率」)
-- [ ] 硬化後五項驗收全過(去重、對照、401、token 不外洩、鎖觸發)
-- [ ] version 已升 0.2.0,知道這筆變更等下 M6 要進 CHANGELOG
-- [ ] `@meeting-ops` 踩線測試通過:整理照做、建票明確拒絕
+- [ ] 撞 C 測過語意觸發(能說出「為什麼寫入型不能賭這個機率」)
+- [ ] 硬化後五項驗收全過;version 已升 0.2.0
+- [ ] `@meeting-ops` 踩線測試:整理照做、開單明講交還、出現按鈕;`@jira-clerk` 先列清單再等確認
+- [ ] 能對「會議助手能不能開單」說出 A/B/C 各自的代價

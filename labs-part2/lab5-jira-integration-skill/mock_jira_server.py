@@ -8,8 +8,7 @@ mock_jira_server.py
 這不是真的 Jira,目的是讓學員在沒有企業 Jira 帳號的情況下,
 也能練習「Skill 呼叫外部系統 API、並且要處理『避免重複建票』」這個真實場景。
 
-啟動方式:
-    pip install -r requirements.txt
+啟動方式(套件已在工作坊共用 venv 中,不需要 pip install):
     python -m uvicorn mock_jira_server:app --reload --port 9000
 """
 from fastapi import FastAPI, Query, Header, HTTPException
