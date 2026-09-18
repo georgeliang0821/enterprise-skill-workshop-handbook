@@ -86,12 +86,14 @@ python --version
 ```powershell
 cd C:\ghcp-workshop        # 換成你自己建立的資料夾
 python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install --no-cache-dir --force-reinstall pip
-.\.venv\Scripts\python.exe -m pip --version
+.\.venv\Scripts\Activate.ps1
+python -m pip install --no-cache-dir --force-reinstall pip
+python -m pip --version
 ```
 
 - [ ] 上課用資料夾已建立。
 - [ ] `python -m venv .venv` 成功，資料夾中出現 `.venv`（沒有被防毒軟體或資料夾權限擋住）。
+- [ ] PowerShell 提示字元出現 `(.venv)`，代表共用 venv 已啟用。
 - [ ] 出現 `Successfully installed pip-…`，代表能連到 PyPI 下載並安裝（沒有逾時、Proxy 或 SSL 憑證錯誤）。
 - [ ] `pip --version` 顯示的路徑落在該資料夾的 `.venv` 裡，代表裝進 venv 而非全域。
 - [ ] **不要刪掉這個 `.venv`**，上課當天會直接沿用它，不會重建。

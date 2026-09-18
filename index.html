@@ -159,14 +159,15 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:20px;border-t
         <div class="setup-block">
           <div class="setup-label">上課當天安裝課程套件</div>
           <pre>cd C:\ghcp-workshop\labs-part1
-..\.venv\Scripts\python.exe -m pip install -r requirements.txt</pre>
+..\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt</pre>
         </div>
       </div>
       <ul class="setup-checks">
         <li><code>labs-part1</code> 與 <code>labs-part2</code> 必須並排在同一個父資料夾下,而且同一層要有自檢表建立的 <code>.venv</code>。</li>
         <li>若還沒建立 <code>.venv</code>,請先照「開課前環境自檢表」的步驟在父資料夾執行 <code>python -m venv .venv</code>。</li>
         <li>兩包的 <code>requirements.txt</code> 內容完全相同,而 <code>.venv</code> 是共用的;只要在 <code>labs-part1</code> 或 <code>labs-part2</code> 任一邊執行一次 <code>pip install -r requirements.txt</code> 即可,另一邊不用再裝。</li>
-        <li>安裝時請使用 <code>..\.venv\Scripts\python.exe</code>,不要裝到全域 Python。</li>
+        <li>安裝前請先執行 <code>..\.venv\Scripts\Activate.ps1</code>,確認提示字元出現 <code>(.venv)</code>,不要裝到全域 Python。</li>
         <li>用 VS Code 開啟 <code>labs-part1</code> 或 <code>labs-part2</code> 資料夾本身,讓內建 <code>.vscode/settings.json</code> 指到父資料夾的共用 <code>.venv</code>。</li>
       </ul>
     </div>

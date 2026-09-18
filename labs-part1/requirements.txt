@@ -1,6 +1,7 @@
 ﻿# 工作坊共用相依清單 —— labs-part1 與 labs-part2 內容完全相同，只需在其中一邊裝一次。
 # 安裝（cd 到本資料夾後執行，共用 .venv 在上層）：
-#   ..\.venv\Scripts\python.exe -m pip install -r requirements.txt
+#   ..\.venv\Scripts\Activate.ps1
+#   python -m pip install -r requirements.txt
 
 # Lab 3A — WBS Excel 產出(Copilot 會現場寫 openpyxl 腳本並執行)
 openpyxl

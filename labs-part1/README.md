@@ -18,7 +18,8 @@
 - Python 3.10+（Lab 3A）。**本資料夾與 `labs-part2` 共用同一個 venv**：請把兩包解壓到課前建好的上課資料夾裡、與 `.venv` 並排（例如 `C:\ghcp-workshop\` 底下同時有 `labs-part1\`、`labs-part2\`、`.venv\`），接著的**第一件事**就是在本資料夾執行：
 
   ```powershell
-  ..\.venv\Scripts\python.exe -m pip install -r requirements.txt
+  ..\.venv\Scripts\Activate.ps1
+  python -m pip install -r requirements.txt
   ```
 
   兩包的 `requirements.txt` 內容相同，只需在其中一邊裝一次，全天不再需要 `pip install`。

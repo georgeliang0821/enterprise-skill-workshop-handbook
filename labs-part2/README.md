@@ -18,7 +18,7 @@
 - [ ] 組織已開通 Copilot CLI 與 Copilot coding agent(本梯次已確認)
 - [ ] Copilot CLI 已安裝並 `/login`(見 `lab6-copilot-cli/README.md`)
 - [ ] `gh auth status` 正常
-- [ ] 共用 venv 就緒：本資料夾與 `labs-part1` 共用同一個 venv（就是課前在上課資料夾建的 `.venv`，與兩個 Lab 資料夾並排）。上半場已在 `labs-part1` 裝過套件的人這裡不用再做；沒裝過的在本資料夾執行 `..\.venv\Scripts\python.exe -m pip install -r requirements.txt`。**下半場不需要其他 `pip install`。**
+- [ ] 共用 venv 就緒：本資料夾與 `labs-part1` 共用同一個 venv（就是課前在上課資料夾建的 `.venv`，與兩個 Lab 資料夾並排）。上半場已在 `labs-part1` 裝過套件的人這裡不用再做；沒裝過的在本資料夾執行 `..\.venv\Scripts\Activate.ps1`，再執行 `python -m pip install -r requirements.txt`。**下半場不需要其他 `pip install`。**
 - [ ] 請用 VS Code **開啟本資料夾本身**(不要開父資料夾);新開終端機提示字元有 `(.venv)`
 
 ## 端到端路徑
