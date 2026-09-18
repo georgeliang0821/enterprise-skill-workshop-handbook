@@ -146,8 +146,8 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:20px;border-t
       </a>
     </div>
     <div class="setup">
-      <h3 class="setup-title">解壓 Lab 素材與建立共用 venv</h3>
-      <p class="setup-desc"><strong>兩包 ZIP 必須解壓到同一個父資料夾</strong>,例如 <code>C:\ghcp-workshop\</code>。路徑請避免中文與空白,兩邊會共用同一個 <code>.venv</code>。</p>
+      <h3 class="setup-title">解壓 Lab 素材與沿用共用 venv</h3>
+      <p class="setup-desc"><strong>兩包 ZIP 必須解壓到同一個父資料夾</strong>,例如 <code>C:\ghcp-workshop\</code>。路徑請避免中文與空白,並沿用自檢表建立好的 <code>.venv</code>。</p>
       <div class="setup-grid">
         <div class="setup-block">
           <div class="setup-label">正確資料夾結構</div>
@@ -157,21 +157,19 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:20px;border-t
 └─ .venv\</pre>
         </div>
         <div class="setup-block">
-          <div class="setup-label">安裝與驗證指令</div>
-          <pre>cd C:\ghcp-workshop\labs-part1
-.\setup\bootstrap-venv.cmd
-powershell -ExecutionPolicy Bypass -File .\setup\verify-env.ps1</pre>
+          <div class="setup-label">上課當天安裝課程套件</div>
+          <pre>cd C:\ghcp-workshop
+.\.venv\Scripts\python.exe -m pip install --no-cache-dir -r .\labs-part1\lab4-openapi-fastapi-scaffold\requirements.txt
+.\.venv\Scripts\python.exe -m pip install --no-cache-dir -r .\labs-part2\lab5-jira-integration-skill\requirements.txt</pre>
         </div>
       </div>
       <ul class="setup-checks">
-        <li><code>labs-part1</code> 與 <code>labs-part2</code> 必須並排在同一個父資料夾下。</li>
-        <li>確認 <code>labs-part1\setup\</code> 與 <code>labs-part1\.vscode\</code> 都存在,避免 ZIP 解壓漏掉點開頭資料夾。</li>
-        <li><code>bootstrap-venv.cmd</code> 最後應印出「共用 venv 已就緒」,<code>verify-env.ps1</code> 應全部 <code>[OK]</code> 並印出「全部通過,環境就緒」。</li>
-        <li>到另一個 Lab 資料夾再跑一次 <code>.\setup\bootstrap-venv.cmd</code>,應顯示「共用 venv 已存在,直接沿用」。</li>
-        <li>用 VS Code 開啟 <code>labs-part1</code> 資料夾本身,新終端機提示字元應出現 <code>(.venv)</code>。</li>
+        <li><code>labs-part1</code> 與 <code>labs-part2</code> 必須並排在同一個父資料夾下,而且同一層要有自檢表建立的 <code>.venv</code>。</li>
+        <li>若還沒建立 <code>.venv</code>,請先照「開課前環境自檢表」的步驟在父資料夾執行 <code>python -m venv .venv</code>。</li>
+        <li>上課當天才安裝課程套件;安裝時請使用 <code>.venv</code> 裡的 Python,不要裝到全域 Python。</li>
+        <li>用 VS Code 開啟 <code>labs-part1</code> 或 <code>labs-part2</code> 資料夾本身,需要跑 Python 時請選用父資料夾的 <code>.venv</code>。</li>
       </ul>
-      <p class="setup-note">兩包若沒辦法放在同一個父資料夾,兩邊都改用 <code>.\setup\bootstrap-venv.cmd -VenvPath C:\ghcp-workshop\.venv</code> 指定同一個路徑。</p>
-      <p class="setup-note">課堂上不需要、也不應該再執行任何 <code>pip install</code>。若 Agent 主動要求安裝套件,請先停下來回報講師。</p>
+      <p class="setup-note">課前只建立並測試 <code>.venv</code>,不要先安裝 FastAPI、openpyxl 或其他課程套件;套件安裝等上課當天依講師指示執行。</p>
     </div>
   </section>
 </div>
