@@ -8,12 +8,12 @@
 :root{
   --accent:#4338A6; --accent-2:#1E2761; --accent-soft:#ECEBF8;
   --bg:#ffffff; --bg-side:#f8f8fb; --text:#222a35; --muted:#5b6472;
-  --border:#e4e3ee;
+  --border:#e4e3ee; --code-bg:#f4f4f9; --code-text:#1f2733;
 }
 :root[data-theme="dark"]{
   --accent:#9b8fe6; --accent-2:#9fb0e6; --accent-soft:#1e1b33;
   --bg:#16161b; --bg-side:#1b1b22; --text:#d7dce3; --muted:#8a93a1;
-  --border:#2e2c3a;
+  --border:#2e2c3a; --code-bg:#0e0e13; --code-text:#d7dce3;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);
@@ -66,9 +66,22 @@ body{margin:0;background:var(--bg);color:var(--text);
 .dl-text{display:flex;flex-direction:column}
 .dl-name{font-weight:700;color:var(--accent-2);font-size:15.5px}
 .dl-meta{color:var(--muted);font-size:12.5px}
+.setup{margin-top:22px;border:1px solid var(--border);border-radius:12px;background:var(--bg-side);padding:20px 22px}
+.setup-title{font-size:18px;color:var(--accent-2);margin:0 0 8px;font-weight:700}
+.setup-desc{color:var(--muted);font-size:14.5px;margin:0 0 14px}
+.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
+.setup-block{min-width:0}
+.setup-label{font-weight:700;color:var(--text);font-size:14px;margin-bottom:6px}
+.setup pre{margin:0;background:var(--code-bg);color:var(--code-text);border:1px solid var(--border);
+  border-radius:10px;padding:12px 14px;overflow-x:auto;font-family:"Cascadia Code",Consolas,"Courier New",monospace;
+  font-size:13px;line-height:1.6}
+.setup-checks{margin:14px 0 0;padding-left:22px;color:var(--muted);font-size:14px}
+.setup-checks li{margin:5px 0}
+.setup-note{margin:14px 0 0;border-left:4px solid var(--accent);background:var(--accent-soft);
+  border-radius:0 8px 8px 0;padding:10px 12px;color:var(--accent-2);font-size:13.5px}
 footer{color:var(--muted);font-size:13px;text-align:center;padding:20px;border-top:1px solid var(--border)}
 @media(max-width:720px){
-  .cards{grid-template-columns:1fr}
+  .cards,.setup-grid{grid-template-columns:1fr}
   .hero-title{font-size:31px}
   .wrap{padding:32px 18px 60px}
 }
@@ -131,6 +144,34 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:20px;border-t
           <span class="dl-meta">下半場 · Lab 5–7 教材</span>
         </span>
       </a>
+    </div>
+    <div class="setup">
+      <h3 class="setup-title">解壓 Lab 素材與建立共用 venv</h3>
+      <p class="setup-desc"><strong>兩包 ZIP 必須解壓到同一個父資料夾</strong>,例如 <code>C:\ghcp-workshop\</code>。路徑請避免中文與空白,兩邊會共用同一個 <code>.venv</code>。</p>
+      <div class="setup-grid">
+        <div class="setup-block">
+          <div class="setup-label">正確資料夾結構</div>
+          <pre>C:\ghcp-workshop\
+├─ labs-part1\
+├─ labs-part2\
+└─ .venv\</pre>
+        </div>
+        <div class="setup-block">
+          <div class="setup-label">安裝與驗證指令</div>
+          <pre>cd C:\ghcp-workshop\labs-part1
+.\setup\bootstrap-venv.cmd
+powershell -ExecutionPolicy Bypass -File .\setup\verify-env.ps1</pre>
+        </div>
+      </div>
+      <ul class="setup-checks">
+        <li><code>labs-part1</code> 與 <code>labs-part2</code> 必須並排在同一個父資料夾下。</li>
+        <li>確認 <code>labs-part1\setup\</code> 與 <code>labs-part1\.vscode\</code> 都存在,避免 ZIP 解壓漏掉點開頭資料夾。</li>
+        <li><code>bootstrap-venv.cmd</code> 最後應印出「共用 venv 已就緒」,<code>verify-env.ps1</code> 應全部 <code>[OK]</code> 並印出「全部通過,環境就緒」。</li>
+        <li>到另一個 Lab 資料夾再跑一次 <code>.\setup\bootstrap-venv.cmd</code>,應顯示「共用 venv 已存在,直接沿用」。</li>
+        <li>用 VS Code 開啟 <code>labs-part1</code> 資料夾本身,新終端機提示字元應出現 <code>(.venv)</code>。</li>
+      </ul>
+      <p class="setup-note">兩包若沒辦法放在同一個父資料夾,兩邊都改用 <code>.\setup\bootstrap-venv.cmd -VenvPath C:\ghcp-workshop\.venv</code> 指定同一個路徑。</p>
+      <p class="setup-note">課堂上不需要、也不應該再執行任何 <code>pip install</code>。若 Agent 主動要求安裝套件,請先停下來回報講師。</p>
     </div>
   </section>
 </div>
