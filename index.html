@@ -43,6 +43,18 @@ body{margin:0;background:var(--bg);color:var(--text);
   padding:10px 22px;border-radius:10px}
 .card-cta .arrow{transition:transform .15s}
 .card:hover .card-cta .arrow{transform:translateX(4px)}
+.labs{margin-top:40px;padding-top:30px;border-top:1px solid var(--border)}
+.labs-eyebrow{color:var(--accent);font-weight:700;letter-spacing:.04em;font-size:13.5px}
+.labs-title{font-size:22px;color:var(--accent-2);margin:6px 0 6px}
+.labs-sub{color:var(--muted);font-size:14.5px;margin:0 0 18px;max-width:760px}
+.dl-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.dl-btn{display:flex;align-items:center;gap:14px;border:1px solid var(--border);border-radius:12px;
+  background:var(--bg-side);padding:16px 18px;text-decoration:none;color:inherit;transition:.15s}
+.dl-btn:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 20px rgba(67,56,166,.14)}
+.dl-ico{font-size:26px;line-height:1}
+.dl-text{display:flex;flex-direction:column}
+.dl-name{font-weight:700;color:var(--accent-2);font-size:15.5px}
+.dl-meta{color:var(--muted);font-size:12.5px}
 footer{color:var(--muted);font-size:13px;text-align:center;padding:20px;border-top:1px solid var(--border)}
 @media(max-width:720px){
   .cards{grid-template-columns:1fr}
@@ -78,6 +90,28 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:20px;border-t
       <span class="card-cta">開啟下半場講義 <span class="arrow">→</span></span>
     </a>
   </div>
+
+  <section class="labs">
+    <div class="labs-eyebrow">動手練習教材</div>
+    <h2 class="labs-title">下載 Lab 教材</h2>
+    <p class="labs-sub">工作坊的完整 Lab 檔案(Skill、範例逐字稿、資料與腳本)。下載後解壓縮,依各 Lab 的 README 操作即可。無需 GitHub 帳號。</p>
+    <div class="dl-row">
+      <a class="dl-btn" href="labs-part1.zip" download>
+        <span class="dl-ico">📦</span>
+        <span class="dl-text">
+          <span class="dl-name">labs-part1.zip</span>
+          <span class="dl-meta">上半場 · Lab 1–4 教材</span>
+        </span>
+      </a>
+      <a class="dl-btn" href="labs-part2.zip" download>
+        <span class="dl-ico">📦</span>
+        <span class="dl-text">
+          <span class="dl-name">labs-part2.zip</span>
+          <span class="dl-meta">下半場 · Lab 5–7 教材</span>
+        </span>
+      </a>
+    </div>
+  </section>
 </div>
 
 <footer>Enterprise Skill Engineering Workshop · GitHub Copilot</footer>

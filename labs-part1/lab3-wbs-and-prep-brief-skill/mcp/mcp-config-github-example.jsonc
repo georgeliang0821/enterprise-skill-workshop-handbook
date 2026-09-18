@@ -1,0 +1,21 @@
+// 範例:路徑二用——GitHub remote MCP server。
+// 目的:在租戶還沒開通 Agent365 / CalendarTools 的情況下,
+// 仍然讓每位學員完成一次「真實的 MCP 設定體驗」(mcp.json → OAuth → /mcp 看工具清單)。
+// 只要有 GitHub 帳號就能用,不需要任何租戶端設定。
+//
+// ⚠️ 注意:
+// 1. 企業租戶的 Copilot policy(Copilot Business/Enterprise)可能封鎖第三方/remote MCP,
+//    被擋就直接走 Lab 3B README 的路徑三(fallback),由講師 demo 這條路徑即可。
+// 2. 這個 server 提供的是 GitHub 的工具(repo、issue、PR 等),跟行事曆無關——
+//    weekly-followup-planner 的行事曆資料來源仍走 fallback(sample-calendar-week.json 或「假設有空」)。
+// 3. 設定完成後,隨口測一句「用 GitHub MCP 幫我列出我最近的 repo」,
+//    確認工具清單有出現、工具真的被呼叫,體驗即完成。
+
+{
+  "servers": {
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/"
+    }
+  }
+}

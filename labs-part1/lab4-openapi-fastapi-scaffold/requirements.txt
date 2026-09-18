@@ -1,0 +1,4 @@
+datamodel-code-generator
+fastapi
+uvicorn[standard]
+pydantic
