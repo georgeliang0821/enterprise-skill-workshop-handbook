@@ -43,6 +43,17 @@ body{margin:0;background:var(--bg);color:var(--text);
   padding:10px 22px;border-radius:10px}
 .card-cta .arrow{transition:transform .15s}
 .card:hover .card-cta .arrow{transform:translateX(4px)}
+.prep{display:flex;align-items:center;gap:16px;margin-bottom:26px;padding:16px 20px;
+  border:1px solid var(--accent);border-left-width:5px;border-radius:12px;background:var(--accent-soft);
+  text-decoration:none;color:inherit;transition:.15s}
+.prep:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(67,56,166,.16)}
+.prep-ico{font-size:28px;line-height:1}
+.prep-text{flex:1}
+.prep-tag{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 10px;border-radius:999px;
+  background:var(--accent);color:#fff;margin-bottom:4px}
+.prep-title{font-weight:700;color:var(--accent-2);font-size:16.5px;margin:2px 0 2px}
+.prep-desc{color:var(--muted);font-size:13.5px}
+.prep-arrow{color:var(--accent);font-size:20px;font-weight:700}
 .labs{margin-top:40px;padding-top:30px;border-top:1px solid var(--border)}
 .labs-eyebrow{color:var(--accent);font-weight:700;letter-spacing:.04em;font-size:13.5px}
 .labs-title{font-size:22px;color:var(--accent-2);margin:6px 0 6px}
@@ -74,6 +85,16 @@ footer{color:var(--muted);font-size:13px;text-align:center;padding:20px;border-t
     <h1 class="hero-title">從 Prompt 到 Enterprise Skill</h1>
     <p class="hero-sub">一整天的工作坊講義入口。上半場帶你親手寫出三個被實測驗證的 Skill 與一份 FastAPI 後端骨架;下半場把它組裝成完整的 AI Meeting Intelligence Portal。點選下方卡片開始。</p>
   </header>
+
+  <a class="prep" href="checklist.html">
+    <span class="prep-ico">✅</span>
+    <span class="prep-text">
+      <span class="prep-tag">開課前必做</span>
+      <span class="prep-title">環境自檢表</span>
+      <span class="prep-desc">請於開課前一天完成,先排除帳號、網路、Proxy、套件與權限問題。</span>
+    </span>
+    <span class="prep-arrow">→</span>
+  </a>
 
   <div class="cards">
     <a class="card" href="part1.html">

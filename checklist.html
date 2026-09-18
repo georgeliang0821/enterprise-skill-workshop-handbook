@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>開課前環境自檢表 · Enterprise Skill Engineering Workshop</title>
+<style>
+:root{
+  --accent:#4338A6; --accent-2:#1E2761; --accent-soft:#ECEBF8;
+  --bg:#ffffff; --bg-side:#f8f8fb; --text:#222a35; --muted:#5b6472;
+  --border:#e4e3ee; --code-bg:#f4f4f9; --code-text:#1f2733; --th-bg:#eeeef6;
+}
+:root[data-theme="dark"]{
+  --accent:#9b8fe6; --accent-2:#9fb0e6; --accent-soft:#1e1b33;
+  --bg:#16161b; --bg-side:#1b1b22; --text:#d7dce3; --muted:#8a93a1;
+  --border:#2e2c3a; --code-bg:#0e0e13; --code-text:#d7dce3; --th-bg:#222231;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:"Microsoft JhengHei","PingFang TC","Noto Sans TC",-apple-system,"Segoe UI",sans-serif;
+  font-size:16px;line-height:1.78;-webkit-font-smoothing:antialiased}
+.wrap{max-width:920px;margin:0 auto;padding:34px 24px 100px}
+.topbar{display:flex;gap:8px;align-items:center;margin-bottom:14px}
+.icon-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:8px;padding:5px 12px;cursor:pointer;font-size:13px;text-decoration:none}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent)}
+.spacer{flex:1}
+.hero{border-bottom:1px solid var(--border);padding-bottom:22px;margin-bottom:8px}
+.hero-eyebrow{color:var(--accent);font-weight:700;letter-spacing:.04em;font-size:13.5px}
+.hero-title{font-size:34px;margin:6px 0 10px;color:var(--accent-2);line-height:1.2}
+h2{font-size:24px;color:var(--accent-2);margin:40px 0 12px;padding-top:8px;border-top:1px solid var(--border)}
+h2:first-of-type{border-top:none}
+h3{font-size:18px;color:var(--text);margin:24px 0 8px}
+p{margin:10px 0}
+a{color:var(--accent)}
+strong{color:var(--text);font-weight:700}
+[data-theme="dark"] strong{color:#f0f3fa}
+code{background:var(--code-bg);color:#3f33a0;font-family:"Cascadia Code",Consolas,"Courier New",monospace;font-size:.88em;padding:1.5px 6px;border-radius:5px}
+[data-theme="dark"] code{color:#b3a8f0}
+.code-block{margin:14px 0;border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.code-head{display:flex;justify-content:space-between;align-items:center;background:var(--th-bg);padding:6px 12px;font-size:12px;color:var(--muted)}
+.code-lang{font-family:Consolas,monospace}
+.copy-btn{background:none;border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:2px 10px;font-size:12px;cursor:pointer}
+.copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+.code-block pre{margin:0;padding:14px 16px;overflow-x:auto;background:var(--code-bg)}
+.code-block code{background:none;color:var(--code-text);padding:0;font-size:13px;line-height:1.7;white-space:pre}
+ul.check{list-style:none;padding-left:2px;margin:12px 0}
+ul.check li{position:relative;padding:4px 0 4px 30px;margin:2px 0}
+ul.check li input[type=checkbox]{position:absolute;left:0;top:9px;width:17px;height:17px;accent-color:var(--accent);cursor:pointer}
+ul.check ul{list-style:disc;margin:4px 0 4px 0;padding-left:22px}
+ul.check ul li{padding:2px 0;color:var(--muted);font-size:14.5px}
+blockquote{margin:12px 0;padding:10px 16px;border-left:4px solid var(--accent);background:var(--bg-side);border-radius:0 8px 8px 0}
+blockquote p{margin:0;color:var(--muted);font-size:14.5px}
+.callout{margin:16px 0;border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:8px;padding:12px 16px;background:var(--accent-soft)}
+.callout p{margin:0;color:var(--accent-2)}
+[data-theme="dark"] .callout p{color:#c9d2ec}
+hr{border:none;border-top:1px solid var(--border);margin:34px 0}
+@media(max-width:720px){.wrap{padding:24px 18px 80px}.hero-title{font-size:27px}}
+@media print{.topbar,.copy-btn{display:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="icon-btn" href="index.html">← 回入口頁</a>
+    <span class="spacer"></span>
+    <button class="icon-btn" id="themeBtn" type="button">🌓 深/淺色</button>
+  </div>
+
+  <header class="hero">
+    <div class="hero-eyebrow">GitHub Copilot · Enterprise Skill Engineering Workshop</div>
+    <h1 class="hero-title">開課前環境自檢表</h1>
+  </header>
+
+  <div class="callout"><p><strong>請在開課前一天完成。</strong> 目的是將帳號、網路、Proxy、套件安裝及權限問題提前排除。環境假設:<strong>Windows + VS Code + PowerShell</strong>,命令以 PowerShell 與 <code>curl.exe</code> 為主。勾選框可直接點選(僅本機暫存,重新整理會清空)。</p></div>
+
+  <h2>① Copilot 與工作區</h2>
+
+  <h3>1. 帳號與授權</h3>
+  <ul class="check">
+    <li><input type="checkbox">能以<strong>公司 GitHub 帳號</strong>登入 <code>https://github.com</code>。</li>
+    <li><input type="checkbox">已被指派有效的 GitHub Copilot seat(Business 或 Enterprise)。
+      <ul>
+        <li>驗證:GitHub 右上頭像 → <strong>Your Copilot</strong>,確認方案為啟用中。</li>
+        <li>未指派 seat 時,請找公司 GitHub 組織管理員處理。</li>
+      </ul>
+    </li>
+  </ul>
+
+  <h3>2. VS Code 與基本工具</h3>
+  <p>PowerShell 執行下列命令;每一行都應顯示版本,而非 <code>not recognized</code>:</p>
+  <div class="code-block"><div class="code-head"><span class="code-lang">powershell</span><button class="copy-btn">複製</button></div><pre><code>code --version
+git --version</code></pre></div>
+  <ul class="check">
+    <li><input type="checkbox">VS Code 與 Git 均可使用。</li>
+  </ul>
+  <blockquote><p>工作坊會使用 commit、push 與 PR,因此完整課程必須安裝 Git。</p></blockquote>
+
+  <h3>3. VS Code 擴充、模型與工作區</h3>
+  <ul class="check">
+    <li><input type="checkbox">已安裝並登入 <strong>GitHub Copilot</strong>,且可開啟 Copilot Chat。</li>
+    <li><input type="checkbox">建立或開啟一個本機可寫入的工作資料夾。</li>
+    <li><input type="checkbox">VS Code 沒有顯示 Restricted Mode;若有,請按 <strong>Trust</strong> 信任此工作區。</li>
+    <li><input type="checkbox">Chat 模式下拉選單可看到並切換至 <strong>Agent</strong>。</li>
+    <li><input type="checkbox">Chat 模型選單看得到 <strong>Auto</strong>,以及至少一個可明確指定的模型。</li>
+  </ul>
+  <blockquote><p>工作坊需要 Agent 建立檔案、執行 Python 與啟動本機服務,因此必須能提出並核准終端機命令。</p></blockquote>
+
+  <h3>4. 實機驗證:Chat、Agent 與終端機</h3>
+  <ul class="check">
+    <li><input type="checkbox"><strong>Chat</strong>:開啟 Copilot Chat,問「<code>what is 1+1</code>」,能收到回應。</li>
+    <li><input type="checkbox"><strong>Agent</strong>:切到 Agent mode,要求它在工作區建立 <code>preflight.txt</code>,確認可提出檔案修改。</li>
+    <li><input type="checkbox"><strong>終端機核准</strong>:要求 Agent 執行 <code>python --version</code>,確認學員能看到並按 <strong>Run</strong> 核准命令。</li>
+  </ul>
+  <blockquote><p>Chat 正常但 Agent 不能寫檔或不能提出/執行終端機命令時,實作練習仍可能卡關,請先處理工作區信任或組織政策。</p></blockquote>
+
+  <h2>② 本機執行環境與套件</h2>
+  <p>工作坊會使用 Python 產生檔案、建立 API 服務並執行本機服務。課前只需確認 Python 已安裝;課程所需套件會在上課當天安裝。</p>
+
+  <h3>Node.js 與 npm(選配)</h3>
+  <p>Node.js 並非主要課程的必要條件;只有需要執行選配前端內容時才需安裝。</p>
+  <div class="code-block"><div class="code-head"><span class="code-lang">powershell</span><button class="copy-btn">複製</button></div><pre><code>node --version
+npm --version
+npm ping</code></pre></div>
+  <ul class="check">
+    <li><input type="checkbox">(選配)<code>npm ping</code> 成功,或至少取得 registry 回應而非逾時、Proxy/SSL 錯誤。</li>
+    <li><input type="checkbox">(選配)Node.js 為 18+(建議 20 LTS)。</li>
+    <li><input type="checkbox">(選配)本機可開啟瀏覽器並存取本機開發伺服器。</li>
+  </ul>
+
+  <h3>Python</h3>
+  <div class="code-block"><div class="code-head"><span class="code-lang">powershell</span><button class="copy-btn">複製</button></div><pre><code>python --version</code></pre></div>
+  <ul class="check">
+    <li><input type="checkbox">Python 為 3.10+。</li>
+    <li><input type="checkbox">Agent mode 可在工作區建立 Python 檔,且學員可核准終端機執行。</li>
+  </ul>
+  <blockquote><p>課前不需安裝 <code>openpyxl</code>、FastAPI、Uvicorn 或其他課程套件。</p></blockquote>
+
+  <h3>localhost 服務</h3>
+  <p>這項測試是確認電腦允許 Python 在 localhost 啟動服務,且另一個程式可以連線。工作坊會用本機 Mock API 模擬企業系統(例如 Jira);Agent 會啟動這個 API,再透過 HTTP 呼叫它。若公司端點防護或防火牆阻擋本機服務,相關實作就無法進行。</p>
+  <p>請同時開啟<strong>兩個彼此獨立的 PowerShell 視窗</strong>,不要在同一個視窗依序執行。</p>
+  <p><strong>PowerShell 視窗 1:啟動測試服務</strong>。執行下列命令後,視窗會持續停在服務執行狀態,這是正常現象;請保持此視窗開啟。</p>
+  <div class="code-block"><div class="code-head"><span class="code-lang">powershell</span><button class="copy-btn">複製</button></div><pre><code>python -m http.server 9000 --bind 127.0.0.1</code></pre></div>
+  <p><strong>PowerShell 視窗 2:測試連線</strong>。保持視窗 1 的服務運作,切換到另一個 PowerShell 視窗執行:</p>
+  <div class="code-block"><div class="code-head"><span class="code-lang">powershell</span><button class="copy-btn">複製</button></div><pre><code>curl.exe -I http://127.0.0.1:9000</code></pre></div>
+  <ul class="check">
+    <li><input type="checkbox">視窗 2 能收到 <code>HTTP/1.0 200 OK</code> 或其他 HTTP 回應。</li>
+    <li><input type="checkbox">驗證完成後,回到視窗 1 按 <code>Ctrl+C</code> 停止測試服務。</li>
+  </ul>
+  <blockquote><p>若公司端點防護或防火牆阻擋 Python 監聽 localhost port <code>9000</code>,請先與 IT 確認。</p></blockquote>
+
+  <h2>③ GitHub repository、CLI 與雲端 coding agent</h2>
+
+  <h3>GitHub repository 權限</h3>
+  <ul class="check">
+    <li><input type="checkbox">擁有一個自己可寫入的 GitHub repository,或有權限建立新 repository。</li>
+    <li><input type="checkbox">能在任一測試 repository 完成 clone、commit 與 push。</li>
+    <li><input type="checkbox">所屬組織已開通 <strong>GitHub Copilot coding agent</strong>;若未開通,請先請組織管理員確認政策。</li>
+  </ul>
+  <div class="code-block"><div class="code-head"><span class="code-lang">powershell</span><button class="copy-btn">複製</button></div><pre><code>git status
+git remote -v</code></pre></div>
+  <blockquote><p>上述命令請在自己現有的測試 repository 內執行,不需要工作坊教材。</p></blockquote>
+
+  <h3>Copilot CLI</h3>
+  <div class="code-block"><div class="code-head"><span class="code-lang">powershell</span><button class="copy-btn">複製</button></div><pre><code>winget install GitHub.Copilot    # 尚未安裝時;也可用 npm install -g @github/copilot
+copilot --version
+copilot                          # 進入 CLI 後執行 /login,再用 /exit 離開</code></pre></div>
+  <ul class="check">
+    <li><input type="checkbox"><code>copilot --version</code> 有正常輸出。</li>
+    <li><input type="checkbox">已在 Copilot CLI 完成 <code>/login</code>。</li>
+    <li><input type="checkbox">所屬組織已開通 <strong>Copilot CLI</strong> 政策。</li>
+  </ul>
+
+  <h3>GitHub CLI</h3>
+  <div class="code-block"><div class="code-head"><span class="code-lang">powershell</span><button class="copy-btn">複製</button></div><pre><code>winget install GitHub.cli    # 尚未安裝時
+gh --version
+gh auth status              # 未登入請執行 gh auth login</code></pre></div>
+  <ul class="check">
+    <li><input type="checkbox"><code>gh auth status</code> 顯示已登入預計上課使用的 GitHub 帳號。</li>
+  </ul>
+  <blockquote><p>請確認登入的帳號對預計使用的 repository 有寫入權限。</p></blockquote>
+
+  <h2>④ MCP 連線前置</h2>
+  <h3>MCP 真實設定體驗(三選一)</h3>
+  <p>工作坊會使用 MCP;CalendarTools 不可用時,可改走 GitHub remote MCP 或免登入的 Microsoft Learn MCP。課前不需建立設定檔,只需確認至少一條路徑可行:</p>
+  <ul class="check">
+    <li><input type="checkbox"><strong>路徑一:CalendarTools</strong>。已有 M365 Copilot 授權,並已提前查好 Entra ID 租戶 ID(<code>tenant_id</code>):
+      <ul><li>回傳的 <code>issuer</code> 格式為 <code>https://login.microsoftonline.com/&lt;tenant_id&gt;/v2.0</code>,中間的 GUID 即為 <code>tenant_id</code>。</li></ul>
+    </li>
+  </ul>
+  <div class="code-block"><div class="code-head"><span class="code-lang">powershell</span><button class="copy-btn">複製</button></div><pre><code># 用公司網域換取租戶 ID,不需登入或任何權限
+(Invoke-RestMethod "https://login.microsoftonline.com/&lt;你的公司網域&gt;/v2.0/.well-known/openid-configuration").issuer</code></pre></div>
+  <ul class="check">
+    <li><input type="checkbox"><strong>路徑二:GitHub remote MCP</strong>。沒有 CalendarTools 授權,但可用 GitHub 帳號完成 OAuth;server URL 為 <code>https://api.githubcopilot.com/mcp/</code>。</li>
+    <li><input type="checkbox"><strong>路徑三:Microsoft Learn MCP</strong>。不方便使用前兩者時,採免登入、免 OAuth 路徑;server URL 為 <code>https://learn.microsoft.com/api/mcp</code>。</li>
+  </ul>
+  <blockquote><p>不需要在課前建立 MCP 設定檔或準備任何範例資料。</p></blockquote>
+
+  <h2>網路 / Proxy / 防火牆</h2>
+  <h3>快速連線測試</h3>
+  <p>在 PowerShell 執行:</p>
+  <div class="code-block"><div class="code-head"><span class="code-lang">powershell</span><button class="copy-btn">複製</button></div><pre><code># Copilot 與 GitHub 基本 HTTPS 連通性
+Test-NetConnection api.github.com -Port 443
+
+# 回傳任意 HTTP 狀態碼代表可連到目標服務;逾時、拒絕或 SSL 錯誤才是異常
+curl.exe -s -o NUL -w "github=%{http_code}`n" https://api.github.com
+curl.exe -s -o NUL -w "copilot-proxy=%{http_code}`n" https://copilot-proxy.githubusercontent.com
+curl.exe -s -o NUL -w "copilot-api=%{http_code}`n" https://api.githubcopilot.com
+
+# 選配前端內容會使用的套件來源
+npm ping
+
+# MCP 路徑二、三(選用哪條就測哪條;任意 HTTP 狀態碼代表已連到服務)
+curl.exe -s -o NUL -w "github-mcp=%{http_code}`n" https://api.githubcopilot.com/mcp/
+curl.exe -s -o NUL -w "learn-mcp=%{http_code}`n" https://learn.microsoft.com/api/mcp</code></pre></div>
+  <blockquote><p>Node.js 為選配,因此不執行前端內容時可略過 <code>npm ping</code>。</p></blockquote>
+
+  <hr>
+  <h2>參考資料</h2>
+  <ul>
+    <li><a href="https://docs.github.com/en/copilot/reference/copilot-allowlist-reference" target="_blank" rel="noopener">GitHub Copilot allowlist reference</a></li>
+    <li><a href="https://docs.github.com/en/copilot/concepts/network-settings" target="_blank" rel="noopener">GitHub Copilot network settings</a></li>
+    <li><a href="https://code.visualstudio.com/docs/setup/network" target="_blank" rel="noopener">VS Code network connections</a></li>
+  </ul>
+</div>
+
+<script>
+(function(){
+  var root=document.documentElement;
+  var saved=localStorage.getItem('handbook-theme');
+  if(saved){root.setAttribute('data-theme',saved);}
+  else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches){
+    root.setAttribute('data-theme','dark');
+  }
+  document.getElementById('themeBtn').addEventListener('click',function(){
+    var next=root.getAttribute('data-theme')==='dark'?'light':'dark';
+    root.setAttribute('data-theme',next);
+    localStorage.setItem('handbook-theme',next);
+  });
+  document.querySelectorAll('.copy-btn').forEach(function(btn){
+    btn.addEventListener('click',function(){
+      var code=btn.closest('.code-block').querySelector('code').innerText;
+      navigator.clipboard.writeText(code).then(function(){
+        var t=btn.textContent;btn.textContent='已複製';
+        setTimeout(function(){btn.textContent=t;},1500);
+      });
+    });
+  });
+})();
+</script>
+</body>
+</html>
