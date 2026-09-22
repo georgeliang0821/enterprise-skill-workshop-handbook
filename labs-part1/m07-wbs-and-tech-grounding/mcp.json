@@ -1,0 +1,33 @@
+// 範例:在 VS Code 專案根目錄的 .vscode/mcp.json 裡加入 CalendarTools。
+// 這是 microsoft/mcp 目錄裡的 remote MCP server,透過 Agent365 存取 Microsoft Graph Calendar API。
+//
+// ⚠️ 使用前請注意:
+// 1. 這個 server 需要貴租戶已開通 Agent365,實際可用性請跟組織的 M365 系統管理員確認——
+//    不是每個租戶現階段都已經開通,這不是本堂課能保證的事。
+// 2. {input:tenant_id} 是 VS Code 的輸入變數語法,存檔後第一次使用時 VS Code 會跳出欄位讓你貼上
+//    貴組織的 Entra ID 租戶 ID,不需要寫死在檔案裡。
+//    建議提前查好再貼,不用等跳出欄位才臨時找:用公司網域換取租戶 ID,不需登入或任何權限:
+//      (Invoke-RestMethod "https://login.microsoftonline.com/<你的公司網域>/v2.0/.well-known/openid-configuration").issuer
+//    或:
+//      curl.exe -s "https://login.microsoftonline.com/<你的公司網域>/v2.0/.well-known/openid-configuration"
+//    回傳的 issuer 欄位格式為 https://login.microsoftonline.com/<tenant_id>/v2.0,中間那段 GUID 就是 tenant_id。
+// 3. 如果你的租戶還沒開通,直接跳過這一步,改用 Lab 7B README 的 B0 路徑二 / 三 + fallback 資料,
+//    用 data/sample-calendar-week.json 模擬 MCP 的回傳結果,不影響練習 Skill 本身的撰寫。
+
+
+{
+  "servers": {
+    "agent365-calendartools": {
+      "type": "http",
+      "url": "https://agent365.svc.cloud.microsoft/agents/tenants/${input:tenant_id}/servers/mcp_CalendarTools"
+    },
+    "microsoft-learn": {
+      "type": "http",
+      "url": "https://learn.microsoft.com/api/mcp"
+    },
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/"
+    }    
+  }
+}

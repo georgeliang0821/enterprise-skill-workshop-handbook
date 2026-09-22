@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>從 Prompt 到 Skill · 從 Prompt 到團隊資產 Workshop · 上半場講義(v5)</title>
+<title>從 Prompt 到 Skill · 從 Prompt 到團隊資產 Workshop · 上半場講義(v6)</title>
 <style>
 
 :root{
@@ -156,12 +156,11 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
 <a href="#sec7-1" data-target="sec7-1" class="toc-h3">四區塊解剖</a>
 <a href="#sec7-2" data-target="sec7-2" class="toc-h3">設計方法:Scope / IO</a>
 <a href="#n-lab6" data-target="n-lab6" class="toc-h3">Lab 6:建立 Meeting Notes Skill</a>
-<a href="#n-m7" data-target="n-m7">M7 · 兩種技術路徑:WBS Generator + Weekly Follow-up Planner</a>
+<a href="#n-m7" data-target="n-m7">M7 · 兩種技術路徑:WBS Generator + Tech Grounding Checker</a>
 <a href="#n-lab7a" data-target="n-lab7a" class="toc-h3">Lab 7A:WBS Generator</a>
-<a href="#n-lab7b" data-target="n-lab7b" class="toc-h3">Lab 7B:Weekly Follow-up Planner</a>
-<a href="#n-m8" data-target="n-m8">M8 · 翻車②:誤觸發實測——三個 Skill 互相干擾</a>
-<a href="#n-wrap" data-target="n-wrap">上半場收尾:三輪紀錄 + 翻車③ 預告</a>
-<a href="#n-wrap-preview" data-target="n-wrap-preview" class="toc-h3">翻車③ 預告(5 分鐘,講師 demo):預設 Agent Mode 的「編排失控」</a>
+<a href="#n-lab7b" data-target="n-lab7b" class="toc-h3">Lab 7B:Tech Grounding Checker</a>
+<a href="#n-wrap" data-target="n-wrap">上半場收尾:三輪紀錄 + 翻車② 預告</a>
+<a href="#n-wrap-preview" data-target="n-wrap-preview" class="toc-h3">翻車② 預告(5 分鐘,講師 demo):預設 Agent Mode 的「編排失控」</a>
 <a href="#n-appA" data-target="n-appA">附錄 A · Context 七層組裝與 # 引用速查(參考,不佔課堂時間)</a>
 <a href="#n-appA-layers" data-target="n-appA-layers" class="toc-h3">A.1 · 每一次請求是怎麼組出來的:七層來源</a>
 <a href="#n-appA-scalpel" data-target="n-appA-scalpel" class="toc-h3">A.2 · # 引用速查:哪些是最佳化、哪些不可取代</a>
@@ -177,18 +176,17 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
 <button class="icon-btn" onclick="window.print()" title="列印 / 存 PDF">&#128424; 列印</button>
 </div>
 <header class="hero" id="intro">
-<div class="hero-eyebrow">從 Prompt 到團隊資產 · GitHub Copilot × M365 Copilot Enterprise Skill Engineering Workshop　·　上半場(M0–M8)</div>
+<div class="hero-eyebrow">從 Prompt 到團隊資產 · GitHub Copilot × M365 Copilot Enterprise Skill Engineering Workshop　·　上半場(M0–M7)</div>
 <h1 class="hero-title">從 Prompt 到 Skill</h1>
 <p class="hero-sub"><strong>同一句 Prompt,為什麼每個人跑出來都不一樣——以及三個 Skill 怎麼把它收斂成每次都一樣。</strong>今天一整天,我們只做一件事:把「AI Meeting Intelligence Portal」這個產品做出來。上半場結束時你手上會有:一份精簡過的 AGENTS.md、一個 prompt file、三個親手撰寫且經實測驗證的 Skill,和一張三輪 before/after 的紀錄。</p>
-<div class="hero-meta"><span class="badge badge-time">⏱ 上半場約 3 小時 40 分</span><span class="badge badge-lab">🧪 四個實作 Lab + 兩次翻車實驗 + 一次翻車預告</span><span class="badge badge-aud">🎯 對象:已使用 Copilot 一段時間的開發者</span><span class="badge badge-env">💻 VS Code + Python</span></div>
+<div class="hero-meta"><span class="badge badge-time">⏱ 上半場約 3 小時 25 分</span><span class="badge badge-lab">🧪 四個實作 Lab + 一次翻車實驗(兩輪)+ 一次翻車預告</span><span class="badge badge-aud">🎯 對象:已使用 Copilot 一段時間的開發者</span><span class="badge badge-env">💻 VS Code + Python</span></div>
 </header>
 
 <div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">講義設計原則</span></div><div class="adm-body">
-<p>「先定終點,再把技術主題掛在功能上」——<strong>每個重要觀念,都先讓你親眼看到沒有它會出什麼事,再教解法。</strong> 上半場有兩次刻意安排的「翻車實驗」,收尾時再預告第三次:</p>
+<p>「先定終點,再把技術主題掛在功能上」——<strong>每個重要觀念,都先讓你親眼看到沒有它會出什麼事,再教解法。</strong> 上半場有一次刻意安排、分兩輪進行的「翻車實驗」,收尾時再預告第二次:</p>
 <ol type="1">
 <li><strong>翻車①(M3 / M5,兩輪)</strong>:同一句 prompt、同一個模型,全班的輸出各不相同;加上 AGENTS.md(always-on instructions)之後只收斂一半 → 這說明了為什麼需要 Skill,也劃出 instructions 與 Skill 的邊界。</li>
-<li><strong>翻車②(M8)</strong>:環境裡有三個 Skill 之後,刻意用模糊指令觀察它選錯 → 這說明了為什麼 description 要寫對比句、什麼時候該把 Skill 鎖成只能手動叫。</li>
-<li><strong>翻車③(收尾預告,下半場 M9 解)</strong>:三個 Skill 都在,一句複合指令下去,誰先跑、跑不跑、會不會越權動檔案,每次都不一樣 → 這是第五種資產 Custom Agent 存在的理由。</li>
+<li><strong>翻車②(收尾預告,下半場 M9 解)</strong>:三個 Skill 都在,一句複合指令下去,誰先跑、跑不跑、會不會越權動檔案,每次都不一樣 → 這是第五種資產 Custom Agent 存在的理由。</li>
 </ol>
 <p>「照著步驟做完」的記憶兩週就淡了;「親眼看到它出事」的記憶會跟著你回到自己的專案裡。</p>
 </div></div>
@@ -200,8 +198,8 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
 <li>親身經歷三輪 before/after——乾淨環境 → 有 AGENTS.md → 有 Skill——並說得出 always-on instructions「管得住什麼、管不住什麼」。(M3 / M5 / M6)</li>
 <li>用 <code>/init</code> 產生 <code>AGENTS.md</code> 草稿並精簡、補上團隊意志;建立帶 <code>${input}</code> 的 <code>.prompt.md</code>;說得出 AGENTS.md 與 copilot-instructions.md 為何擇一。(M4)</li>
 <li>逐塊掌握 SKILL.md 的四個核心區塊(適用範圍、輸入、步驟、輸出格式),並用 Scope / IO 判準決定一件事該不該拆成兩個 Skill。(M6)</li>
-<li>親手完成三個技術路徑不同的 Skill:會議紀錄整理(meeting-summary)、檔案產出(wbs-generator,code execution)、多來源整合(weekly-followup-planner,MCP);每個人都完成過一次真實的 MCP 設定。(M6 / M7)</li>
-<li>在「多個相似 Skill 並存」的環境裡實測誤觸發,學會用 description 對比句收斂 selection;能區分 Prompt File 的手動觸發、Skill 的自動觸發、以及 <code>disable-model-invocation</code> 這道 Skill 自己的護欄。(M8)</li>
+<li>親手完成三個技術路徑不同的 Skill:會議紀錄整理(meeting-summary)、檔案產出(wbs-generator,code execution)、外部文件查證(tech-grounding-checker,MCP);每個人都完成過一次真實的 MCP 設定。(M6 / M7)</li>
+<li>說得出 Skill selection 是機率性語意匹配、description 為什麼要用對比句而不是堆關鍵詞;能區分 Prompt File 的手動觸發、Skill 的自動觸發、以及 <code>disable-model-invocation</code> 這道 Skill 自己的護欄。(M6 / M7)</li>
 </ul>
 
 <h2 id="n-story">今日故事線</h2>
@@ -236,11 +234,10 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
   M4["<b>M4 · Lab</b><br/>/init → AGENTS.md + Prompt File"]
   M5["<b>M5 · 翻車① 第二輪</b><br/>有 instructions 仍偏離預期的部分 → 為什麼需要 Skill"]
   M6["<b>M6 · Lab</b><br/>SKILL.md 四區塊 + meeting-summary(第三輪 before/after)"]
-  M7["<b>M7 · Lab</b><br/>wbs-generator(code exec)+ weekly-followup-planner(MCP)"]
-  M8["<b>M8 · 翻車②</b><br/>誤觸發實測:三個 Skill + 一個 Prompt File"]
-  WRAP["收尾:三輪紀錄 + <b>翻車③ 預告</b>(編排失控)"]
+  M7["<b>M7 · Lab</b><br/>wbs-generator(code exec)+ tech-grounding-checker(MCP)"]
+  WRAP["收尾:三輪紀錄 + <b>翻車② 預告</b>(編排失控)"]
   BREAK(("下半場:從 Skill 到 Agent"))
-  M0-->M1-->M2-->M3-->M4-->M5-->M6-->M7-->M8-->WRAP-->BREAK</script></div></div>
+  M0-->M1-->M2-->M3-->M4-->M5-->M6-->M7-->WRAP-->BREAK</script></div></div>
 
 <h2 id="n-time">課程時間表(上半場)</h2>
 <div class="table-wrap"><table>
@@ -254,9 +251,8 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
 <tr><td>01:25</td><td>M5 翻車① 第二輪:有 instructions 之後仍偏離預期的部分</td><td>實驗+講解</td><td>10</td></tr>
 <tr><td>01:35</td><td>☕ 休息</td><td>—</td><td>10</td></tr>
 <tr><td>01:45</td><td>M6 SKILL.md 四區塊解剖 + Lab 6(meeting-summary,第三輪)</td><td>講解+Lab</td><td>45</td></tr>
-<tr><td>02:30</td><td>M7 Lab 7A WBS Generator + Lab 7B Weekly Follow-up Planner(MCP)</td><td>Lab</td><td>45</td></tr>
-<tr><td>03:15</td><td>M8 翻車②:誤觸發實測(+ Prompt File 對照組)</td><td>全班實驗</td><td>15</td></tr>
-<tr><td>03:30</td><td>上半場收尾:三輪紀錄回顧 + 翻車③ 預告 + 下半場預告</td><td>講解+demo</td><td>10</td></tr>
+<tr><td>02:30</td><td>M7 Lab 7A WBS Generator + Lab 7B Tech Grounding Checker(MCP)</td><td>Lab</td><td>45</td></tr>
+<tr><td>03:15</td><td>上半場收尾:三輪紀錄回顧 + 翻車② 預告 + 下半場預告</td><td>講解+demo</td><td>10</td></tr>
 </tbody></table></div>
 
 <div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">Lab 之間的可獨立進行性</span></div><div class="adm-body">
@@ -268,21 +264,10 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
 <tr><td>M4 Lab</td><td>無</td><td>兩個檔案都有完成版在 <code>m04-agents-md-and-prompt-file/</code>。</td></tr>
 <tr><td>M5 第二輪</td><td>M4(至少 AGENTS.md)</td><td>把完成版 <code>AGENTS.md</code> 複製到 repo 根目錄即可參加。</td></tr>
 <tr><td>M6 Lab 6 meeting-summary</td><td>M3 / M5(強烈建議,那是這個 Lab 存在的理由)</td><td>素材同上,可獨立進行。</td></tr>
-<tr><td>M7 Lab 7A wbs-generator</td><td>可選:Lab 6 的 Action Items</td><td>改用 <code>m07-wbs-and-followup-planner/sample-transcript.txt</code> 當輸入。</td></tr>
-<tr><td>M7 Lab 7B weekly-followup-planner</td><td>無</td><td>沒有 CalendarTools 權限時走 B0 的路徑二或三,行事曆用 fallback 資料。</td></tr>
-<tr><td>M8 誤觸發實測</td><td>Lab 6 + Lab 7(需要三個 Skill 同時存在)</td><td>暫時把三份完成版 SKILL.md 放進 <code>.github/skills/</code> 即可參加。</td></tr>
+<tr><td>M7 Lab 7A wbs-generator</td><td>可選:Lab 6 的 Action Items</td><td>改用 <code>m07-wbs-and-tech-grounding/sample-transcript.txt</code> 當輸入。</td></tr>
+<tr><td>M7 Lab 7B tech-grounding-checker</td><td>Lab 7A 產出的 WBS .xlsx</td><td>改用 <code>m07-wbs-and-tech-grounding/data/wbs_sample.xlsx</code> 當輸入;Learn MCP 免登入、免 OAuth,B0 不會有人卡住。</td></tr>
 </tbody></table></div>
 
-</div></div>
-
-<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">課前準備</span></div><div class="adm-body">
-<ul>
-<li>VS Code + GitHub Copilot,Agent mode 可用;模型選單<strong>至少有一個可指定的模型</strong>(M3 / M5 / M6 三輪實驗全班鎖同一個講師指定的模型,不用 Auto)。</li>
-<li>Python 3.10+(Lab 7A 用);Node.js 18+(只有想自己重跑 Portal 前端的人才需要)。</li>
-<li>本堂 Lab 素材壓縮檔<strong>當天提供</strong>。課前先建好上課用資料夾與共用 venv(例如 <code>C:\ghcp-workshop</code>,在其中執行 <code>python -m venv .venv</code>);當天把 <code>labs-part1</code> 與 <code>labs-part2</code> 解壓到同一個資料夾底下、與 <code>.venv</code> 並排,再在其中一邊執行 <code>..\.venv\Scripts\Activate.ps1</code> 啟用 venv,接著執行 <code>python -m pip install -r requirements.txt</code> 一次裝好所有套件。</li>
-<li>VS Code 請<strong>開啟 Lab 資料夾本身</strong>(不要開父資料夾),新終端機提示字元應出現 <code>(.venv)</code>;裝完之後全天都不需要再 <code>pip install</code>。</li>
-<li>下半場會用到 GitHub repo、Copilot CLI 與雲端 coding agent——請確認你有一個可以 push 的 repo,並在下半場開始前完成 <code>labs-part2/README.md</code> 的環境檢查。</li>
-</ul>
 </div></div>
 
 <h2 id="sec4">M0 · 開場:Portal Live Demo + 一個關鍵提問</h2>
@@ -294,13 +279,13 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
 <blockquote>
 <p><strong>「你剛剛看到,一段夠詳細的 prompt 可以生出一整個專案。那——如果你的同事明天也要做出結構一模一樣的東西,靠什麼保證他做出來的跟你一致?」</strong></p>
 </blockquote>
-<p>「把 prompt 傳給他」是多數人的第一直覺。M3 會讓你親眼看到這個答案為什麼不夠。</p>
+<p>「把 prompt 傳給他」是多數人的第一直覺。今天會讓你親眼看到這個答案為什麼不夠。</p>
 <div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">今天的核心命題</span></div><div class="adm-body">
-<p>三階,今天全部走過:</p>
+
 <ol type="1">
 <li><strong>Prompt Engineering</strong>——每次重新想怎麼下指令。大部份企業都已經做了。</li>
-<li><strong>Context Engineering</strong>——控制模型每一次請求「看到什麼」:顯性引用、instructions、session 邊界。M2 與 M4。</li>
-<li><strong>Enterprise Skill Engineering</strong>——把「怎麼做」寫下來一次,團隊每個人、每個專案用起來結果一致。M6 之後的全部,一路到下半場。</li>
+<li><strong>Context Engineering</strong>——控制模型每一次請求「看到什麼」:顯性引用、instructions、session 邊界。</li>
+<li><strong>Enterprise Skill Engineering</strong>——把「怎麼做」寫下來一次,團隊每個人、每個專案用起來結果一致。</li>
 </ol>
 </div></div>
 
@@ -316,32 +301,55 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
 </thead>
 <tbody>
 <tr>
-<td><strong>Prompt File</strong></td>
+<td><strong>1. Prompt File</strong></td>
 <td>存成檔案、可重複叫用的指令範本</td>
 <td>你把常用的「幫這個 PR 產生 release notes」指令存成 <code>.prompt.md</code>,之後每次直接 <code>/release-notes</code> 叫出來,不用重打</td>
 </tr>
 <tr>
-<td><strong>Custom Agent</strong></td>
+<td><strong>2. Custom Agent</strong></td>
 <td>一個聚焦、限縮工具的「人設」</td>
 <td>用 <code>@</code> 明確叫出來的角色,只給它特定工具跟特定指令,讓它專心做一件事(例如只做安全審查、不能改檔案)</td>
 </tr>
 <tr>
-<td><strong>Skill</strong></td>
-<td>固定情境 + 標準流程 + 判斷邏輯</td>
-<td>針對一個明確的情境(例如「拿到會議逐字稿」),寫下標準流程、需要的輸入、判斷規則(什麼算決議、日期怎麼換算)與輸出格式;模型判斷情境相符時自動載入,不同人、不同專案執行結果一致</td>
+<td><strong>3. Skill</strong></td>
+<td>固定情境 + 標準流程 + 判斷邏輯 <strong>+ 可執行的腳本</strong></td>
+<td>針對一個明確的情境(例如「拿到會議逐字稿」),寫下標準流程、判斷規則與輸出格式;<strong>其中不該讓模型用推理去猜的部分(日期換算、數值計算、格式驗證)直接寫成 Python/Shell 由 agent 執行</strong>。模型判斷情境相符時自動載入,不同人、不同專案結果一致</td>
 </tr>
 <tr>
-<td><strong>MCP</strong></td>
+<td><strong>4. MCP</strong></td>
 <td>外部系統的標準化連接介面</td>
 <td>「我跟 Outlook 日曆、Jira 溝通的插頭規格」——把外部系統的功能包成 Agent/Skill 可以呼叫的工具,本身不帶團隊的判斷邏輯</td>
 </tr>
 <tr>
-<td><strong>Always-on instructions</strong><br/>(<code>AGENTS.md</code> / <code>copilot-instructions.md</code>)</td>
+<td><strong>5. Always-on instructions</strong><br/>(<code>AGENTS.md</code> / <code>copilot-instructions.md</code>)</td>
 <td>一直都在、自動注入的專案層級規則</td>
 <td>不用叫、每次請求都自動套用的「repo 預設規矩」——命名規範、安全預設、語言/風格慣例都寫這裡,是其他四種資產共用的底層基準</td>
 </tr>
 </tbody>
 </table></div>
+
+
+
+<h3 id="n-m1-tree">五種資產的 github 檔案結構總覽</h3>
+<p>五種資產裡有四種是存在 repo 內的檔案,第五種(MCP)是連線設定</p>
+<div class="code-block"><div class="code-head"><span class="code-lang">.github/ 與相關設定檔(本 workshop 使用的位置)</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>&lt;repo&gt;/
+├── AGENTS.md                              ← always-on 規則(跨工具:VS Code / CLI / 雲端 agent 都讀);/init 產草稿(M4)
+├── .github/
+│   ├── copilot-instructions.md            ← AGENTS.md 的 GitHub 專屬等價物;擇一使用,不要兩個都放
+│   ├── instructions/
+│   │   └── &lt;topic&gt;.instructions.md        ← 帶 applyTo glob 的規則,碰到符合的檔案才注入(下半場 M12)
+│   ├── prompts/
+│   │   └── &lt;name&gt;.prompt.md               ← 可重複叫用的指令範本,手動 /&lt;name&gt; 觸發(M4)
+│   ├── skills/
+│   │   └── &lt;name&gt;/
+│   │       ├── SKILL.md                   ← 固定情境 + 標準流程 + 判斷邏輯,模型判斷相關時自動載入(M6、M7)
+│   │       └── scripts/ templates/ …      ← Skill 可攜帶的腳本與範本,按需取用
+│   └── agents/
+│       └── &lt;name&gt;.agent.md               ← 人設 + tools 白名單 + 路由 + handoffs,用 @&lt;name&gt; 叫用(下半場 M9)
+├── .vscode/
+│   └── mcp.json                           ← VS Code 的 MCP server 連線設定(Lab 7B)
+└── ~/.copilot/                            ← 使用者層級(不進 repo):個人 agents、Copilot CLI 的 MCP 設定</code></pre></div>
+
 <h3 id="sec5-1">二個最像的:x vs y 逐對拆解</h3>
 <p>二種可叫用的資產之所以最難分,是因為它們<strong>兩兩之間</strong>都有一段模糊地帶。以下由「<strong>最像</strong>」排到「比較好分」,一次看懂邊界。分辨時只要問兩件事:<strong>是我喊、還是它自己判斷?</strong> 以及 <strong>它在管動作、身分、做法、還是連線?</strong></p>
 <div class="adm adm-note"><div class="adm-head"><span class="adm-ico">①</span><span class="adm-title">Prompt File vs. Skill 〈最像〉</span></div><div class="adm-body">
@@ -381,66 +389,41 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
 </div></div>
 
 
-<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">②</span><span class="adm-title">Skill vs. MCP</span></div><div class="adm-body">
-<p>兩個常被當成同一類,其實本質相反——一個是「怎麼做」,一個是「連到哪」:</p>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">③</span><span class="adm-title">Skill vs. MCP</span></div><div class="adm-body">
+<p>這兩個最容易被當成「二選一」,但它們<strong>根本不在同一個軸上</strong>。Skill 是三層疊起來的東西,MCP 只對應到最下面那層的一部分:</p>
 <div class="table-wrap"><table>
 <thead>
 <tr>
-<th></th>
+<th>層</th>
 <th>Skill</th>
 <th>MCP</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>負責</td>
-<td>這件事該怎麼做的<strong>團隊 SOP</strong>(判斷層)</td>
-<td>怎麼<strong>連上外部系統</strong>的工具(協定層)</td>
+<td><strong>情境判斷</strong><br/>什麼時候該啟動</td>
+<td>✓ 由 <code>description</code> 決定,模型自己判斷這次對話相不相關、要不要載入</td>
+<td>✗ 工具永遠掛著,它不會判斷「現在適不適合用我」——要由 agent 或 Skill 去叫它</td>
 </tr>
 <tr>
-<td>本質</td>
-<td>知識/程序 + 本地腳本</td>
-<td>運行中的伺服器,提供活的工具/資料</td>
+<td><strong>判斷邏輯</strong><br/>拿到東西後怎麼取捨</td>
+<td>✓ 團隊共識寫在這:什麼算決議、衝突時以誰為準、輸出格式長怎樣</td>
+<td>✗ 完全不碰。同一個 MCP,十個團隊用會有十種結果</td>
 </tr>
 <tr>
-<td>帶團隊判斷?</td>
-<td>Skill 是 SOP,照著這份共識做,結果才會一致</td>
-<td>MCP 是插頭規格——誰都能插,插了之後要幹嘛它不管</td>
+<td><strong>執行</strong><br/>實際動手</td>
+<td>✓ 隨 repo 走的本地腳本(.py / .sh / .ps1),跟程式碼一起版控與 review</td>
+<td>✓ 遠端常駐服務,提供活的工具與資料,處理憑證與連線</td>
 </tr>
 </tbody>
 </table></div>
-<p><strong>一句話 +</strong> Lab 7B 的 <code>weekly-followup-planner</code> 就是搭配使用:MCP 負責讀到你本週行事曆的忙碌與空檔;Skill 負責讀到之後——挑出可用空檔、把未結的 Action Item 排進去、決定輸出格式。</p>
+<!-- 替換:③ Skill vs. MCP 的收尾一句話 -->
+<p><strong>一句話:</strong>MCP 給你「能做什麼」,Skill 決定「什麼時候做、照什麼規矩做」。少了 Skill,MCP 只是一堆沒人指揮的工具。</p>
+<p><strong>注意:</strong>Skill 的腳本當然可以自己打 REST API 碰外部系統——不需要 MCP 也做得到。差別不在「能不能碰」,而在<strong>憑證與維運誰扛</strong>:自己打 API,token 取得與更新、API 改版、錯誤重試全部要自己寫在腳本裡;走 MCP,這些由 server 端統一處理,你只負責授權與呼叫。</p>
 </div></div>
-<h3 id="n-m1-tree">五種資產在 repo 裡長什麼樣:.github 檔案結構總覽</h3>
-<p>五種資產裡有四種是存在 repo 內的檔案,第五種(MCP)是連線設定;另外有一種<strong>不進 repo</strong>的設定——tool set——會在下半場 M9 出現,先記得它不在這棵樹上。今天所有 Lab 的產出,最後都會落在下面這棵樹的某個位置——之後每一節都會回來對照它:</p>
-<div class="code-block"><div class="code-head"><span class="code-lang">.github/ 與相關設定檔(本 workshop 使用的位置)</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>&lt;repo&gt;/
-├── AGENTS.md                              ← always-on 規則(跨工具:VS Code / CLI / 雲端 agent 都讀);/init 產草稿(M4)
-├── .github/
-│   ├── copilot-instructions.md            ← AGENTS.md 的 GitHub 專屬等價物;擇一使用,不要兩個都放
-│   ├── instructions/
-│   │   └── &lt;topic&gt;.instructions.md        ← 帶 applyTo glob 的規則,碰到符合的檔案才注入(下半場 M12)
-│   ├── prompts/
-│   │   └── &lt;name&gt;.prompt.md               ← 可重複叫用的指令範本,手動 /&lt;name&gt; 觸發(M4)
-│   ├── skills/
-│   │   └── &lt;name&gt;/
-│   │       ├── SKILL.md                   ← 固定情境 + 標準流程 + 判斷邏輯,模型判斷相關時自動載入(M6、M7)
-│   │       └── scripts/ templates/ …      ← Skill 可攜帶的腳本與範本,按需取用
-│   └── agents/
-│       └── &lt;name&gt;.agent.md               ← 人設 + tools 白名單 + 路由 + handoffs,用 @&lt;name&gt; 叫用(下半場 M9)
-├── .vscode/
-│   └── mcp.json                           ← VS Code 的 MCP server 連線設定(Lab 7B)
-└── ~/.copilot/                            ← 使用者層級(不進 repo):個人 agents、Copilot CLI 的 MCP 設定</code></pre></div>
-<div class="table-wrap"><table>
-<thead><tr><th>資產</th><th>位置</th><th>被讀取的時機</th><th>共用方式</th><th>今天在哪裡建立</th></tr></thead>
-<tbody>
-<tr><td>Always-on instructions</td><td><code>AGENTS.md</code>(repo 根目錄;跨工具)或 <code>.github/copilot-instructions.md</code>(GitHub 專屬)——擇一</td><td>每一次請求</td><td>隨 repo</td><td>M4(<code>/init</code> 產草稿 → 精簡 → 補團隊意志)</td></tr>
-<tr><td>Custom Instructions(applyTo)</td><td><code>.github/instructions/*.instructions.md</code></td><td>對話涉及符合 glob 的檔案時</td><td>隨 repo</td><td>下半場 M12</td></tr>
-<tr><td>Prompt File</td><td><code>.github/prompts/*.prompt.md</code></td><td>使用者手動 <code>/&lt;name&gt;</code></td><td>隨 repo</td><td>M4</td></tr>
-<tr><td>Skill</td><td><code>.github/skills/&lt;name&gt;/SKILL.md</code></td><td>模型依 description 判斷相關時(可用 <code>disable-model-invocation</code> 改為僅手動)</td><td>隨 repo</td><td>M6、M7</td></tr>
-<tr><td>Custom Agent</td><td><code>.github/agents/*.agent.md</code></td><td>使用者 <code>@&lt;name&gt;</code>,或被其他 agent 當 subagent 呼叫</td><td>隨 repo</td><td>下半場 M9</td></tr>
-<tr><td>MCP</td><td><code>.vscode/mcp.json</code>(VS Code)/ CLI 與雲端 agent 各有設定位置</td><td>agent 需要該工具時</td><td>設定檔;<strong>連線與授權須各執行面分別完成</strong></td><td>Lab 7B</td></tr>
-</tbody></table></div>
-<p>三個執行面(VS Code、Copilot CLI、雲端 coding agent)都會讀取 <code>.github/</code> 底下的 instructions、skills、agents——這是下半場「資產可攜」的基礎。<code>.vscode/mcp.json</code> 則只有 VS Code 讀。</p>
+
+
+
 <h3 id="sec5-2">進 Lab 前,先自我檢測一下</h3>
 <p>以下情境,各屬於 Prompt File / Custom Agent / Skill / MCP / Always-on instructions / Agent Mode 中的哪一個?</p>
 <ol class="steps" type="1">
@@ -466,7 +449,7 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
 </details>
 
 <h2 id="n-m2">M2 · Context Engineering:先看兩個症狀,再對症下藥(講師 demo)</h2>
-<p>M0 的核心命題有三階。第一階「Prompt Engineering」大部份企業都已經做了;第三階「Skill Engineering」是今天的主軸。中間這一階——<strong>Context Engineering:控制模型每一次請求「看到什麼」</strong>——是多數人跳過的。這一節只有 10 分鐘的講師 demo:看兩個症狀、記住兩個動作(<code>#file</code>、新開 session)。完整的七層組裝表與 <code>#</code> 引用速查整理在<a href="#n-appA">附錄 A</a>,回公司再翻。</p>
+<p>M0 的核心命題有三階。第一階「Prompt Engineering」大部份企業都已經做了;第三階「Skill Engineering」是今天的主軸。中間這一階——<strong>Context Engineering:控制模型每一次請求「看到什麼」</strong>——是多數人跳過的。這一節看兩個症狀、記住兩個動作(<code>#file</code>、新開 session)。完整的七層組裝表與 <code>#</code> 引用速查整理在<a href="#n-appA">附錄 A</a>。</p>
 
 <h3 id="n-m1b-pain">症狀一:Agent 必須自行定位檔案</h3>
 <ol class="steps" type="1">
@@ -482,7 +465,7 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
 <li>新開一個 session，固定模型，送出不含附件的基準問題。點擊或 hover chat 輸入框的 <strong>Context Window 使用量指示器</strong>，記錄 Context Window、Session Cost、Files 與 Tool Results。</li>
 <li>另開一個全新 session，把 <code>src/</code> 資料夾拖進 chat，送出相同問題。資料夾附件只會提供路徑與目錄結構，不會把所有檔案全文加入 prompt；Agent 仍須自行搜尋及讀取檔案。本例的日期換算不在 <code>src/</code>，因此這是一個不精準的探索範圍。</li>
 <li>再開一個全新 session，使用 <code>#file</code> 只附加真正包含日期換算的檔案，送出相同問題。這次完整檔案內容會直接進入 request，Agent 可以少做搜尋與讀檔。</li>
-<li>比較三次的 Context Window、Session Cost、Files 與 Tool Results。若要確認差異來源，再打開 <strong>Agent Debug Logs → Summary</strong>，比較 input tokens、tool calls、cache reuse 與 credits。</li>
+<li>比較三次的 Context Window、Session Cost、Files 與 Tool Results</li>
 </ol>
 <p>本次測試中，附加正確檔案雖然提高了 Files 的占比，卻減少了 Agent 搜尋、讀檔與工具結果所需的 context，因此整體 token 與 credits 反而較低。重點不是「附件越少越省」，而是<strong>越早提供正確且最小的 authoritative context，Agent 越不需要花 token 探索錯誤範圍</strong>。實際差距仍會受到模型、回答長度、快取與工具決策影響，教學時應將數字視為這次實驗結果，而不是固定比例。</p>
 
@@ -501,7 +484,8 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
 <h3 id="n-m2-fix">對症下藥:記住兩個動作</h3>
 <ol class="steps" type="1">
 <li><strong>已知關鍵檔案,就 <code>#file</code> 明確附加</strong>——不是點開就好。不知道在哪,給一個合理的範圍(拖資料夾縮小搜尋範圍),或直接讓 agent 搜——agent mode 內建 codebase search,<code>#codebase</code> 在 agent mode 多數是多餘的。引用的原則不是「多加幾個比較保險」,而是<strong>加入完成任務所需、最小且可信的來源</strong>。</li>
-<li><strong>換任務就新開 session</strong>——上一輪的訊息與工具結果會一直佔著 context,也會干擾新任務。長 session 可用 <code>/compact</code> 把舊對話壓成摘要騰出 context window,但不會退回已消耗的 credits。</li>
+
+<li><strong>換任務就新開 session</strong>——上一輪的訊息與工具結果會一直佔著 context,也會干擾新任務。<code>/compact</code> 是求生工具,不是省 token 工具:它額外計費,且不保證縮小 context。要騰出空間請開新 session。</li>
 </ol>
 <p>等一下 M3、M5、M6 三輪實驗,每一輪都要新開 session,原因就在第二個動作:不新開,模型會參考自己上一輪的輸出。<code>#terminalLastCommand</code>、<code>#web</code> 等其他引用什麼時候才「不可取代」,見<a href="#n-appA">附錄 A</a> 的速查表。</p>
 
@@ -509,8 +493,8 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
 <p><strong>在學任何 SKILL.md 語法之前,先做這個 15 分鐘的實驗。</strong></p>
 <div class="labchip"><span class="labchip-ico">📄</span><code>m06-meeting-summary-skill/sample-transcript.txt</code><span class="labchip-desc">— 全班共用的同一份逐字稿</span></div>
 <div class="labchip"><span class="labchip-ico">📄</span><code>m03-drift-experiment/worksheet.md</code><span class="labchip-desc">— 三輪比對記錄表(每人一份;M3 / M5 / M6 各一欄)</span></div>
-<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">全班鎖同一個模型,不用 Auto</span></div><div class="adm-body">
-<p>模型選單<strong>全班鎖同一個講師指定的模型</strong>(當天可用的 1x 等級模型即可),並在 worksheet 記下模型名稱——M5 第二輪、M6 第三輪都用同一個。這樣三輪之間唯一的變因就是「有沒有 instructions / 有沒有 Skill」。Auto 會依任務與系統狀態在不同時間路由到不同模型,那是另一個變因,今天刻意不混進來;Auto 怎麼運作、什麼情境該鎖模型,見<a href="#n-appB">附錄 B</a>。</p>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">建議鎖同一個模型,不用 Auto</span></div><div class="adm-body">
+<p>建議鎖同一個模型(GPT-5.6 Luna), Auto 會依任務與系統狀態在不同時間路由到不同模型;Auto 怎麼運作、什麼情境該鎖模型,見<a href="#n-appB">附錄 B</a>。</p>
 </div></div>
 <p>操作(每個人都做,不要跳過):</p>
 <ol class="steps" type="1">
@@ -519,36 +503,31 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
 <li>跑完後不要修、不要重跑,保留第一次的輸出;在 worksheet 記下模型名稱。</li>
 <li>講師現場抽 3-4 位學員,把輸出投影並排比對。</li>
 </ol>
-<p>比對時盯著這四個點看:</p>
+<p>比對時分兩層看——<strong>結構層幾乎每個人都不一樣;內容層不一定每個人都中,但全班二十幾份輸出攤開來,一定有人中。</strong></p>
 <div class="table-wrap"><table>
 <thead><tr><th>檢查點</th><th>你會看到的偏離預期</th></tr></thead>
 <tbody>
-<tr><td>輸出結構</td><td>有人被分成摘要/決議/待辦,有人是一大段流水帳,有人多了「討論重點」這種自創區塊</td></tr>
-<tr><td>Due Date</td><td>逐字稿裡 David 說「這週五前」、George 說「下週三前」——有人換算成實際日期,有人照抄相對用詞,有人乾脆沒抓到期限</td></tr>
-<tr><td>Decisions 判定</td><td>「跟 SAP 整合」在逐字稿裡明講「先不排進 PoC 範圍」——有人正確排除,有人把它列成決議或待辦</td></tr>
-<tr><td>Owner 欄位</td><td>有人寫姓名(David / Mary / George),有人寫職稱(架構師 / 財務窗口)</td></tr>
+<tr><td>輸出結構(結構層)</td><td>有人分成摘要/決議/待辦,有人是一大段流水帳,有人多了「討論重點」「風險項目」這種自創區塊,區塊順序也不一樣</td></tr>
+<tr><td>欄位格式(結構層)</td><td>同一欄有人叫「工作項目」、有人叫「待辦事項」;Owner 有人寫姓名(David / Mary / George)、有人寫職稱(架構師 / 財務窗口);日期格式每份都不同</td></tr>
+<tr><td>Due Date 換算(內容層)</td><td>Mary 說「下週會議前」——下週會議是哪天,逐字稿從沒出現過;George 說「大概下週三前」——那個「大概」有人保留、有人抹掉。有人換算成實際日期,有人照抄相對用詞,有人註明「確切日期未定」</td></tr>
+<tr><td>被推翻的決議(內容層)</td><td>PoC 啟動時間先決議「下週開始」,後面因為資安與成本來不及,Host 改口「下下週初」——有人只抓到第一次,有人兩個都列,有人正確收斂到最後版本</td></tr>
+<tr><td>待辦的認定邊界(內容層)</td><td>David 順口提「現有 Portal 存取權限要有人去盤一下」,現場沒人認領——有人漏掉,有人掛給 George,有人掛給 David,期限有人寫「PoC 環境開啟前」、有人寫「未明確指定」。另一邊「跟 SAP 整合」明講「先不排進 PoC 範圍」——有人正確排除,有人仍列成待辦</td></tr>
 </tbody></table></div>
-<p>然後回到 M0 留下的那個提問:「把 prompt 傳給同事」為什麼不夠?——你們剛剛全班用的是同一句 prompt、同一份輸入,輸出還是長得不一樣。這不是誰的 prompt 寫得不好,是 LLM 生成本質上的 sampling variance:沒有被固定下來的判斷(什麼算決議、日期怎麼換算、欄位長怎樣),每次都會重新被「發明」一次。<strong>而且你們用的是同一個模型——這個差異不能怪「模型不同」。</strong></p>
+
+<p>然後回到 M0 留下的那個提問:「把 prompt 傳給同事」為什麼不夠?——你們剛剛全班用的是同一句 prompt、同一份輸入,輸出還是長得不一樣。這不是誰的 prompt 寫得不好,而是<strong>逐字稿裡有一堆沒有標準答案的判斷</strong>(什麼算決議、被改過的結論要聽哪一次、沒人認領的事情算不算待辦、相對日期要不要換算),這些判斷沒有被固定下來,每次就會重新被「發明」一次。<strong>而且你們用的是同一個模型——這個差異不能怪「模型不同」。</strong></p>
 <p>這就是 Consistency Gap 的長相。一個常見的因應方式是「把規則寫進 always-on instructions」——M4 就做這件事,做完之後回來執行第二輪,驗證它能收斂多少。</p>
 
-<h2 id="n-m4">M4 · Lab 4:AGENTS.md 與 Prompt File <em>(Lab ★)</em></h2>
-<p>五種資產裡,<strong>Always-on instructions(一直都在的規則)</strong>與 <strong>Prompt File(自訂的 /)</strong>是這個 Lab 的對象。兩個檔案都貼著會議 Portal 的故事,之後都會被回收。(第三種「碰到符合檔案才注入」的 Custom Instructions(<code>applyTo</code>)留到下半場 M12 產 FastAPI 骨架時再建——那時它才有東西可以套。)</p>
-<div class="table-wrap"><table>
-<thead><tr><th>檔案</th><th>寫什麼</th><th>誰讀、何時讀</th><th>之後在哪裡回收</th></tr></thead>
-<tbody>
-<tr><td><code>AGENTS.md</code>(repo 根目錄)</td><td>由 <code>/init</code> 產生草稿:build / test 指令、框架、目錄結構等<strong>客觀事實</strong>;再由你補上<strong>團隊意志</strong>:回覆用繁中、Owner 用姓名不用職稱、日期一律 YYYY-MM-DD、不編造人名、不補規格外的商業邏輯</td><td>每一次請求自動注入;VS Code、Copilot CLI、雲端 coding agent 都讀</td><td>M5 第二輪;下半場 M13 / M14 在 CLI 與雲端 agent 上原封不動生效</td></tr>
-<tr><td><code>.github/prompts/meeting-quickcheck.prompt.md</code><br/>含 <code>${input:meetingDate}</code></td><td>「快速檢查這份逐字稿:有沒有明確決議?有沒有沒訂期限的承諾?」</td><td>你手動打 <code>/meeting-quickcheck</code> 時</td><td>M8 拿來當「手動觸發 vs 自動觸發」的對照組</td></tr>
-</tbody></table></div>
-<div class="labchip"><span class="labchip-ico">📄</span><code>m04-agents-md-and-prompt-file/</code><span class="labchip-desc">— 兩個檔案的完成版(先自己做,再對照)</span></div>
-<h3 id="n-m4-a">A. AGENTS.md:用 /init 產草稿,再由你決定留什麼</h3>
+<h2 id="n-m4">M4 · Lab 4:AGENTS.md — 把團隊規則變成每次都在的規則 <em>(Lab ★)</em></h2>
+<p>五種資產裡,<strong>Always-on instructions(一直都在的規則)</strong>是這個 Lab 的對象。這是最直覺的解法:既然每次輸出都不一樣,那就把規則寫下來,讓它每次都生效。(另外兩種「手動叫用才載入」與「碰到符合檔案才注入」的資產,等一下第二輪跑完你會知道它們為什麼存在。)</p>
+<div class="labchip"><span class="labchip-ico">📄</span><code>m04-agents-md/</code><span class="labchip-desc">— AGENTS.md 完成版(先自己做,再對照)</span></div>
+<h3 id="n-m4-a">A. 用 /init 產草稿,再由你決定留什麼</h3>
 <div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">/init 的產出是草稿,不是成品</span></div><div class="adm-body">
 <p><code>/init</code> 會派 subagent 探索 codebase,把發現寫成 <code>AGENTS.md</code>。它抓得到<strong>客觀事實</strong>(怎麼 build、怎麼跑測試、用什麼框架、目錄長什麼樣),抓不到<strong>團隊意志</strong>(為什麼禁用某個 pattern、哪些目錄碰不得、安全紅線)。這正是 M2 症狀二在 repo 層的解法:讓 agent 把每個 session 都要重新發現的事實探索一次、寫下來,以後不再花 token 重新探索——<strong>但這份檔案每一次請求都會被送出去</strong>,所以第二步是精簡。</p>
 </div></div>
 <ol class="steps" type="1">
-<li><strong>A1 產草稿</strong>:在 Portal 專案的 chat 輸入 <code>/init</code>。它會讀 <code>package.json</code>、設定檔、目錄結構——展開 references 看它讀了什麼。完成後 repo 根目錄會出現 <code>AGENTS.md</code>。若它順帶建議產生 skills 或 custom agents,<strong>今天只保留 AGENTS.md</strong>——那兩種資產你稍後會自己寫。</li>
+<li><strong>A1 產草稿</strong>:在 Portal 專案的 chat 輸入 <code>/init</code>。它會讀 <code>package.json</code>、設定檔、目錄結構——展開 references 看它讀了什麼。完成後 repo 根目錄會出現 <code>AGENTS.md</code>。若它順帶建議產生 skills、prompts 或 custom agents,<strong>今天只保留 AGENTS.md</strong>——那些資產你稍後會自己寫,而且會知道為什麼要寫。</li>
 <li><strong>A2 精簡</strong>:逐段看草稿,問一個問題——「這一段是不是每一次請求都需要?」不是的就刪(或改成一行連結指向文件,官方建議「link, don't embed」)。對照附錄 A 七層表的第 2 層:這裡多一行,每個請求就多付一行。</li>
-<li><strong>A3 補團隊意志</strong>:在末尾加上 <code>/init</code> 不可能知道的規則。今天的版本是下面五條;它們對應 M3 四種偏離預期裡的兩種(Owner 姓名、日期格式)——其餘兩種(什麼算決議、輸出結構)是判斷邏輯,不屬於這裡,原因等第二輪你會親眼看到。</li>
-<li><strong>A4 檢核</strong>:隨便問一句(例如「這個 repo 是做什麼的?」),展開 references——應該看到 <code>AGENTS.md</code>。<strong>看得到,才代表它真的被注入了。</strong></li>
+<li><strong>A3 補團隊意志</strong>:在末尾加上 <code>/init</code> 不可能知道的規則。今天的版本是下面五條,它們直接瞄準你在 M3 看到的偏離預期:Owner 用姓名不用職稱、日期一律 YYYY-MM-DD、不確定的寫「未訂」不要猜。</li>
 </ol>
 <div class="code-block"><div class="code-head"><span class="code-lang">AGENTS.md(完成版:上半段為 /init 精簡後的客觀事實,下半段為團隊意志)</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code># AI Meeting Intelligence Portal
 
@@ -563,63 +542,80 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
 ## 團隊規則(每次請求都適用,保持精簡)
 - 一律用繁體中文回覆;程式碼註解與 commit message 用英文。
 - 提到人名時使用逐字稿或程式碼中出現的實際姓名,不要用職稱代替,也不要編造名字。
-- 所有日期輸出使用 YYYY-MM-DD;無法確定的日期寫「未訂」,不要猜。
+- 對「人看的輸出」(會議紀錄、報告、摘要),日期一律用中華民國年:民國YYY年M月D日,例如 2026-01-01 寫成「民國115年1月1日」;無法確定的日期寫「未訂」,不要猜。程式碼、設定檔、API 欄位維持 ISO 8601(YYYY-MM-DD)。
 - 不要在骨架程式碼裡補上規格沒有的商業邏輯。
-- 需要外部系統(Jira、行事曆)的操作時,先說明你要做什麼、再等使用者確認。</code></pre></div>
+- 需要外部系統(Jira、行事曆)的操作時,先說明你要做什麼、再等使用者確認。
+</code></pre></div>
 <div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title">AGENTS.md 與 .github/copilot-instructions.md:擇一,不要兩個都放</span></div><div class="adm-body">
 <p>兩者都是 always-on 規則,VS Code 兩個都會注入——同時存在就是同一段內容付兩次。差別在<strong>可攜性</strong>:<code>AGENTS.md</code> 是跨工具慣例,Copilot CLI 與雲端 coding agent 原生讀取;<code>.github/copilot-instructions.md</code> 是 GitHub 專屬的等價物。本課用 AGENTS.md,因為下半場要在三個執行面證明同一份檔案都生效。既有 repo 若已有 copilot-instructions.md,沿用即可,內容規則相同。</p>
 </div></div>
-<h3 id="n-m4-b">B. Prompt File:把固定動詞存成 /</h3>
-<ol class="steps" type="1">
-<li>建立 <code>.github/prompts/meeting-quickcheck.prompt.md</code>。用 <code>${input:meetingDate:會議日期 YYYY-MM-DD}</code> 讓它在叫用時跳出輸入框——這就是 M3 裡「沒基準日就換算不了期限」的解法之一,只是這次是「使用者在叫用時給」。</li>
-<li>把 <code>sample-transcript.txt</code> 拖進 chat,輸入 <code>/meeting-quickcheck</code>,填日期,送出。</li>
-<li>注意兩件事:<strong>它不會被自動觸發</strong>——你不打 <code>/</code> 它就不存在;<strong>它是一段文字</strong>——沒有附件、沒有腳本,這是它跟 Skill 最根本的差別(M1 第①對)。</li>
-</ol>
-<div class="code-block"><div class="code-head"><span class="code-lang">.github/prompts/meeting-quickcheck.prompt.md(完成版)</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>---
-description: 快速檢查一份會議逐字稿:有沒有明確拍板的決議、有沒有沒訂期限的承諾。不產生完整會議紀錄。
-agent: agent
----
-會議日期:${input:meetingDate:會議日期 YYYY-MM-DD}
-
-請只做兩件事,不要產生完整摘要:
-1. 列出逐字稿中「明確被拍板同意」的決議(單純討論或提議不算);沒有就寫「無」。
-2. 列出所有「某人承諾要做某事、但沒有講期限」的句子,標出說話的人(用實際姓名)。
-   有講期限的,依上面的會議日期換算成 YYYY-MM-DD 一併列出。
-
-輸出用兩個小標題:「決議」「未訂期限的承諾」。</code></pre></div>
-<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">兩個檔案,兩種「何時被讀」——之後還有兩種</span></div><div class="adm-body">
-<p><strong>AGENTS.md:每次注入</strong>(所以要精簡)。<strong>Prompt File:手動叫用才載入</strong>(所以可以帶參數)。等一下 M6 會加第三種:<strong>Skill——模型判斷相關才載入</strong>,而且可以帶腳本與範本;下半場 M12 再加第四種:<strong>Custom Instructions(applyTo)——處理到符合的檔案才注入</strong>(所以可以寫得很具體)。「被讀取的時機」不同,就是這幾種資產最本質的差別。</p>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">這份檔案會活很久</span></div><div class="adm-body">
+<p>它不只用在今天的會議摘要。下半場 M13 / M14 你會把同一份 <code>AGENTS.md</code> 原封不動搬到 Copilot CLI 與雲端 coding agent 上,證明規則跨執行面生效。現在先去驗證它在<strong>這一個任務</strong>上收斂了多少。</p>
 </div></div>
-<div class="adm adm-check"><div class="adm-head"><span class="adm-ico">✅</span><span class="adm-title">完成檢核</span></div><div class="adm-body">
-<ul>
-<li>任意一句 chat 的 references 都列出 <code>AGENTS.md</code>;你能指出草稿裡被你刪掉的至少一段,並說出為什麼。</li>
-<li><code>/meeting-quickcheck</code> 出現在 <code>/</code> 選單、會跳出日期輸入框、輸出只有兩個小標題。</li>
-<li>你說得出:為什麼「什麼算決議」不該寫進 AGENTS.md。</li>
-</ul>
-</div></div>
+
 
 <h2 id="n-m5">M5 · 翻車① 第二輪:有 instructions 之後仍偏離預期的部分</h2>
-<h3 id="n-m5-1">第二輪:同一句、同一份、同一個模型,多了 AGENTS.md</h3>
+<h3 id="n-m5-a">A. 第二輪:同一句、同一份、同一個模型,多了 AGENTS.md</h3>
 <ol class="steps" type="1">
-<li><strong>新開一個 session</strong>(不要在第一輪的對話裡續問,它會參考自己剛剛的輸出)。模型維持第一輪鎖的那一個。</li>
-<li>再拖一次 <code>sample-transcript.txt</code>,再下同一句:「幫我整理這場會議的紀錄」。</li>
-<li>跟第一輪並排,在 worksheet 上逐項打勾:四種偏離預期哪些收斂了、哪些沒有。</li>
+<li><strong>新開一個 session</strong>(不要在第一輪的對話裡續問,它會參考自己剛剛的輸出)。模型維持第一輪鎖的那一個,對照組維持 Auto。</li>
+<li>再拖一次 <code>sample-transcript.txt</code>,再下同一句:「幫我整理這場會議的紀錄」。一樣不要修、不要重跑。</li>
+<li>跟第一輪並排,在 worksheet 上逐項打勾:五種偏離預期哪些收斂了、哪些沒有。</li>
 </ol>
 <div class="table-wrap"><table>
 <thead><tr><th>檢查點</th><th>第二輪通常會怎樣</th><th>原因</th></tr></thead>
 <tbody>
-<tr><td>Owner 欄位</td><td>✅ 大多收斂成姓名</td><td>這是「風格規則」,instructions 管得住</td></tr>
-<tr><td>Due Date 格式</td><td>◐ 有寫日期的變成 YYYY-MM-DD;但「這週五」仍有人換算不出或算錯</td><td>格式是風格;<strong>換算需要基準日這個輸入</strong>,instructions 給不了輸入</td></tr>
-<tr><td>Decisions 判定</td><td>❌ SAP 整合仍有人列進去</td><td>這是判斷邏輯,需要「什麼才算決議」的步驟定義,不是一條風格規則</td></tr>
-<tr><td>輸出結構</td><td>❌ 仍有人四區塊、有人流水帳</td><td>沒有人指定輸出格式;instructions 裡也不應為單一任務指定格式</td></tr>
+<tr><td>輸出結構</td><td>❌ 仍有人四區塊、有人流水帳,區塊順序也還是不一樣</td><td>沒有人指定輸出格式;而這種只適用於單一任務的格式,也不該寫進每次都注入的 instructions</td></tr>
+<tr><td>欄位格式</td><td>◐ Owner 收斂成姓名了——連 Host 說的「架構師這邊麻煩你」也會被還原成 David;但欄位名稱三份三種(工作項目 / 待辦事項 / 工作內容),列數 4 到 5 條不等</td><td>「用姓名不用職稱」是風格規則,管得住;欄位要叫什麼、哪些事該獨立成一列,沒有人規定</td></tr>
+<tr><td>Due Date 換算</td><td>◐ 格式收斂成 YYYY-MM-DD,「未訂」也開始出現;但 George 那句「<strong>大概</strong>下週三前」算不算「確定」——有人寫 2026-07-15,有人寫「約 2026-07-15 前」,有人寫未訂</td><td>規則定義了「不確定時怎麼寫」,沒有定義「<strong>什麼叫不確定</strong>」。前者是風格,後者是判斷</td></tr>
+<tr><td>被推翻的決議</td><td>◐ PoC 啟動時間多半能收斂到「下下週初 / 未訂」;但<strong>決議有幾條</strong>會炸開——逐字稿裡 Host 明講的只有兩條,有人列 2 條,有人把「環境須待資安確認」「SAP 不列入本次 PoC」也升格成決議,列到 5 條</td><td>「不要猜日期」是風格規則,收得住;「什麼才算一條決議」是判斷邏輯,instructions 沒有定義</td></tr>
+<tr><td>待辦的認定邊界</td><td>◐ 「不要編造名字」生效了,沒人再把無主的權限盤點硬掛給 George 或 David,會寫「未指定」;但那條待辦<strong>該不該列</strong>仍然分歧,有人整條漏掉。SAP 的後續成本重估,也有人列進待辦、有人放進後續議題</td><td>規則管得住「不知道時不要亂填」,管不住「這件事算不算待辦」</td></tr>
 </tbody></table></div>
-<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">instructions 管風格,管不了判斷——所以下一步是 Skill</span></div><div class="adm-body">
-<p>你剛親手驗證了一件事:<strong>always-on instructions(AGENTS.md)能收斂「怎麼寫」,收不了「怎麼判斷」與「需要什麼輸入」</strong>。要收後兩者,需要一個「模型判斷相關時才載入、內含固定情境、標準流程、判斷邏輯與輸出格式」的東西——那就是 M6 的 SKILL.md。這也是 M1 表格裡 always-on instructions 與 Skill 的邊界。</p>
+<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">收斂的都在「落筆時」,沒收的都在「落筆前」</span></div><div class="adm-body">
+<p>看看收斂的那幾項——用姓名不用職稱、日期寫成 YYYY-MM-DD、不確定寫「未訂」、不知道負責人寫「未指定」——全都發生在<strong>落筆的當下</strong>。再看沒收斂的那幾項——什麼才算一條決議、沒人認領的事算不算待辦、這張表該長幾列、欄位要叫什麼——全都要在<strong>落筆之前</strong>就決定好。</p>
+<p>連「無法確定的日期寫未訂」這條都只走到一半:它規定了不確定時怎麼寫,卻規定不了什麼叫不確定,所以「大概下週三前」還是各寫各的。</p>
+<p>那把判斷邏輯也寫進 <code>AGENTS.md</code> 不就好了?可以,但你會付兩次代價:一是這些規則只適用於「整理會議紀錄」這一種任務,卻<strong>每一次請求都被注入</strong>——你改個 CSS 也要付;二是判斷邏輯寫清楚要好幾行,M4 的 A2 才剛教你精簡,這裡馬上又胖回去。所以下一步先試另一個地方。</p>
+</div></div>
+<h3 id="n-m5-b">B. 那把判斷寫在哪?先試 Prompt File</h3>
+<p>Prompt File 是<strong>手動叫用才載入</strong>的一段指令:你打 <code>/</code> 它才存在,不打就完全不佔成本。既然判斷邏輯只有整理會議時才需要,放這裡看起來剛剛好。</p>
+<div class="labchip"><span class="labchip-ico">📄</span><code>m05-prompt-file/</code><span class="labchip-desc">— meeting-quickcheck.prompt.md 完成版</span></div>
+<ol class="steps" type="1">
+<li>建立 <code>.github/prompts/meeting-quickcheck.prompt.md</code>,內容如下。注意它把第二輪沒收斂的幾件事<strong>直接寫成判斷規則</strong>:被改過口的以最後一次為準、沒人認領的寫「未指定」、輸出用固定兩個小標題。</li>
+<li><code>${input:meetingDate:會議日期 YYYY-MM-DD}</code> 會在叫用時跳出輸入框——今天這份逐字稿抬頭剛好有日期,但真實世界從錄音轉出來的檔案常常沒有,這個參數就是讓使用者在叫用當下把基準日補進來。</li>
+<li>把 <code>sample-transcript.txt</code> 拖進 chat,輸入 <code>/meeting-quickcheck</code>,填日期,送出。<strong>跑兩次</strong>,比對兩次的決議條數與未訂期限清單。</li>
+</ol>
+<div class="code-block"><div class="code-head"><span class="code-lang">.github/prompts/meeting-quickcheck.prompt.md(完成版)</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>---
+description: 快速檢查一份會議逐字稿:有沒有明確拍板的決議、有沒有沒訂期限的承諾。不產生完整會議紀錄。
+agent: agent
+argument-hint: 會議日期(西元 YYYY-MM-DD)
+---
+會議日期:${input:meetingDate:會議日期(西元 YYYY-MM-DD)}
+
+## 執行前檢查
+若上方「會議日期」為空白、仍是 `${input:...}` 原文,或不符合 YYYY-MM-DD 格式,
+**立即停止,不要輸出任何分析結果**,只回一句話向使用者索取會議日期。
+
+請只做兩件事,不要產生完整摘要:
+1. 列出逐字稿中「明確被拍板同意」的決議(單純討論、提議、或主持人補充說明都不算);
+   沒有就寫「無」。
+   若同一件事在會議中被改過口,以最後一次為準,並註明原本的版本。
+2. 列出所有「某人承諾要做某事、但沒有講期限」的句子,標出說話的人(用實際姓名);
+   沒有人認領的事項,負責人寫「未指定」。
+   有講期限的,依上面的會議日期換算並一併列出(日期格式依團隊規則,見 AGENTS.md);
+   期限帶有「大概」「左右」這類模糊詞的,日期後面加註「(未確認)」。
+
+輸出用兩個小標題:「決議」「未訂期限的承諾」。</code></pre></div>
+<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">它有效——但只有在你記得打斜線的時候</span></div><div class="adm-body">
+<p>跑完兩次你會發現:判斷邏輯<strong>收斂了</strong>。決議條數穩定了,「大概下週三前」兩次都標成未確認,無主的權限盤點兩次都是「未指定」。寫在 <code>AGENTS.md</code> 裡會太胖的規則,寫在這裡剛剛好——而且不打 <code>/</code> 就不佔任何成本。</p>
+<p>那為什麼還需要 Skill?回到 M0 那個場景:同事收到一份逐字稿,他的直覺動作是把檔案拖進去說「<strong>幫我整理一下</strong>」。那一刻,這個 prompt file 等於不存在——你的判斷邏輯寫得再好,他不會知道有這個斜線指令,也不會記得打。</p>
+<p>所以問題從「怎麼把規則寫清楚」變成了:<strong>同樣的判斷邏輯,怎麼讓它在該出現的時候自己出現?</strong>這就是 M6 的 <code>SKILL.md</code>——模型判斷相關時才載入,而且可以帶腳本與範本。這也是 M1 表格裡 Prompt File 與 Skill 的邊界:兩者都寫得下判斷,差別只在<strong>誰負責觸發</strong>。</p>
+</div></div>
+<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">到目前為止,兩種「何時被讀」——之後還有兩種</span></div><div class="adm-body">
+<p><strong>AGENTS.md:每次注入</strong>(所以要精簡,只放跨任務的風格規則)。<strong>Prompt File:手動叫用才載入</strong>(所以可以帶參數、可以寫得很囉唆,但要人記得打)。M6 會加第三種:<strong>Skill——模型判斷相關才載入</strong>;下半場 M12 再加第四種:<strong>Custom Instructions(applyTo)——處理到符合的檔案才注入</strong>。「被讀取的時機」不同,就是這幾種資產最本質的差別。</p>
 </div></div>
 <div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">「模型」這個變因,今天刻意拿掉了</span></div><div class="adm-body">
-<p>三輪都鎖同一個模型,所以你看到的偏離預期是<strong>同一個模型的 sampling variance</strong>,不是模型不同。回公司之後你會面對另一個選擇:日常用 Auto 還是鎖模型?團隊資產為什麼要在 <code>model:</code> 欄位鎖定?Auto 的運作方式與判斷依據整理在<a href="#n-appB">附錄 B</a>;下半場 M13 的 <code>/usage</code> 會讓你看到「一個 Skill 跑一次」花多少。</p>
+<p>三輪都鎖同一個模型,所以你看到的偏離預期是<strong>同一個模型的 sampling variance</strong>,不是模型不同——對照組的 Auto 輸出擺在旁邊,差距會更明顯。之後你會面對另一個選擇:日常用 Auto 還是鎖模型?團隊資產為什麼要在 <code>model:</code> 欄位鎖定?Auto 的運作方式與判斷依據整理在<a href="#n-appB">附錄 B</a>;下半場 M13 的 <code>/usage</code> 會讓你看到「一個 Skill 跑一次」花多少。</p>
 </div></div>
-<p>休息之後的 45 分鐘,我們把第二輪還沒收斂的那兩項——判斷邏輯與輸出格式——用 Skill 收掉。收完之後,你會用同一句指令跑第三次,親眼對比三輪差異。</p>
+<p>休息之後的 45 分鐘,我們把判斷邏輯、認定邊界與輸出格式從 prompt file 搬進 Skill,讓它不需要斜線也會自己出現。收完之後,你會用<strong>跟前兩輪一模一樣的那句話</strong>跑第三次,親眼對比三輪差異。</p>
 
 <h2 id="n-m6">M6 · SKILL.md 四區塊解剖 + Lab 6:meeting-summary</h2>
 <h3 id="sec7-1">四區塊解剖</h3>
@@ -636,7 +632,7 @@ agent: agent
 <tr>
 <td>frontmatter <code>description</code></td>
 <td><strong>選前讀</strong>:決定「要不要選中這個 Skill」。要同時寫清楚「做什麼 + 何時用 + 不是什麼」的對比句 + 關鍵詞</td>
-<td>太泛 → 亂觸發或不觸發;跟其他 Skill 描述太像 → 選錯(M8 會實測這件事)</td>
+<td>太泛 → 亂觸發或不觸發;跟其他 Skill 描述太像 → 選錯(下半場 M11 你會親眼看到一次)</td>
 </tr>
 <tr>
 <td>① 適用範圍 / 不適用時改用</td>
@@ -682,14 +678,14 @@ version: 0.1.0                    # 團隊治理慣例欄位:工具不讀它、�
 ## ④ 輸出格式
 - [ ] ...</code></pre></div>
 <div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">description 是整個 Skill 最關鍵的一行</span></div><div class="adm-body">
-<p>Copilot 靠 <code>description</code> 判斷「這件事我有沒有 SOP」。它要同時回答<strong>做什麼、何時用、不是什麼、有哪些關鍵詞</strong>。寫得準,命中率就高;寫得泛,不是亂觸發就是不觸發。位置放在 <code>.github/skills/&lt;name&gt;/SKILL.md</code>,Chat 打 <code>/skills</code> 可確認被偵測到。多 Skill 並存時 description 怎麼互相干擾,M8 會實測,這裡先埋一句:<strong>description 用對比句法(「是 X,不是 Y」),不要只堆關鍵詞。</strong></p>
+<p>Copilot 靠 <code>description</code> 判斷「這件事我有沒有 SOP」。它要同時回答<strong>做什麼、何時用、不是什麼、有哪些關鍵詞</strong>。寫得準,命中率就高;寫得泛,不是亂觸發就是不觸發。位置放在 <code>.github/skills/&lt;name&gt;/SKILL.md</code>,Chat 打 <code>/skills</code> 可確認被偵測到。Skill selection 是<strong>機率性語意匹配</strong>:多個 Skill 並存時,description 不夠具體、沒有清楚的對比詞,彼此就會互相干擾、選錯或選不到;description 的工作是把機率分佈收窄,不是給出保證。所以:<strong>description 用對比句法(「是 X,不是 Y」),不要只堆關鍵詞。</strong>M7 兩個 Skill 的 description 會各寫一次,新增 Skill 時把新舊 description 一起丟給 Copilot,問「這兩個會不會混淆、什麼情況下會選錯」,至少人工過一次這道關。</p>
 </div></div>
 <div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">disable-model-invocation / user-invocable:兩個常被忽略的開關</span></div><div class="adm-body">
 <ul>
 <li><code>disable-model-invocation: true</code> —— 這個 Skill 不會被自動語意觸發,只能手動 <code>/skill-name</code> 呼叫。</li>
 <li><code>user-invocable</code> —— 決定能不能被使用者手動叫用,預設 true。</li>
 </ul>
-<p>今天的 Lab 只讀不寫,先認識這兩個欄位存在、記得它們的作用。什麼情況下「值得」把一個 Skill 鎖成只能手動呼叫?先放著——M8 會先給一半答案,下半場 M11 會給你一個讓你自己想清楚的場景。</p>
+<p>今天的 Lab 只讀不寫,先認識這兩個欄位存在、記得它們的作用。對照 M4 建的 prompt file:<code>/meeting-quickcheck</code> 每次都準確執行、每次都只做它那兩件事——因為<strong>它根本沒有參與 selection</strong>,是你喊它才出現。所以當一個能力「一定要人明確叫、不能被語意猜中」時,你有兩個選擇:寫成 prompt file,或寫成 Skill 但設 <code>disable-model-invocation: true</code>;差別只在要不要帶附件與腳本。什麼情況下「值得」把一個 Skill 鎖成只能手動呼叫?先放著——下半場 M11 會給你一個讓你自己想清楚的場景。</p>
 </div></div>
 <h3 id="sec7-2">設計方法:Scope / IO</h3>
 <h4 id="h4-1">Scope 怎麼抓——優先權判斷,不是只看一句話長短</h4>
@@ -740,7 +736,7 @@ version: 0.1.0                    # 團隊治理慣例欄位:工具不讀它、�
 <li>建立 <code>.github/skills/meeting-summary/SKILL.md</code>,對照四區塊骨架<strong>自己動手寫</strong>(不要直接複製完成版——寫的過程本身就是在練 Scope / IO 的設計判斷)。寫的時候,把 M5 第二輪還沒收斂的那兩種偏離預期(判斷邏輯、輸出格式)對應成明確規則;已經被 AGENTS.md 收掉的(Owner 姓名、日期格式)在 Skill 裡仍應寫一次——Skill 會被搬到沒有那份 instructions 的 repo:什麼算決議、日期怎麼換算、Owner 用姓名不用職稱、四區塊即使為空也要寫「無」。</li>
 <li>存檔後,Chat 輸入 <code>/skills</code> 確認被偵測到。</li>
 <li><strong>關鍵一步:用跟 M3 一模一樣的方式再跑一次(同一個模型、新開 session)</strong>——貼同一份逐字稿、下同一句「幫我整理這場會議的紀錄」(逐字稿開頭已標註會議日期 2026-07-08),不要點名 Skill 名稱,觀察它有沒有自動選中。</li>
-<li>把這次輸出跟你 worksheet 上 M3 / M5 兩輪的輸出並排比對——這是第三輪,也是今天第一次完整的「before / after」,也是你之後回公司推 Skill 時最有說服力的一張圖。</li>
+<li>把這次輸出跟你 worksheet 上 M3 / M5 兩輪的輸出並排比對——這是第三輪,也是今天第一次完整的「before / after」,也是你之後推 Skill 時最有說服力的一張圖。</li>
 <li>檢查 Due Date:David「這週五前」、Mary「下週會議前」、George「下週三前」,都要換算成 YYYY-MM-DD 實際日期。</li>
 <li>對照完成版 SKILL.md,檢查差異——特別是 description 的寫法,以及「什麼才算真正的決議」「Due Date 怎麼換算」這兩種容易含糊的判斷邏輯怎麼寫清楚。</li>
 </ol>
@@ -756,7 +752,7 @@ version: 0.2.0
 ## ① 適用範圍 / 不適用時改用
 - 適用:使用者提供一份會議逐字稿或會議紀錄全文,並要求產生摘要、決議、風險、或待辦事項——四項只要要求其中任何一項,都由這個 Skill 一次處理。
 - 不適用:使用者只是「討論某個主題」、沒有提供實際逐字稿內容——直接對話回答就好。
-- 不適用:使用者要的是看本週空檔、把未結事項排進去跟進 → 改用 weekly-followup-planner。
+- 不適用:使用者要的是替已經拆好的 WBS / 工作項查證官方技術依據 → 改用 tech-grounding-checker。
 
 ## ② 需要的輸入
 1. 會議逐字稿全文(必要)。
@@ -801,40 +797,40 @@ version: 0.2.0
 </ul>
 </div></div>
 
-<h2 id="n-m7">M7 · 兩種技術路徑:WBS Generator + Weekly Follow-up Planner</h2>
-<p>這個模組一次帶兩個 Skill,刻意選了兩種<strong>技術路徑完全不同</strong>的任務——一個靠 Agent mode 內建的 code execution 產出檔案,一個靠 MCP 接外部工具。兩者的「最大風險」也完全不同,這正是要對照的重點:</p>
+<h2 id="n-m7">M7 · 兩種技術路徑:WBS Generator + Tech Grounding Checker</h2>
+<p>這個模組一次帶兩個 Skill,刻意選了兩種<strong>技術路徑完全不同</strong>的任務——一個靠 Agent mode 內建的 code execution 產出檔案,一個靠 MCP 查官方文件替前者補依據。兩者的「最大風險」也完全不同,這正是要對照的重點:</p>
 <div class="table-wrap"><table>
 <thead>
 <tr>
 <th></th>
 <th>wbs-generator</th>
-<th>weekly-followup-planner</th>
+<th>tech-grounding-checker</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>性質</td>
 <td>結構化生成 + 檔案輸出(code execution)</td>
-<td>多來源工具整合(MCP)</td>
+<td>外部文件查證(MCP)</td>
 </tr>
 <tr>
 <td>技術路徑</td>
 <td>Agent mode 內建檔案編輯 + 終端機執行工具</td>
-<td>MCP server(CalendarTools)+ 內部資料查詢</td>
+<td>Microsoft Learn MCP(Docs Search / Docs Fetch)+ 讀取 7A 產出的 WBS</td>
 </tr>
 <tr>
 <td>輸出</td>
 <td>Excel WBS(大綱階層 + 篩選)</td>
-<td>本週跟進規劃 Markdown</td>
+<td>技術依據對照表 Markdown(已查證 / 查無依據 / 不適用)</td>
 </tr>
 </tbody>
 </table></div>
 <div class="adm adm-note"><h3 id="n-lab7a">Lab 7A:WBS Generator <em>(Lab ★)</em></h3>
 <p>故事線延續 Lab 6 的逐字稿——會議決議「下週開始進行 PoC」,David / Mary / George 各有一筆待辦。今天把這個 PoC 階段拆成一份 Excel WBS。這是今天第一個<strong>產出檔案</strong>(而不是聊天視窗文字)的 Skill:靠 Agent mode 內建的檔案編輯 + 終端機執行完成,重點在<strong>每個工作包都要對得到輸入依據、格式用固定範本釘死</strong>。</p>
-<div class="labchip"><span class="labchip-ico">📄</span><code>m07-wbs-and-followup-planner/skills/wbs-generator/SKILL.md</code><span class="labchip-desc">— 完成版(含固定 openpyxl 參考腳本)</span></div>
-<div class="labchip"><span class="labchip-ico">📄</span><code>m07-wbs-and-followup-planner/sample-transcript.txt</code><span class="labchip-desc">— 沒做 Lab 6 的人用這份當輸入</span></div>
+<div class="labchip"><span class="labchip-ico">📄</span><code>m07-wbs-and-tech-grounding/skills/wbs-generator/SKILL.md</code><span class="labchip-desc">— 完成版(含固定 openpyxl 參考腳本)</span></div>
+<div class="labchip"><span class="labchip-ico">📄</span><code>m07-wbs-and-tech-grounding/sample-transcript.txt</code><span class="labchip-desc">— 沒做 Lab 6 的人用這份當輸入</span></div>
 <ol class="steps" type="1">
-<li>建立 <code>.github/skills/wbs-generator/SKILL.md</code>,對照完成版自己寫一版——至少 description 跟 ③ 步驟自己重新表達。description 記得寫對比句:是「專案範圍分解成 Excel」,不是會議摘要(meeting-summary)、不是本週跟進規劃(weekly-followup-planner)。</li>
+<li>建立 <code>.github/skills/wbs-generator/SKILL.md</code>,對照完成版自己寫一版——至少 description 跟 ③ 步驟自己重新表達。description 記得寫對比句:是「專案範圍分解成 Excel」,不是會議摘要(meeting-summary)、不是替既有項目查證技術依據(tech-grounding-checker)。</li>
 <li>Agent mode 提供逐字稿(或 Lab 6 產出的 Action Items),下指令:<strong>「幫我把這場會議決議的 PoC 階段拆成一份 WBS,輸出成 Excel」</strong>。</li>
 <li>觀察它是不是先寫一段 Python(openpyxl)、再呼叫終端機執行——<strong>每個終端機指令執行前都要你按 Run 核准</strong>,這一步不會自動跳過。下半場 M9 的 Custom Agent 會把 <code>runCommands</code> 列進 tools 白名單、M10 再把它下放到一個 subagent——原因就在這裡:能跑終端機,就是一道要管的邊界。</li>
 <li>打開產出的 <code>.xlsx</code>:左側有大綱群組(+/− 摺疊)、標題列有篩選按鈕、捲動時標題列凍結。</li>
@@ -859,90 +855,100 @@ version: 0.2.0
 <p>Python 版本能讓 Copilot 照抄的,只有<strong>流程邏輯</strong>(先分組、再建階層、再寫欄位這個順序)——這部分轉換通常很穩。但 <code>outline_level</code>、<code>auto_filter.ref</code>、<code>freeze_panes</code> 這幾個 openpyxl <strong>特有</strong>的 API 寫法,原始碼裡沒有任何東西可以讓它「照抄」到 ClosedXML,它得重新生成,而 ClosedXML 有自己一套容易寫錯又不報錯的細節。三個檢查項如果有沒過的,不是練習失敗——那正是「有得抄不等於全部都穩」最直接的證據。</p>
 </div></div>
 
-<h3 id="n-lab7b">Lab 7B:Weekly Follow-up Planner <em>(Lab ★)</em></h3>
-<p>故事線:<strong>「幫我看本週行事曆哪些時段有空,並把還沒結案的 Action Item 列出來,我想挑個空檔把它們清一清。」</strong> 空檔來自行事曆(CalendarTools MCP),未結事項來自內部 Action Item 記錄——兩個來源各自獨立、不需互相對齊。</p>
-<div class="labchip"><span class="labchip-ico">📄</span><code>m07-wbs-and-followup-planner/skills/weekly-followup-planner/SKILL.md</code><span class="labchip-desc">— 完成版</span></div>
-<div class="labchip"><span class="labchip-ico">🔌</span><code>CalendarTools</code></div>
-<div class="labchip"><span class="labchip-ico">📄</span><code>m07-wbs-and-followup-planner/data/sample-calendar-week.json</code><span class="labchip-desc">— Fallback 用本週行事曆(週三刻意排滿)</span></div>
-<div class="labchip"><span class="labchip-ico">📄</span><code>m07-wbs-and-followup-planner/data/past-action-items.json</code><span class="labchip-desc">— 模擬內部 Action Item 記錄</span></div>
-<div class="labchip"><span class="labchip-ico">📄</span><code>m07-wbs-and-followup-planner/mcp/mcp-config-example.jsonc</code><span class="labchip-desc">— MCP 設定範例</span></div>
-<h4 id="h4-3">B0. MCP 路徑選擇(三選一,都不影響 B1 之後的練習)</h4>
-<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">誠實面對 MCP 的可用性問題</span></div><div class="adm-body">
-<p>CalendarTools 是 Agent365 底下的功能,不是每個租戶都已開通。若只是「沒權限就用 fallback 資料」,走 fallback 的人整場沒摸到真的 MCP(mcp.json、OAuth、工具清單)。所以三條路擇一,<strong>至少確保每個人都完成過一次真實的 MCP 設定</strong>;行事曆資料有沒有真的,不影響 B1 之後的練習:</p>
+<h3 id="n-lab7b">Lab 7B:Tech Grounding Checker <em>(Lab ★)</em></h3>
+<p>故事線:<strong>「這份 WBS 我要拿去報告,但上面每一項,我說得出根據嗎?」</strong> David 在 7A 交出了 WBS,現在要拿去跟資安、採購過,最後上長官會議。表上寫著「確認資料落地地區設定」——這句話所有人的直覺都是「把資源開在日本就好」。</p>
+<p><strong>查完官方文件,答案不是這樣。</strong></p>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">🔍</span><span class="adm-title">這個 Lab 真正的產出</span></div><div class="adm-body">
+<p>Azure OpenAI <strong>資源所在區域,不等於推論資料必然只在該區域處理</strong>。資料處理範圍由<strong>部署類型(deployment type)</strong>決定:選了 <code>Global</code>,資源開在哪裡都一樣;有嚴格資料落地要求時,要選 <code>Data Zone</code> 或 geography-based 的 <code>Standard</code> / <code>Regional Provisioned</code>。</p>
+<p>這一題在長官會議上答錯,不是延一週的事,是資安承諾做錯。<strong>這個 Skill 的價值不是幫你找文件,是幫你發現「你以為的」跟「官方寫的」不一樣。</strong></p>
 </div></div>
-<div class="table-wrap"><table>
-<thead><tr><th>路徑</th><th>條件</th><th>你會做到</th><th>行事曆資料來源</th></tr></thead>
-<tbody>
-<tr><td>一 · CalendarTools</td><td>有 M365 Copilot 授權、租戶已開通 Agent365</td><td>查 tenant_id → <code>.vscode/mcp.json</code> → OAuth → <code>/mcp</code> 看到 CalendarTools 工具</td><td>真行事曆</td></tr>
-<tr><td>二 · GitHub remote MCP</td><td>有 GitHub 帳號</td><td><code>mcp.json</code> → OAuth → <code>/mcp</code>;試一句「用 GitHub MCP 列出我最近的 repo」</td><td><code>data/sample-calendar-week.json</code>(fallback)</td></tr>
-<tr><td>三 · Microsoft Learn MCP</td><td>連 GitHub 都不方便用</td><td><code>mcp.json</code>(免登入、免 OAuth)→ <code>/mcp</code>;試一句「用 Microsoft Learn MCP 查 Azure Container Apps 的 ingress」</td><td><code>data/sample-calendar-week.json</code>(fallback)</td></tr>
-</tbody></table></div>
-<p>三條路徑的逐步設定、<code>mcp.json</code> 範例,以及 OAuth 卡住時的排障(<code>Authentication: Remove Dynamic Authentication Providers</code>),都在 <code>m07-wbs-and-followup-planner/README.md</code> 的 B0——照著做,做完回來 B1。</p>
+<p><strong>一份可交付的 WBS,每一列<em>往回</em>要指得到需求,<em>往前</em>要指得到依據。</strong>7A 的備註欄做了往回(「來源:PoC 架構設計初稿內容」),7B 補上往前。</p>
+<div class="labchip"><span class="labchip-ico">📄</span><code>m07-wbs-and-tech-grounding/skills/tech-grounding-checker/SKILL.md</code><span class="labchip-desc">— 完成版(非生效路徑)</span></div>
+<div class="labchip"><span class="labchip-ico">🔌</span><code>Microsoft Learn MCP</code><span class="labchip-desc">— 免登入、免 OAuth,門檻最低的真 MCP</span></div>
+<div class="labchip"><span class="labchip-ico">📄</span><code>Lab 7A 產出的 WBS .xlsx</code><span class="labchip-desc">— 7B 的輸入,放在 workspace 裡</span></div>
+<div class="labchip"><span class="labchip-ico">📄</span><code>m07-wbs-and-tech-grounding/.vscode/mcp.json</code><span class="labchip-desc">— MCP 設定</span></div>
+<h4 id="h4-3">B0. 設定 Microsoft Learn MCP</h4>
+<p>在專案根目錄建立 <code>.vscode/mcp.json</code>,存檔後<strong>立刻可用——免登入、免 OAuth、不受企業 Copilot policy 影響</strong>。這是門檻最低的真 MCP,全班不會有人卡在這一步:</p>
+<pre><code class="language-jsonc">{
+  "servers": {
+    "microsoft-learn": {
+      "type": "http",
+      "url": "https://learn.microsoft.com/api/mcp"
+    }
+  }
+}</code></pre>
+<p>存檔後按 <code>Ctrl+Shift+P</code> / <code>Cmd+Shift+P</code> 開啟 Command Palette,輸入 <strong>MCP: List Servers</strong>,確認 <code>microsoft-learn</code> 有出現且狀態正常</p>
+
 <h4 id="h4-4">B1. 建立 Skill</h4>
-<p>建立 <code>.github/skills/weekly-followup-planner/SKILL.md</code>,對照完成版自己寫。description 記得寫成對比句:不是逐字稿摘要(那是 meeting-summary),也不是專案範圍分解(那是 wbs-generator)——<strong>這兩句對比句等一下 M8 會被實際拿來考驗,現在寫得越含糊,等一下誤觸發越精彩。</strong></p>
+<p>建立 <code>.github/skills/tech-grounding-checker/SKILL.md</code>,對照完成版自己寫。description 記得寫成對比句:不是逐字稿摘要(那是 meeting-summary),也不是專案範圍分解(那是 wbs-generator)——<strong>這個 Skill 的輸入本身就已經是拆好的項目,它只負責補依據。</strong>特別注意「WBS」「來源」這兩個詞,wbs-generator 跟這個 Skill 的 description 都會有——「WBS」在那邊是<strong>產出</strong>、在這邊是<strong>輸入</strong>;「來源」在那邊指逐字稿哪一句(往回),在這邊指官方文件(往前)。光堆關鍵詞分不開,真正要寫清楚的是<strong>方向</strong>:一個是把範圍拆成項目,一個是替已經拆好的項目補依據。寫完把兩份 description 一起丟給 Copilot,問「幫我確認這份 WBS 每一項的來源」會選誰。</p>
 <h4 id="h4-5">B2. 觸發 Skill</h4>
-<p>把 <code>data/past-action-items.json</code> 提供給 Copilot,再視你 B0 走的路:</p>
+
+<p>指令:<strong>「幫我逐項查證這份 WBS 的技術依據」</strong>。觀察三件事:</p>
 <ul>
-<li>有 CalendarTools:「幫我看本週哪些時段有空,並把還沒結案的 Action Item 列出來,我想挑空檔跟進」,觀察 Agent 有沒有先呼叫 CalendarTools。</li>
-<li>走 fallback:連同 <code>sample-calendar-week.json</code> 一起提供(或「假設我本週下午都有空」),下同樣的指令。</li>
+<li>它先寫一段 Python(<code>openpyxl</code>,而且帶 <code>read_only=True</code>)把 15 列讀出來——<strong>又是一次終端機 Run 核准,但這次是讀檔不是寫檔</strong>。</li>
+<li>它有沒有<strong>先分類</strong>(技術項 / 不適用)再開始查,還是每一項都硬查一輪。</li>
+<li>它查 Learn 的方式:先 <code>Docs Search</code> 拿候選,再 <code>Docs Fetch</code> 抓全文核對——<strong>有沒有只看搜尋摘要就下結論</strong>。</li>
 </ul>
-<h4 id="h4-6">B3. 檢查來源標註</h4>
-<p>「待跟進的未結事項」要列出 <code>past-action-items.json</code> 裡<strong>所有</strong> <code>status: "open"</code> 的項目、每筆標來源 id,而且<strong>沒有</strong>把已 <code>done</code> 的 <code>AI-2026-06-20-01</code> 列進去。「可用空檔」要標明來源是 calendar,不是憑空生出的時段。</p>
-<h4 id="h4-7">B4. 刻意測試「排滿、沒有空檔」的情境</h4>
-<p>用 <code>sample-calendar-week.json</code> 走一次,問「週三幫我排時間跟進」——週三被刻意排滿整天,確認 Copilot 誠實回報「週三無可用空檔」而不是硬生一個時段。這裡的幻覺風險比 WBS 更隱蔽:錯誤可能藏在 MCP 查詢、內部資料查詢,或 LLM 整合多來源時自己腦補,任何一環沒把關,都會排出一個根本不存在的空檔。</p>
+<h4 id="h4-6">B3. 驗證來源——請真的去點</h4>
+<p>隨機點兩條 Learn 連結。不是確認「開得起來」就好,要確認:<strong>這篇文章講的,是不是這個工作包的那一件事?</strong> 連結能開、內容也沒錯,但講的是別的服務——這種錯誤通過了所有表面檢查。</p>
+<p>再看「查證發現」欄:<strong>有沒有哪一項,文件寫的跟 WBS 上假設的不一樣?</strong> 那一格才是這份對照表拿去長官會議時最有價值的東西——上面那個資料落地的結論,就是這樣掉出來的。</p>
+<h4 id="h4-7">B4. 邊界測試:數一下「不適用」有幾項</h4>
+<p>實跑的結果是 <strong>✅ 已查證 5 項 / ⚠️ 查無依據 0 項 / —— 不適用 10 項</strong>。十五分之十標成「不適用」,這個比例合理嗎?逐項對一次:</p>
+<div class="table-wrap"><table>
+<thead><tr><th>WBS</th><th>項目</th><th>標「不適用」對不對</th></tr></thead>
+<tbody>
+<tr><td>1.2</td><td>規劃與現有 Portal 前端的串接方式</td><td>✅ 對——客戶自家系統,官方文件不可能涵蓋別人家的架構</td></tr>
+<tr><td>4.1</td><td>在資安確認通過後開啟 PoC 環境</td><td>✅ 對——專案管理流程,不是技術設定</td></tr>
+<tr><td>3.2</td><td>盤點現有 Portal 存取權限與最小化原則</td><td>❌ <strong>不對</strong>——RBAC、最小權限原則 Learn 上一大堆</td></tr>
+<tr><td>5.1 / 5.2</td><td>驗證會議摘要 / 待辦抽取準確度</td><td>❌ <strong>不對</strong>——AI Foundry evaluation 有整組文件</td></tr>
+</tbody></table></div>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">🎯</span><span class="adm-title">這才是這個 Lab 要抓的幻覺</span></div><div class="adm-body">
+<p>三分法給了模型一個<strong>逃生口</strong>:標「不適用」比真的去查省事,而且看起來很謹慎、很誠實。</p>
+<p>這比「掛一篇相近的文件充數」<strong>更隱蔽</strong>——掛錯文件你點下去會發現;標「不適用」,你根本不會去點。<strong>模型不是只會編造答案,它也會用一個看起來負責任的標籤,來逃避該做的查證。</strong></p>
+<p>回去在 ③ 步驟補一條判準:<em>標「不適用」之前先問——這一項有沒有指名任何雲端服務或平台功能?有的話就要查。</em>然後重跑一次,看數字有沒有變。</p>
+</div></div>
+<h4 id="h4-8">7A 與 7B 的幻覺,剛好成對</h4>
+<div class="table-wrap"><table>
+<thead><tr><th></th><th>幻覺長什麼樣</th><th>品質規則怎麼擋</th></tr></thead>
+<tbody>
+<tr><td>Lab 7A</td><td><strong>範圍失控</strong>——把逐字稿明確排除的 SAP 整合列進 WBS</td><td>① 不適用範圍</td></tr>
+<tr><td>Lab 7B</td><td><strong>逃避查證</strong>——把該查的項目標成「不適用」矇混過去</td><td>③ 分類判準 + ⑤ 不適用比例自檢</td></tr>
+</tbody></table></div>
+<p>一個是多做了不該做的,看得出來;一個是少做了該做的,而且<strong>偽裝成謹慎</strong>。企業場景兩種都會出事,第二種發現得比較慢——一旦這份對照表被當成「已經查證過」往上呈,沒查的那幾項就永遠不會有人再去查了。</p>
 <div class="adm adm-check"><div class="adm-head"><span class="adm-ico">✅</span><span class="adm-title">完成檢核(M7 整體)</span></div><div class="adm-body">
 <ul>
 <li>WBS Excel 有大綱群組、篩選、凍結窗格,且沒有把 SAP 整合列進去。</li>
-<li>每個人都完成過至少一次真實 MCP 設定(CalendarTools、GitHub MCP 或 Microsoft Learn MCP),<code>/mcp</code> 看得到工具清單。</li>
-<li>weekly-followup-planner 列出所有 open 項目、每筆標來源 id,done 項目沒被誤列。</li>
-<li>排滿情境誠實回報「無可用空檔」,沒有硬生時段。</li>
+<li><strong>MCP: List Servers</strong> 看得到 microsoft-learn 且狀態正常,Skill 執行時確實呼叫了 <code>Docs Search</code> / <code>Docs Fetch</code>。</li>
+<li>對照表裡每一個連結都點得開,<strong>而且講的是該項目本身的那個服務</strong>。</li>
+<li>1.2 與 4.1 標的是「不適用」,不是「查無依據」——兩者意義完全不同。</li>
+<li><strong>「不適用」的項目逐一檢查過</strong>,沒有把指名了具體服務、查得到文件的項目也丟進去。</li>
+<li>「查證發現」欄至少有一項,指出文件寫的跟 WBS 假設的不一樣。</li>
+<li>原始 WBS Excel 沒有被修改(<code>read_only=True</code>)。</li>
 </ul>
 </div></div>
 
-<h2 id="n-m8">M8 · 翻車②:誤觸發實測——三個 Skill 互相干擾</h2>
-<p><strong>現在你的 <code>.github/skills/</code> 裡有三個 Skill 了。這是今天第一次、也是企業場景裡每天都在發生的情境:selection 不再只有一個候選。</strong></p>
-<p>GitHub Copilot 的 Skill selection 是<strong>機率性語意匹配</strong>——description 不夠具體、沒有清楚的對比詞,多個 Skill 之間就會互相干擾、選錯或選不到。理論講完了,接下來 15 分鐘直接測。</p>
-<p>操作(每一句都是新開對話,避免上下文污染):</p>
-<ol class="steps" type="1">
-<li><strong>模糊指令一</strong>:附上 <code>past-action-items.json</code>,只說:「幫我看一下這些 action item」。——三個 Skill 的 description 裡都有 "action item" 這個詞。觀察選中了誰?還是誰都沒選、直接回答?</li>
-<li><strong>模糊指令二</strong>:附上 <code>sample-transcript.txt</code>,說:「幫我把會議裡的待辦整理一下,排個計畫」。——「整理待辦」指向 meeting-summary,「排個計畫」同時沾到 wbs-generator(拆解)跟 weekly-followup-planner(排程)。</li>
-<li><strong>模糊指令三</strong>:「我下週要跟進這個專案,幫我準備一下」。——沒有任何一個 Skill 的關鍵詞被直接命中,看它會硬選一個、還是不觸發。</li>
-<li>講師收集現場結果:<strong>同一句指令,不同人的機器選中的 Skill 很可能不一樣</strong>——這本身就是最重要的觀察:selection 是機率性的,description 的工作是把機率分佈收窄,不是給出保證。</li>
-<li><strong>修復回合</strong>:挑一句你這邊選錯(或不觸發)的指令,回頭改對應 Skill 的 description——加對比句、加關鍵詞、或把容易誤導的詞拿掉——再測一次,確認行為改變。</li>
-</ol>
-<p>改完之後,養成兩個帶得走的習慣:</p>
-<ul>
-<li>description 用對比句法,不是只堆關鍵詞:「是逐字稿產出的結構化紀錄,不是排程規劃」,而不是單純寫「摘要、逐字稿、summary」。</li>
-<li>新增 Skill 時,把新舊 description 一起丟給 Copilot,問「這兩個會不會混淆、什麼情況下會選錯」——不需要自動化互斥檢查,但至少人工過一次這道關。</li>
-</ul>
-<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">這個實驗跟下半場的關係</span></div><div class="adm-body">
-<p>企業內部很快會累積 5-10 個以上相似的 Skill,誤觸發從「偶發」變「日常」。下半場 M11 你會撞到同一件事、但賭注是「寫入外部系統」——到時你就會知道為什麼有些 Skill 該直接鎖成只能手動叫。</p>
-</div></div>
-<div class="adm adm-tip"><div class="adm-head"><span class="adm-ico">💡</span><span class="adm-title">對照組:prompt file 為什麼永遠不會「誤觸發」</span></div><div class="adm-body">
-<p>三句模糊指令跑完後,再做一件事:附上逐字稿、打 <code>/meeting-quickcheck</code>。它每次都準確執行、每次都只做它那兩件事——因為<strong>它根本沒有參與 selection</strong>,是你喊它才出現。這就是 M4 說的「手動叫用才載入」。所以當一個能力「一定要人明確叫、不能被語意猜中」時,你有兩個選擇:寫成 prompt file,或寫成 Skill 但設 <code>disable-model-invocation: true</code>。差別只在要不要帶附件與腳本——下半場 M11 的寫入型 Skill 會用到後者。</p>
-</div></div>
 
-<h2 id="n-wrap">上半場收尾:三輪紀錄 + 翻車③ 預告</h2>
+<h2 id="n-wrap">上半場收尾:三輪紀錄 + 翻車② 預告</h2>
 <p>到這裡,你手上有:</p>
 <ul>
 <li>兩個 repo 層級的檔案:<code>AGENTS.md</code>(每次注入,<code>/init</code> 起稿、你精簡並補上團隊意志)、<code>meeting-quickcheck.prompt.md</code>(手動叫用)。</li>
-<li>三個親手設計、實測驗證過的 Skill:meeting-summary、wbs-generator、weekly-followup-planner——每一個都經歷過至少一次「刻意讓它出錯」的測試。</li>
+<li>三個親手設計、實測驗證過的 Skill:meeting-summary、wbs-generator、tech-grounding-checker——每一個都經歷過至少一次「刻意讓它出錯」的測試。</li>
 <li>一張 worksheet:三輪偏離預期實驗(乾淨 / 有 instructions / 有 Skill)的並排紀錄,同一個模型、同一句 prompt——回公司要說服團隊時,這比任何簡報都有用。</li>
-<li>兩次翻車的一手經驗:輸出偏離預期與 instructions 的極限(M3 / M5)、誤觸發(M8)。</li>
+<li>翻車① 兩輪的一手經驗:輸出偏離預期與 instructions 的極限(M3 / M5),以及 Skill 把它收掉的那一輪(M6)。</li>
 </ul>
 <p>回到 M0 留下的提問:「同事怎麼做出跟你一致的東西?」——答案不是把 prompt 傳給他,是把<strong>判斷</strong>寫進 Skill,commit 進 repo。</p>
-<h3 id="n-wrap-preview">翻車③ 預告(5 分鐘,講師 demo):預設 Agent Mode 的「編排失控」</h3>
+<h3 id="n-wrap-preview">翻車② 預告(5 分鐘,講師 demo):預設 Agent Mode 的「編排失控」</h3>
 <p>三個 Skill 都在了。講師在乾淨對話裡附上 <code>sample-transcript.txt</code>,下一句刻意複合又有點模糊的指令:<strong>「這是這場會議的逐字稿,幫我把該做的都做一做。」</strong>——連跑兩三次,盯這兩點看:</p>
 <ul>
-<li><strong>編排偏離預期</strong>:一次只拿到摘要、一次摘要 + WBS、一次三個全跑、順序還可能顛倒——同一句指令,「做了哪些事」每次不一樣。這是 M3 / M8 的偏離預期升級到「多 Skill 編排」這一層。</li>
+<li><strong>編排偏離預期</strong>:一次只拿到摘要、一次摘要 + WBS、一次三個全跑、順序還可能顛倒——同一句指令,「做了哪些事」每次不一樣。這是 M3 / M5 的偏離預期升級到「多 Skill 編排」這一層。</li>
 <li><strong>越權風險</strong>:預設 Agent Mode 手上有完整的檔案編輯與終端機執行工具。你沒有任何結構上的保證它不會「順手」動到不該動的東西。</li>
 </ul>
 <p>這個問題不在任何一個 Skill 裡,而在<strong>「誰來編排、帶著什麼工具」</strong>——那是第五種資產 Custom Agent 的工作。下半場第一件事就是解它。</p>
 <div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">下半場:從 Skill 到 Agent</span></div><div class="adm-body">
 <p>上半場的所有檔案都住在 <code>.github/</code> 底下。下半場不再新增 Skill 的「種類」,而是回答兩個問題:這些 Skill 怎麼被安全地編排、接上會寫入的企業系統?以及離開 VS Code 之後還算什麼?</p>
 <ul>
-<li><strong>M9</strong>:翻車③的解法——Custom Agent <code>@meeting-ops</code>:人設 + 薄路由 + tools 白名單;護欄與行為準則是兩種強度不同的收斂。</li>
-<li><strong>M10</strong>:Subagent 把 WBS 的終端機工作派出去、Handoff 把「排進本週跟進」做成一顆人按的按鈕。</li>
+<li><strong>M9</strong>:翻車②的解法——Custom Agent <code>@meeting-ops</code>:人設 + 薄路由 + tools 白名單;護欄與行為準則是兩種強度不同的收斂。</li>
+<li><strong>M10</strong>:Subagent 把 WBS 的終端機工作派出去、Handoff 把「逐項查證技術依據」做成一顆人按的按鈕。</li>
 <li><strong>M11</strong>:第一個有寫入副作用的 Skill(Jira)。先用天真版踩三次,再自己防呆;接著面對「誰有權觸發 Jira 開單?」,實作由人確認的 handoff。</li>
 <li><strong>M12</strong>:applyTo instructions + OpenAPI → FastAPI 骨架——講師示範純手刻的型別漂移,你只做包工具那一輪。</li>
 <li><strong>M13</strong>:Copilot CLI。同一個 repo、同一組 agent 與 Skill,在終端機跑一次;<code>/usage</code> 看今天的 Skill 用了多少。</li>
@@ -951,7 +957,7 @@ version: 0.2.0
 <p>下半場開始前,請完成 <code>labs-part2/README.md</code> 的環境檢查(GitHub repo 可 push、Copilot CLI 已登入)。休息之後,下半場見。</p>
 </div></div>
 
-<h2 id="n-appA">附錄 A · Context 七層組裝與 # 引用速查(參考,不佔課堂時間)</h2>
+<h2 id="n-appA">附錄 A · Context 七層組裝與 # 引用速查</h2>
 <p>M2 只講了兩個症狀與兩個動作。這裡是完整版:每一次請求由哪七類來源組成、各由誰決定;以及五個最常被問到的 <code>#</code> 引用問題,在 agent mode 下哪些只是最佳化、哪些不可取代。</p>
 <h3 id="n-appA-layers">A.1 · 每一次請求是怎麼組出來的:七層來源</h3>
 <p>依 VS Code 官方文件,每次 agent 向模型發出請求時,VS Code 會從七類來源組裝 context。M2 觀察到的檔案定位與探索成本,主要涉及第 4、5、6、7 層:</p>
@@ -988,11 +994,12 @@ version: 0.2.0
 <p class="note">上表的「必要性」以 agent mode 具備完整工具集為前提。codebase search 與 fetch 可能被設定停用或由擴充套件替換,實測時建議一併記錄當時的 tool list。</p>
 
 <div class="adm adm-tip"><div class="adm-head"><span class="adm-ico">💡</span><span class="adm-title">對症狀二的另外兩刀:/compact 與新開 session</span></div><div class="adm-body">
-<p>第 4 層的 conversation history 會隨 session 累積。<code>/compact</code> 可將較舊的對話內容壓縮成摘要,騰出 context window,但不會退回已消耗的 credits。切換到不相關的任務時應新開 session,避免上一輪的訊息與工具結果繼續佔用 context,也降低舊資訊干擾新任務的風險。</p>
+<p>第 4 層的 conversation history 會隨 session 累積。<code>/compact</code> 可將較舊的對話內容壓縮成摘要,讓長 session 不失憶地繼續跑,但它是求生工具而非省 token 工具:摘要生成本身會額外計費,且不保證縮小 context。要真正騰出空間,應新開 session,同時也避免上一輪的訊息與工具結果繼續佔用 context,並降低舊資訊干擾新任務的風險。</p>
+
 </div></div>
 
-<h2 id="n-appB">附錄 B · 模型選擇與用量:Auto 怎麼運作、什麼時候該鎖模型(參考)</h2>
-<p>今天三輪偏離預期實驗刻意全班鎖同一個模型,把「模型不同」這個變因拿掉。但回公司之後你會面對它:日常用 Auto 還是鎖模型?團隊共用的 <code>.agent.md</code> 為什麼要在 <code>model:</code> 欄位鎖定?以下依官方文件整理。</p>
+<h2 id="n-appB">附錄 B · 模型選擇與用量:Auto 怎麼運作、什麼時候該鎖模型</h2>
+<p>今天三輪偏離預期實驗刻意全班鎖同一個模型,把「模型不同」這個變因拿掉。但之後你會面對它:日常用 Auto 還是鎖模型?團隊共用的 <code>.agent.md</code> 為什麼要在 <code>model:</code> 欄位鎖定?以下依官方文件整理。</p>
 <div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title">以下依 GitHub 官方文件(About Copilot auto model selection)整理,2026-09 查核;模型名單與計費會變動,請以當天文件為準</span></div><div class="adm-body">
 <ul>
 <li>Auto 用於 Copilot Chat、Copilot CLI、GitHub Copilot app、Copilot cloud agent 時,付費方案享 <strong>10% 折扣</strong>;費用仍依實際被選用的模型計算。</li>
@@ -1016,7 +1023,7 @@ version: 0.2.0
 <tr><td>長 agentic session(改多個檔、跑測試、修到過)</td><td>新開 session,Auto 切 Intelligence,或鎖定一個強模型</td><td>成本較高;鎖模型時可能遇到限流(Auto 的優勢之一是避開限流)</td></tr>
 </tbody></table></div>
 <div class="adm adm-tip"><div class="adm-head"><span class="adm-ico">💡</span><span class="adm-title">用量實務:context 即成本</span></div><div class="adm-body">
-<p>usage-based 之後,三個以前看不見的成本現在看得見:<strong>AGENTS.md 每次注入</strong>(所以 M4 要求 /init 之後精簡)、<strong><code>#codebase</code> 在大型 repo 上的搜尋成本</strong>(找到檔案後改用 <code>#file</code>)、<strong>長 session 每一輪都帶著全部歷史</strong>(所以換任務就 <code>/new</code>)。下半場 M13 Copilot CLI 的 <code>/usage</code> 可以當場檢視用量——到時候把今天的 Skill 跑一次,親眼看數字。</p>
+<p>usage-based 之後,三個以前看不見的成本現在看得見:<strong>AGENTS.md 每次注入</strong>(所以 M4 要求 /init 之後精簡)、<strong><code>#codebase</code> 在大型 repo 上的搜尋成本</strong>(找到檔案後改用 <code>#file</code>)、<strong>長 session 每一輪都帶著全部歷史</strong>(所以換任務就 <code>/new</code>)。</p>
 </div></div>
 </main>
 </div>
