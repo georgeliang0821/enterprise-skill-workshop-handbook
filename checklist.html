@@ -81,7 +81,7 @@ hr{border:none;border-top:1px solid var(--border);margin:34px 0}
     root.setAttribute('data-theme',next);
     localStorage.setItem('handbook-theme',next);
   });
-  fetch('checklist.md')
+  fetch('checklist.md?v='+Date.now(),{cache:'no-store'})
     .then(function(response){
       if(!response.ok){throw new Error('HTTP '+response.status);}
       return response.text();
