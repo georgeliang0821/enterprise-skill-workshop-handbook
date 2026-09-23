@@ -15,15 +15,16 @@
 
 ## 第零步:啟動 Mock Jira Server
 
-套件已由共用 venv 裝好,**不需要 `pip install`**。在本資料夾開一個終端機(VS Code 外的 PowerShell 也可以),確認提示字元有 `(.venv)`,然後:
+套件已由共用 venv 裝好,**不需要 `pip install`**。在本資料夾開一個終端機,確認提示字元有 `(.venv)`,然後:
 
 ```powershell
+$env:JIRA_API_TOKEN = "mock-jira-token-classroom-only"
 python -m uvicorn mock_jira_server:app --reload --port 9000
 ```
 
-開 `http://127.0.0.1:9000/docs` 確認 Swagger UI 正常。
+開 `http://127.0.0.1:9000/docs` 確認 Swagger UI 正常。token 之後由 Skill 從環境變數讀,不寫死在任何檔案裡。
 
-> Mock Jira 不驗 token,所以今天沒有認證這一步。真實 Jira 要 token 時,放使用者層級環境變數或 secret store,**不要寫進 SKILL.md**——M13 / M14 會把整個 `.github/` 推上 GitHub。
+> 環境變數只在這個終端機視窗有效——之後要在別的視窗跑 Skill 的話,那個視窗也要設一次。
 
 ## 第一輪:用(naive 版跑起來,看似正常)
 
@@ -61,21 +62,22 @@ curl.exe -X POST http://127.0.0.1:9000/debug/reset
 
 1. **去重**(對踩 A):③ 步驟加上「建票前先呼叫 `GET /rest/api/2/search` 用 summary 關鍵字查詢是否已存在;已存在則略過並註明」。
 2. **鎖自動觸發**(對踩 B):frontmatter 改 `disable-model-invocation: true`,version 升為 `0.2.0`(這次變更本身就是 M6 要收割的一筆)。
-3. 順手補 ⑤ 品質自檢:去重、每筆都有明確狀態。
+3. 順手補一道沒踩到、但寫入型一定要有的——**認證處理**:② 加上「token 只從環境變數讀,401 視為設定缺漏、誠實回報、不重試硬闖、不印 token」;再補 ⑤ 品質自檢:去重、401 誠實回報、token 不出現在輸出/log、每筆都有明確狀態。
 
-然後驗收(三項,都是你自己的防呆成果):
+然後驗收(四項,都是你自己的防呆成果):
 
 - 重新提供待辦清單,明確打 `/action-item-to-jira` 觸發 → `debug/issues` 三筆票。
 - 同一份清單再觸發一次 → 輸出標註「已存在,略過」,沒有重複票。
+- 把 `$env:JIRA_API_TOKEN` 設錯再觸發 → 誠實回報「認證失敗」,輸出/log 完全看不到 token 值。
 - 隨口說「這些待辦要記得追蹤」→ **不會**自動觸發,只有明確打 `/action-item-to-jira` 才執行。
 
-最後對照完成版 `SKILL.md`,比較你的寫法差異——特別看它 ① 裡「不要自作主張連建票都做了」。
+最後對照完成版 `SKILL.md`,比較你的寫法差異——特別看它 ① 裡「不要自作主張連建票都做了」跟 ② 裡 401 的處理方式。
 
 ## 第四輪:決策點——誰有權觸發 Jira 開單?(接上 M10 的 handoff)
 
 > 這一輪是**應用 M10 v3 的 handoff,不是新機制**:按鈕、`send: false`、label 要有英數字元都做過了;新的只有接完之後「三道東西各自擋什麼」那張疊層表(見講義)。
 
-現在 `action-item-to-jira` 已經把去重與自動觸發鎖好。Skill 內部安全了,下一個風險不在 Skill 裡,而在**誰可以啟動這個寫入副作用**。把它接回 M9 的編排型 `@meeting-ops` 時,觸發權要交給模型,還是留在人手上?
+現在 `action-item-to-jira` 已經把去重、認證處理與自動觸發鎖好。Skill 內部安全了,下一個風險不在 Skill 裡,而在**誰可以啟動這個寫入副作用**。把它接回 M9 的編排型 `@meeting-ops` 時,觸發權要交給模型,還是留在人手上?
 
 比較下面三種整合方式——**它們都合法,差別在誰握有觸發權**:
 
@@ -106,6 +108,6 @@ curl.exe -X POST http://127.0.0.1:9000/debug/reset
 
 - [ ] 踩 A 親眼看過(重複票出現在 `debug/issues` 裡)
 - [ ] 踩 B 測過語意觸發(能說出「為什麼寫入型不能賭這個機率」)
-- [ ] 防呆後三項驗收全過;version 已升 0.2.0
+- [ ] 防呆後四項驗收全過;version 已升 0.2.0
 - [ ] `@meeting-ops` 踩線測試:整理照做、開單明講交還、出現按鈕;`@jira-clerk` 先列清單再等確認
 - [ ] 能對「誰有權觸發 Jira 開單」說出 A/B/C 各自的觸發者與代價

@@ -14,7 +14,7 @@ version: 0.1.0-naive
 ## ② 需要的輸入
 1. Action Item 清單(Owner / Action / Due Date / Priority)。
 2. Jira 專案代碼,例如 `MIP`。
-3. Jira base URL,例如 `http://127.0.0.1:9000`。
+3. Jira base URL 與認證 token(從環境變數 `JIRA_API_TOKEN` 讀取,帶入 `Authorization: Bearer {token}` header)。
 
 ## ③ 步驟
 1. 對每一筆 Action Item,呼叫 `POST /rest/api/2/issue` 建立新票:

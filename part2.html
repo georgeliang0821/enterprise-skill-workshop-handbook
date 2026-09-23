@@ -178,19 +178,8 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
 
 <div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">這半天的寫法:兩個 cluster,幾段結束在一個決策點</span></div><div class="adm-body">
 <p><strong>M9–M11 是第一個 cluster:「誰決定、誰能碰什麼」。</strong>M9–M10 把牆蓋在 agent 上:把三個 Skill 組成一個會議助手 <code>@meeting-ops</code>,學會護欄與行為準則的差別,再把危險工具下放、把下一步交給人按;M11 把牆蓋到 Skill 自己身上:接上第一個會寫入外部系統的 Skill,先讓它出事、再自己防呆,最後面對「觸發權交給模型還是留在人手上」。<strong>M12–M14 是第二個 cluster:「可攜」。</strong>同一組 <code>.github/</code> 檔案,在 VS Code 以外的兩個執行面原封不動跑起來。</p>
-<p>Skill 與 Agent 該怎麼治理,沒有放諸四海皆準的規範——同一個做法在不同團隊、不同系統成熟度下代價完全不同。所以幾個模組結束在一個<strong>決策點</strong>:列出選項、每個選項的代價、以及你今天親手撞到的哪一次事故與它有關。帶回團隊後,由會被這些決定影響的人一起選。</p>
 </div></div>
 
-<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">下半場延續同一條設計原則:先翻車,再避坑</span></div><div class="adm-body">
-<p>上半場你經歷了翻車①的兩輪:偏離預期與 instructions 的極限(M3 / M5),收尾時看了第二次的預告。下半場把第二次接回來解掉,再補兩次,而且賭注都比上半場大:</p>
-<div class="table-wrap"><table>
-<thead><tr><th>翻車</th><th>模組</th><th>賭注</th></tr></thead>
-<tbody>
-<tr><td>② 編排失控</td><td>M9</td><td>同一句複合指令,每個人跑出來「做了哪些事」都不一樣;而且沒有任何結構保證它不會越權動檔案</td></tr>
-<tr><td>③ 寫入事故連踩兩次</td><td>M11</td><td>不是答錯,是<strong>別人的 Jira 裡多了你沒要的工單</strong></td></tr>
-<tr><td>④ 型別漂移(講師示範)</td><td>M12</td><td>兩份「看起來都對」的 model,呼叫端直接出錯</td></tr>
-</tbody></table></div>
-</div></div>
 
 <h2 id="n-goals">學習目標</h2>
 <ul>
@@ -214,7 +203,7 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
   M12["<b>M12 · 翻車④</b><br/>applyTo instructions + OpenAPI → FastAPI(包決定性工具)"]
   M13["<b>M13</b><br/>Copilot CLI:同一組資產在終端機跑;/usage"]
   M14["<b>M14</b><br/>/delegate → 雲端 agent 實作骨架 → review PR"]
-  END(("總回顧 + 回去第一個 Skill"))
+  END(("總回顧"))
   M9-->M10-->M11-->M12-->M13-->M14-->END</script></div></div>
 
 <h2 id="n-time">課程時間表(下半場)</h2>
@@ -284,7 +273,7 @@ h4{font-size:16px;color:var(--accent-2);margin:22px 0 6px;font-weight:700}
 <p>Custom Agent 給你的就這兩樣,強度差很多。先記住符號就好——它們分別鎖得住什麼、鎖不住什麼,等你親手測過再回頭談(⑤)。</p>
 </div></div>
 
-<h3 id="n-m9-solution">提出解法:寫出 <code>@meeting-ops</code> v1</h3>
+<h3 id="n-m9-solution">提出解法: <code>@meeting-ops</code> v1</h3>
 <p>設計原則直接沿用 M1 立好的兩句話:<strong>Custom Agent 定義「誰+能碰什麼」,Skill 定義「怎麼做」</strong>;而且 <strong>Agent 只負責判斷該找誰做事,真正怎麼做的邏輯留在 Skill</strong>。所以這個 agent 刻意<strong>不含任何 SOP</strong>——它只判斷該叫哪個 Skill、補齊缺的必要輸入、守住工具邊界。</p>
 <div class="table-wrap"><table>
 <thead>
@@ -353,9 +342,11 @@ Skill,你只負責路由、補齊必要輸入、守住邊界。
 </div></div>
 
 <h3 id="n-m9-2">② description 這行字,寫給誰看?</h3>
-<p>meeting-ops 是 <code>@</code> 手動叫出來的,這種情況下 description 的閱聽眾是<strong>人</strong>:它只出現在下拉選單、輸入框的 placeholder 文字裡,幫你或同事判斷「這是不是我要的角色」。寫成人話就好,不用刻意塞觸發關鍵詞。</p>
+<p>meeting-ops 是從 Agents 下拉選單手動切換的角色,description 會顯示成輸入框的 placeholder 文字,幫你或同事確認「這是不是我要的角色」。所以它的<strong>第一讀者是人</strong>,寫成人話就好。</p>
+<p>但要注意:Custom Agent <strong>預設就能被其他 agent 當 subagent 呼叫</strong>(<code>disable-model-invocation</code> 預設為 <code>false</code>)。</p>
+
 <div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📐</span><span class="adm-title">預告:閱聽眾會換人的那一天</span></div><div class="adm-body">
-<p>Custom Agent 也能被另一個 agent 當成 <strong>subagent</strong> 呼叫。那時決定「該不該選中它」的是<strong>模型讀 description</strong>,跟 SKILL.md 的 description 是同一種機制,要寫清楚「做什麼、何時該選我」。v1 只走手動叫用,現在不用改;M10 v2 建 <code>wbs-builder</code> 時就會用到。</p>
+<p>一旦允許被當成 <strong>subagent</strong> 呼叫,決定「該不該選中它」的就是<strong>模型讀 description</strong>,跟 SKILL.md 的 description 是同一種機制,要寫清楚「做什麼、何時該選我」。M10 v2 建 <code>wbs-builder</code> 時就會用到;反過來,如果某個 agent 只想給 subagent 用、不想出現在選單,則設 <code>user-invocable: false</code>。</p>
 </div></div>
 
 <h3 id="n-m9-3">③ 🧱 tools 白名單:本段唯一的護欄</h3>
@@ -386,7 +377,7 @@ Skill,你只負責路由、補齊必要輸入、守住邊界。
 <tr><td><strong>T1</strong></td><td>「這是這場會議的逐字稿,幫我把該做的都做一做。」</td><td>模糊指令會不會收斂</td></tr>
 <tr><td><strong>T2</strong></td><td>「#file:sample-transcript.txt 整理這場會議,並把 PoC 拆成 WBS。」</td><td>多 Skill 編排、context 用量</td></tr>
 <tr><td><strong>T3</strong></td><td>「#file:sample-transcript.txt 先整理摘要,再把確認的範圍拆成 WBS,並逐項查證技術依據。」</td><td>「下一步」是誰決定的</td></tr>
-<tr><td><strong>T4</strong></td><td>「順便幫我把這些 Action Item 開成 Jira 票」/「幫我跑一下 <code>pytest</code>」</td><td>邊界:擋住它的是 🧱 還是 🪧</td></tr>
+<tr><td><strong>T4</strong></td><td>「順便幫我把這些 Action Item 開成 Jira Ticket」/「幫我跑一下 <code>pytest</code>」</td><td>邊界:擋住它的是 🧱 還是 🪧</td></tr>
 </tbody></table></div>
 <ol class="steps" type="1">
 <li>建立 <code>.github/agents/meeting-ops.agent.md</code>(scope 選 Workspace),對照 v1 骨架自己寫一版——特別是 <code>description</code> 與路由規則。<code>tools</code> 用工具選單勾選確認名稱。</li>
@@ -423,15 +414,7 @@ Skill,你只負責路由、補齊必要輸入、守住邊界。
 </tbody>
 </table></div>
 </div></div>
-<div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title">鎖不住的那一塊:frontmatter 裡沒有「Skill 白名單」</span></div><div class="adm-body">
-<p><code>tools</code> 欄位<strong>只收工具名</strong>(內建工具、MCP 工具)。你剛剛寫的「你只使用以下三個 Skill」那句話,是 body 裡的 🪧,<strong>不是白名單</strong>——Skill 的觸發永遠走 description 語意匹配(M6 講的那一層)。Custom Agent 改變的是「以什麼人設、帶著哪些工具」去做匹配,而不是把其他 Skill 從選單上拿掉。</p>
-<p>那 Skill 這一層誰來管?<strong>它的護欄長在 SKILL.md 自己身上</strong>——M6 認識過的 <code>disable-model-invocation: true</code>,讓該 Skill 只能手動 <code>/skill-name</code> 叫用,不會被任何 agent 自動選中。</p>
-<p>完整的治理拼圖是三塊:<strong>工具的護欄蓋在 agent 上,Skill 的護欄蓋在 Skill 上,行為準則寫在 agent 的 body 裡。</strong>記住這張拼圖——M11 你會遇到一個 tools 白名單管不到的場景。</p>
-</div></div>
-<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📐</span><span class="adm-title">還有第三道牆,只是它不在你的檔案裡</span></div><div class="adm-body">
-<p>你跑 T4-pytest 時若看到 <strong>Run command? / Allow / Skip</strong> 的確認框,那是<strong>執行期的人工關卡</strong>——不是你在 <code>.agent.md</code> 裡設的,是宿主預設就有的。它跟前兩道牆都不同:按 Skip 之後 agent 不會停下來,而是<strong>去想別的辦法</strong>(換個指令、換條路、或乾脆略過那一步繼續)。</p>
-<p>所以它擋得住「這一次執行」,擋不住「這個意圖」。M10 的 handoff 按鈕是同一種機制,但那是<strong>你設計出來的</strong>人工關卡,位置和時機由你決定。</p>
-</div></div>
+
 
 <h4 id="h4-9">三個最常見的錯誤</h4>
 <ul>
@@ -439,24 +422,10 @@ Skill,你只負責路由、補齊必要輸入、守住邊界。
 <li><strong>別以為寫了就有護欄</strong>:scope 選錯、工具名填錯都不會報錯。護欄要用「測一次叫不叫得到」來驗證,不是用「我有寫」來驗證——就像你剛剛跑 T4 那樣。</li>
 <li><strong>Custom Agent 不是 selection 正確性的保證</strong>:路由規則是強力行為準則,但 description 對比句(M6 / M7 寫的)還是要寫好——疊加才有穩定行為。</li>
 </ul>
-<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">一句話帶走:三個槓桿疊加,不是三選一</span></div><div class="adm-body">
-<p><strong>description 對比句</strong>(M6 / M7,收「哪個 Skill 被選中」)、<strong>路由指令</strong>(🪧,收「這個角色怎麼編排」)、<strong>工具邊界</strong>(🧱,就算路由漂了,傷害也被限制住)。</p>
-<p>v1 已經有了後兩個——但它手上還握著整類終端機(T4-pytest 那道牆只有 🪧,而且沒擋住),而「下一步」仍然是模型決定的(T3)。這兩件事,就是 M10 要解的。</p>
-</div></div>
-<div class="adm adm-check"><div class="adm-head"><span class="adm-ico">✅</span><span class="adm-title">完成檢核(v1)</span></div><div class="adm-body">
-<ul>
-<li><code>.github/agents/meeting-ops.agent.md</code> 存在(Workspace scope),<code>@meeting-ops</code> 叫得出來。</li>
-<li><code>tools</code> 裡有 <code>read</code>,而且你在回應裡看得到它確實讀了 SKILL.md、輸出格式符合 Skill 規範。</li>
-<li>T1:預設 Agent Mode 跑出來會漂;<code>@meeting-ops</code> 每次都穩定地只做摘要。</li>
-<li>T4-Jira:它明確回報超出範圍、交還使用者,而且你說得出這次是 🧱 與 🪧 一起在起作用。</li>
-<li>T4-pytest:你記下了 v1 會想去執行,並說得出「擋它的只有 🪧,而且沒擋住」。</li>
-<li>agent 檔案裡<strong>沒有</strong>任何「怎麼做」的 SOP——那些仍然只存在於 Skill 裡。</li>
-<li>你能用一句話向同事解釋:「工具邊界是護欄,Skill 路由是行為準則;Skill 自己的護欄是 <code>disable-model-invocation</code>。」</li>
-</ul>
-</div></div>
 
-
-
+<!-- ============================================================
+     M10 · Subagent(v2)與 Handoff(v3)
+     ============================================================ -->
 <!-- ============================================================
      M10 · Subagent(v2)與 Handoff(v3)
      ============================================================ -->
@@ -476,39 +445,25 @@ Skill,你只負責路由、補齊必要輸入、守住邊界。
 <h3 id="n-m10-subagent">v2 · Subagent:把繁雜的工作派出去,把危險的工具一起帶走</h3>
 <p>Custom Agent 可以把一部分工作派給另一個 custom agent 當 <strong>subagent</strong> 執行:subagent 在<strong>自己的 context</strong> 裡跑完整個 agentic loop,只把結果摘要回傳給呼叫者;而且它<strong>帶自己的 tools 白名單</strong>。</p>
 <div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">下放的價值,在於下放的同時把權限削小</span></div><div class="adm-body">
-<p>把 wbs-generator 放進 <code>wbs-builder</code> subagent,<code>@meeting-ops</code> 的 tools 就可以拿掉 <code>execute</code>。但這只完成一半——<strong>如果把整類 <code>execute</code> 原封不動搬過去,你只是換了持有人,沒換權限。</strong></p>
-<p>真正的收緊在於:wbs-generator 只需要「跑一支 Python」,所以 wbs-builder 展開 <code>execute</code> 後<strong>只勾 <code>runInTerminal</code></strong> 這一項,<code>runTask</code>、<code>runTests</code>、<code>createAndRunTask</code>、<code>killTerminal</code> 全部不給。這三件事要一起做,這一步才算數:</p>
+<p>把 wbs-generator 放進 <code>wbs-builder</code> subagent,<code>@meeting-ops</code> 的 tools 就可以拿掉 <code>execute</code>。但如果把整類 <code>execute</code> 原封不動搬過去,<strong>你只是換了持有人,沒換權限。</strong>四件事一起做,這一步才算數:</p>
 <ol>
 <li>把需要危險工具的那段工作獨立成一個 subagent</li>
-<li>呼叫者的 tools 拿掉該工具</li>
-<li><strong>subagent 只勾那段工作實際用得到的子工具</strong></li>
+<li>呼叫者的 tools 拿掉該工具,並用 <code>agents</code> 限定只能派給它</li>
+<li>subagent 只勾那段工作實際用得到的子工具</li>
+<li><strong>subagent 設 <code>user-invocable: false</code></strong>,從下拉選單消失,只能被派工、不能被直接選來對話</li>
 </ol>
-<p>三個好處:context 不被汙染(看得到)、入口 agent 不再握有終端機(看不到但更重要)、爆炸半徑縮到「一個只會拆 WBS 的 agent × 一項子工具」。M11 一個會寫入外部系統的 Skill,靠的正是終端機——v1 那種配置等於把鑰匙放在最常被叫用的 agent 身上。</p>
+<p>驗收標準只有一句:<strong>使用者能選到的每一個 agent,身上都沒有終端機。</strong>終端機只存在於「meeting-ops → wbs-builder」這一條被白名單限定的路徑上。少了第 4 件,使用者直接在選單選 wbs-builder,就又多了一個握著 shell 的入口。</p>
 </div></div>
-
-<h4 id="n-m10-callee">被呼叫的那一方:誰能把你拉去當 subagent?</h4>
-<p>一個常見誤解:「我的 <code>.agent.md</code> 裡沒寫 <code>agents</code> 欄位,所以沒有人可以呼叫到我」——<strong>方向反了</strong>。<code>agents</code> 欄位是寫在<strong>呼叫者</strong>身上的允許清單,不是寫在<strong>被呼叫者</strong>身上的門禁。</p>
-<div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title">預設值是開放的</span></div><div class="adm-body">
-<p>只要你沒有主動設 <code>disable-model-invocation: true</code>,你的 agent 就<strong>預設可以</strong>被任何有 <code>agent</code> tool、且把它列進自己 <code>agents</code> 陣列(或用 <code>*</code>)的 coordinator 當成 subagent 呼叫。</p>
-</div></div>
-<div class="table-wrap"><table>
-<thead><tr><th>你想要的結果</th><th>該怎麼設</th><th>設在誰身上</th></tr></thead>
-<tbody>
-<tr><td>可以被任何 coordinator 呼叫(預設)</td><td>什麼都不用寫</td><td>—</td></tr>
-<tr><td>完全不能被當 subagent,只能 <code>@</code> 或按鈕叫</td><td><code>disable-model-invocation: true</code></td><td><strong>自己</strong>的 <code>.agent.md</code></td></tr>
-<tr><td>平常鎖死,但某個信任的 coordinator 仍可呼叫</td><td>自己設 <code>disable-model-invocation: true</code>,coordinator 的 <code>agents</code> 陣列明確列出你的名字</td><td>兩邊都要設</td></tr>
-</tbody></table></div>
-<p>最後一列:被明確列進 <code>agents</code> 陣列,會<strong>覆蓋</strong>它自己的 <code>disable-model-invocation: true</code>——「預設鎖死、對信任對象開白名單」,跟 tools 白名單同一種精神,只是防的方向不同:tools 防「meeting-ops 能碰什麼工具」,這裡防「某個 agent 會不會被別人拉去用」。</p>
-<p>這也是 M9 ② 預告的那一刻:wbs-builder 會被模型選中,所以它的 description 要寫給<strong>模型</strong>看——做什麼、什麼時候該交給我。</p>
 
 <div class="labchip"><span class="labchip-ico">📄</span><code>m09-meeting-ops-agent/agents/wbs-builder.agent.md</code><span class="labchip-desc">— 完成版</span></div>
-<div class="labchip"><span class="labchip-ico">📄</span><code>m09-meeting-ops-agent/agents/meeting-ops.agent.md</code><span class="labchip-desc">— v2 完成版</span></div>
+<div class="labchip"><span class="labchip-ico">📄</span><code>m09-meeting-ops-agent/agents/meeting-ops.agent.md</code><span class="labchip-desc">— v2 完成版(可直接複製整份)</span></div>
 <ol class="steps" type="1">
-<li>建立 <code>.github/agents/wbs-builder.agent.md</code>。<strong>不要設</strong> <code>disable-model-invocation</code>——它就是要被 coordinator 呼叫的。
+<li>建立 <code>.github/agents/wbs-builder.agent.md</code>。兩個欄位一正一反:<strong>不設</strong> <code>disable-model-invocation</code>(它就是要被 coordinator 派工),<strong>但設</strong> <code>user-invocable: false</code>(不讓使用者直接選它)。
 <div class="code-block"><div class="code-head"><span class="code-lang">.github/agents/wbs-builder.agent.md</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>---
 name: wbs-builder
 description: 拿範圍描述或 Action Items,用 wbs-generator 產出 Excel WBS。需要把會議範圍拆成工作項時交給我;我回報檔案路徑、工作項清單與被排除的項目。
 tools: ['read', 'edit', 'runInTerminal']   # read 讀 SKILL.md;終端機只留「跑指令」這一項
+user-invocable: false                      # 不出現在下拉選單,只能被派工
 model: &lt;講師指定的模型&gt;
 ---
 
@@ -521,15 +476,18 @@ model: &lt;講師指定的模型&gt;
 1. 產出的 .xlsx 檔案路徑
 2. 工作項清單(編號 + 名稱)
 3. 被排除在範圍外的項目與理由</code></pre></div>
-<div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title">subagent 缺工具時,coordinator 會自己想辦法</span></div><div class="adm-body">
-<p>如果 wbs-builder 忘了給 <code>read</code>,它讀不到 <code>wbs-generator/SKILL.md</code>,會繞去終端機;你按 Skip 之後,<strong>meeting-ops 不會停下來——它會自己把 SKILL.md 讀進來,再把規格塞進 prompt 重派一次</strong>。</p>
-<p>結果是:工作最後還是完成了,但 context 隔離的好處蒸發了(規格進了主對話),而且你不會收到任何警告。<strong>subagent 的 tools 要配足它完成任務所需的最小集合——少一個,分工就會默默瓦解。</strong></p>
+<p>它會被模型選中,所以 description 是寫給<strong>模型</strong>看的:做什麼、什麼時候該交給我(M9 ② 預告的那一刻)。</p>
+<div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title">subagent 缺工具時,分工會默默瓦解</span></div><div class="adm-body">
+<p>如果忘了給 <code>read</code>,wbs-builder 讀不到 SKILL.md;你擋掉它繞去終端機之後,<strong>meeting-ops 會自己把 SKILL.md 讀進來、塞進 prompt 重派</strong>。工作照樣完成,但規格進了主對話,context 隔離蒸發,而且沒有任何警告。tools 要配足完成任務的<strong>最小</strong>集合,少一個都不行。</p>
 </div></div></li>
-<li><strong>在工具選單裡展開 <code>execute</code>,只勾 <code>runInTerminal</code></strong>,取消其他子工具。勾完看一眼 <code>tools:</code> 那一行:子工具名稱會<strong>取代</strong>整類名稱,也就是 <code>execute</code> 消失、<code>runInTerminal</code> 出現。<em>(進階、可選:<code>edit</code> 也能同樣削成 <code>createFile</code> + <code>editFiles</code>。收穫比削 <code>execute</code> 小得多——它動的是你自己 workspace 裡的檔案,最壞情況有 git 可以救;<code>execute</code> 動的是整台機器。先削 <code>execute</code>,時間夠再削 <code>edit</code>。)</em></li>
+<li><strong>在工具選單裡展開 <code>execute</code>,只勾 <code>runInTerminal</code></strong>,取消其他子工具。勾完看一眼 <code>tools:</code> 那一行:子工具名稱會<strong>取代</strong>整類名稱,<code>execute</code> 消失、<code>runInTerminal</code> 出現。</li>
 <li><strong>改 <code>meeting-ops.agent.md</code> 的 frontmatter</strong>:
 <div class="code-block"><div class="code-head"><span class="code-lang">diff · frontmatter v1 → v2</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>- tools: ['read', 'edit', 'execute', 'microsoft-learn/*']
 + tools: ['read', 'edit', 'agent', 'microsoft-learn/*']   # execute 下放;agent 用來呼叫 subagent
-+ agents: [wbs-builder]                                   # 呼叫者的允許清單</code></pre></div></li>
++ agents: [wbs-builder]                                   # 呼叫者的允許清單</code></pre></div>
+<div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title"><code>agents</code> 不寫,不是「不能派」,是「全部都能派」</span></div><div class="adm-body">
+<p><code>agents</code> 是寫在<strong>呼叫者</strong>身上的允許清單。沒寫這個欄位時,所有沒設 <code>disable-model-invocation: true</code> 的 agent 預設都能被它當 subagent 呼叫。預設是開放的,所以這一行一定要寫。</p>
+</div></div></li>
 <li><strong>整段換掉「路由規則」</strong>(「邊界」那一段不動)。
 <div class="code-block"><div class="code-head"><span class="code-lang">BEFORE · v1 的路由規則</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>## 路由規則(只負責判斷該找誰做事,不重寫 SOP)
 你只使用以下三個 Skill,除此之外的 Skill 一律不採用:
@@ -547,17 +505,14 @@ model: &lt;講師指定的模型&gt;
 - 一句話同時要「拆 WBS + 查證」時,先交給 wbs-builder,再把它回報的工作項
   交給 tech-grounding-checker,並向使用者說明你的順序。
 - 缺會議日期時先反問(延續 meeting-summary ② 的必要輸入),不要自己假設。</code></pre></div>
-<p>三處要改:開場那句「三個 Skill」變「兩個」、WBS 那一行改派 subagent、串接規則裡的 <code>wbs-generator</code> 也要換成 <code>wbs-builder</code>。</p></li>
+<p>三處不同:開場那句「三個 Skill」變「兩個」、WBS 那一行改派 subagent、串接規則裡的 <code>wbs-generator</code> 換成 <code>wbs-builder</code>。</p></li>
+<li><strong>打開 agents 下拉選單</strong>:wbs-builder 不在裡面。<em>(講師示範:先拿掉 <code>user-invocable: false</code>,選單裡就會出現 wbs-builder,直接選它請它跑 pytest——它會照跑。加回去、存檔,它就消失。這就是第 4 件事不能省的原因。)</em></li>
 <li><strong>T2</strong>:再跑一次。主對話只收到檔案路徑、工作項清單、被排除的項目(v3 的 handoff 會用到這份清單)。看 context window 指示器,跟 v1 的數字比。
 <div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📐</span><span class="adm-title">subagent 在畫面上幾乎是隱形的</span></div><div class="adm-body">
-<p>別期待明顯的視覺區塊:<strong>輸入框仍然顯示 <code>meeting-ops</code></strong>(你一直在跟它對話,沒有換人)。能看見的證據只有三個:回應文字裡出現 agent 名字(「WBS 代理已回報產檔完成」)、<strong>context window 指示器的數字</strong>、展開步驟才看得到的內部 tool 呼叫。</p>
-<p>這件事本身就是教學點:<strong>模型自己派的工作,你不容易看見。</strong>等一下的 handoff 正好相反。</p>
+<p><strong>輸入框仍然顯示 <code>meeting-ops</code></strong>——你一直在跟它對話,沒有換人。能看見的證據只有三個:回應裡出現 agent 名字、context window 指示器的數字、展開步驟才看得到的內部 tool 呼叫。<strong>模型自己派的工作,你不容易看見。</strong>等一下的 handoff 正好相反。</p>
 </div></div></li>
 <li><strong>T4-pytest</strong>:meeting-ops 現在沒有終端機,應該明講「目前沒有可用的終端機執行工具,無法代跑,請在終端機自行執行」。<strong>🧱 確實擋住了</strong>——對照 v1 那次它會想去執行。
-<div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title">觀察重點:如果它繞去叫 wbs-builder 跑呢?</span></div><div class="adm-body">
-<p>wbs-builder 手上<strong>有</strong> <code>runInTerminal</code>。注意:它沒有 <code>runTests</code>,但那攔不住 <code>pytest</code>——終端機本來就能打任何指令。所以這條繞路上 🧱 擋不住,擋它的只剩兩道 🪧:meeting-ops 的路由規則沒有「跑測試 → wbs-builder」,以及 wbs-builder 的 body 說「與 WBS 無關的指令不在範圍內」。</p>
-<p><strong>把危險工具下放並削小,是把它關進更小的房間,不是把它消滅。</strong>房間裡的 🪧 寫得好不好,仍然重要。若它真的繞了,你就抓到一個要修的路由漏洞;而「已放行的工具被拿去做別的事」,正是 M11 要處理的問題。</p>
-</div></div></li>
+
 </ol>
 
 <h3 id="n-m10-handoff">v3 · Handoff:把「下一步」做成一顆按鈕,交給人按</h3>
@@ -567,18 +522,16 @@ model: &lt;講師指定的模型&gt;
 <ol>
 <li><strong>輸入框上方的 agent 換人</strong>——從 <code>meeting-ops</code> 變成 <code>grounding-checker</code>,接下來這一輪由它接手,用它自己的 tools。</li>
 <li><strong>你設定的 prompt 被填進輸入框</strong>,連同上一段的結果一起帶過去。</li>
-<li><strong>停在那裡,游標等你</strong>(因為 <code>send: false</code>)。你可以改字、可以刪掉重寫、可以直接關掉不送。</li>
+<li><strong>停在那裡,游標等你</strong>(因為 <code>send: false</code>)。你可以改字、刪掉重寫、或直接不送。</li>
 </ol>
-<p>跟 subagent 對照一下:subagent 是模型自己派、畫面上幾乎看不出來;handoff 是人按、而且<strong>換人這件事擺在你眼前</strong>。這不是巧合——需要人審核的下一步,本來就該讓人看見。</p>
+<p>subagent 是模型自己派、畫面上幾乎看不出來;handoff 是人按、而且<strong>換人這件事擺在你眼前</strong>。需要人審核的下一步,本來就該讓人看見。</p>
 </div></div>
-<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">為什麼「拆 WBS」可以讓模型派,「查證」要人按按鈕</span></div><div class="adm-body">
-<p>兩個理由。第一,查證是<strong>要花錢也花時間的</strong>:15 個工作項 × Docs Search + Docs Fetch,不是每次整理會議都該自動跑。第二,<strong>查證的輸入要先由人看過</strong>——上半場 7A 你檢查過「SAP 整合有沒有被誤列進 WBS」;範圍錯了再去查,查出來的依據也是白查。WBS 產出後停一下、人看過、再按按鈕,是這條線天然的審核點。</p>
-</div></div>
+
 <p>今天先做一個<strong>唯讀</strong>的 handoff——先拿沒有副作用的下一步練一次,等一下就會懂為什麼。</p>
 <div class="labchip"><span class="labchip-ico">📄</span><code>m09-meeting-ops-agent/agents/grounding-checker.agent.md</code><span class="labchip-desc">— 被 handoff 到的 agent(唯讀,只有 Learn MCP)</span></div>
-<div class="labchip"><span class="labchip-ico">📄</span><code>m09-meeting-ops-agent/agents/meeting-ops.agent.md</code><span class="labchip-desc">— v3 完成版(含 handoffs)</span></div>
+<div class="labchip"><span class="labchip-ico">📄</span><code>m09-meeting-ops-agent/agents/meeting-ops.agent.md</code><span class="labchip-desc">— v3 完成版(含 handoffs,可直接複製整份)</span></div>
 <ol class="steps" type="1">
-<li>建立 <code>.github/agents/grounding-checker.agent.md</code>。tools <strong>只有 <code>read</code> 與 <code>microsoft-learn/*</code></strong>——不給 edit、不給終端機;並設 <code>disable-model-invocation: true</code>,讓它只走按鈕,不讓任何 coordinator 把它當 subagent 拉去用。
+<li>建立 <code>.github/agents/grounding-checker.agent.md</code>。tools <strong>只有 <code>read</code> 與 <code>microsoft-learn/*</code></strong>——不給 edit、不給終端機;並設 <code>disable-model-invocation: true</code>,讓它只走按鈕,不被任何 coordinator 當 subagent 拉去用。
 <div class="code-block"><div class="code-head"><span class="code-lang">.github/agents/grounding-checker.agent.md</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>---
 name: grounding-checker
 description: 拿一份 WBS 工作項清單,逐項查證官方技術依據,產出對照表。只透過 @meeting-ops 的 handoff 按鈕叫用。
@@ -595,7 +548,9 @@ model: &lt;講師指定的模型&gt;
 ## 範圍與必要輸入
 - 使用者指定了查證範圍(例如「1.1」「3.x」)時,只查該範圍,其餘不碰。
 - 沒有指定範圍、而待查工作項超過 5 項時,先列出章節清單反問使用者要查哪些,
-  不要自作主張整份跑完。(同 meeting-summary ② 的必要輸入原則)</code></pre></div></li>
+  不要自作主張整份跑完。(同 meeting-summary ② 的必要輸入原則)</code></pre></div>
+<!-- 上台前實測:被列進 coordinator 的 agents 陣列是否仍會覆蓋 disable-model-invocation: true -->
+<p>注意:某個 coordinator 若把它<strong>明確列進 <code>agents</code> 陣列</strong>,會覆蓋它自己的 <code>disable-model-invocation: true</code>。所以 meeting-ops 的 <code>agents</code> 只列 wbs-builder,不列它。</p></li>
 <li><strong>在 <code>meeting-ops.agent.md</code> 的 frontmatter 加上 handoff</strong>:
 <div class="code-block"><div class="code-head"><span class="code-lang">diff · frontmatter v2 → v3</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>  agents: [wbs-builder]
 + handoffs:
@@ -607,9 +562,7 @@ model: &lt;講師指定的模型&gt;
 +       若上面指定了範圍,只查該範圍。標「不適用」之前先確認該項沒有指名任何雲端服務或平台功能。
 +     send: false</code></pre></div>
 <div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title"><code>label</code> 不能是純中文</span></div><div class="adm-body">
-<p>純中文的 label 會被擋下來,錯誤訊息是:<br>
-<code>The 'label' property in a handoff must contain at least one alphanumeric character.</code></p>
-<p>至少要有一個英數字元。建議寫成 <strong>英文 + 中文說明</strong>(例如 <code>Ground-check (逐項查證技術依據)</code>):英文在前比較不會被按鈕寬度截斷,中文讓學員一眼知道在做什麼。M11 的 <code>jira-clerk</code> 會踩到同一條。</p>
+<p>純中文的 label 會被擋下來:<code>The 'label' property in a handoff must contain at least one alphanumeric character.</code> 建議寫成<strong>英文 + 中文說明</strong>(例如 <code>Ground-check (逐項查證技術依據)</code>)。</p>
 </div></div></li>
 <li><strong>整段換掉「路由規則」</strong>(「邊界」那一段仍然不動)。這條路現在由使用者按按鈕決定,不由模型決定。
 <div class="code-block"><div class="code-head"><span class="code-lang">BEFORE · v2 的路由規則</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>## 路由規則(只負責判斷該找誰做事,不重寫 SOP)
@@ -627,74 +580,46 @@ model: &lt;講師指定的模型&gt;
 - 要替 WBS 查證技術依據 → 不自己查;產出 WBS 後提醒使用者用
   「Ground-check」按鈕交給 @grounding-checker
 - 缺會議日期時先反問(延續 meeting-summary ② 的必要輸入),不要自己假設。</code></pre></div>
-<p>相對 v2 有兩處:開場那句變成「一個 Skill」、查證那一行改成「不自己查、提醒按按鈕」,<strong>並把 v1 就埋下的那條串接規則整條刪掉</strong>。</p></li>
+<p>兩處不同:開場那句變成「一個 Skill」、查證那一行改成「不自己查、提醒按按鈕」,<strong>並把 v1 就埋下的那條串接規則整條刪掉</strong>。</p></li>
 <li><strong>T2</strong>:wbs-builder 回報工作項清單後,回應底下應該出現一顆「Ground-check」按鈕。</li>
 <li>按下去,確認三件事都發生了:輸入框上方變成 <code>grounding-checker</code>、prompt 已預填、尚未送出。<strong>把第一行改成「查證範圍:1.1」再送出</strong>,整段示範就從十幾分鐘縮到一分鐘。
 <div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title"><code>send: false</code> 給你的不只是「要不要跑」,還有「跑之前還能改」</span></div><div class="adm-body">
-<p>按鈕是 🧱(沒人按就不會發生),預填而不送出則是把<strong>範圍控制</strong>也交到人手上。一個要花錢、花時間的下一步,人可以在送出前先縮小它。這是 <code>send: true</code> 做不到的事——那等於模型自己接著跑,只是換了個 agent。</p>
+<p>按鈕是 🧱(沒人按就不會發生),預填而不送出則把<strong>範圍控制</strong>也交到人手上。<code>send: true</code> 做不到這件事——那等於模型自己接著跑,只是換了個 agent。<strong>要人審核的下一步,一律 <code>send: false</code>。</strong></p>
 </div></div></li>
-<li>送出後注意它<strong>沒有去讀 .xlsx</strong>:它手上沒有終端機,所以走的是 SKILL.md ② 的第二條路,直接用對話裡 wbs-builder 回報的那份清單。上半場 7B 你在預設 Agent Mode 跑同一份 SKILL.md 時,它是寫 Python 讀檔的。
+<li>送出後注意它<strong>沒有去讀 .xlsx</strong>:它手上沒有終端機,所以走 SKILL.md ② 的第二條路,直接用對話裡 wbs-builder 回報的清單。上半場 7B 在預設 Agent Mode 跑同一份 SKILL.md 時,它是寫 Python 讀檔的。
 <div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">同一份 Skill,換一個工具邊界就走另一條路</span></div><div class="adm-body">
 <p>Skill 定義「怎麼做」,Agent 定義「能碰什麼」——兩者可以獨立變動。你沒改 tech-grounding-checker 一個字,只是換了帶它的人。</p>
 </div></div></li>
 <li><strong>T3</strong>:再跑一次複合指令。現在它應該只做摘要與 WBS,然後用按鈕提示你下一步——而不是自己接著查。</li>
 </ol>
-<div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title">handoff 的兩個現實</span></div><div class="adm-body">
-<ul>
-<li><code>send: true</code> 會自動送出預填 prompt——那就變回「模型接著跑」,只是換了個 agent。<strong>要人審核的下一步一律 <code>send: false</code></strong>。</li>
-<li>handoff 是 VS Code chat 的 UI 機制;在 Copilot CLI 與雲端 coding agent 裡的支援程度以當天版本為準(M13 會實際看)。按鈕這道 🧱 會隨介面而消失,所以有副作用的能力,不能只靠 handoff 守——M11 會把護欄再往下蓋一層,蓋到 Skill 自己身上。</li>
-</ul>
-</div></div>
-<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📐</span><span class="adm-title">同一個欄位名,蓋在兩個地方,防兩件事</span></div><div class="adm-body">
-<div class="table-wrap"><table>
-<thead><tr><th><code>disable-model-invocation: true</code> 寫在…</th><th>防的是</th><th>今天的例子</th></tr></thead>
-<tbody>
-<tr><td><code>SKILL.md</code></td><td>這個 Skill 被任何 agent 依 description <strong>自動選中</strong>;只能手動 <code>/skill-name</code></td><td>今天沒有——三個 Skill 都是唯讀,鎖了沒差;哪種 Skill 非鎖不可,M11 讓你踩出來</td></tr>
-<tr><td><code>.agent.md</code></td><td>這個 agent 被 coordinator <strong>當成 subagent 呼叫</strong>;只能 <code>@</code> 或按鈕</td><td><code>grounding-checker</code></td></tr>
-</tbody></table></div>
+<div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title">按鈕這道 🧱 會隨介面消失</span></div><div class="adm-body">
+<p>handoff 是 VS Code chat 的 UI 機制;在 Copilot CLI 與雲端 coding agent 目前暫不支援(M13 會實際看)。</p>
 </div></div>
 
 <h3 id="n-m10-wrap">收尾:一個檔案,三個版本</h3>
 <p>把 M9 記下的 v1 結果和今天的 v2、v3 放在一起。兩個量在移動:<strong>meeting-ops 手上的工具越來越少,而「下一步」的決定權從模型移向人。</strong></p>
-<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">🗺️</span><span class="adm-title">路線圖:同一個 <code>@meeting-ops</code>,三個版本</span></div><div class="adm-body">
 <div class="table-wrap"><table>
-<thead><tr><th>版本</th><th>加了什麼</th><th>meeting-ops 手上的工具</th><th>「下一步」誰決定</th><th>看得見嗎</th></tr></thead>
+<thead><tr><th></th><th>v1 · Custom Agent</th><th>v2 · + Subagent</th><th>v3 · + Handoff</th></tr></thead>
 <tbody>
-<tr><td><strong>v1</strong></td><td>人設 + 路由規則 + tools 白名單</td><td>讀、編輯、<strong>整類終端機</strong>、Learn</td><td>模型,依 body 指令</td><td>—</td></tr>
-<tr><td><strong>v2</strong></td><td>subagent <code>wbs-builder</code></td><td>讀、編輯、Learn(<strong>終端機下放並削成 <code>runInTerminal</code></strong>)</td><td>模型,決定要不要派 subagent</td><td>幾乎看不到</td></tr>
-<tr><td><strong>v3</strong></td><td>handoff 到 <code>grounding-checker</code></td><td>同 v2</td><td><strong>人,按按鈕</strong></td><td><strong>輸入框換人,擺在眼前</strong></td></tr>
-</tbody></table></div>
-</div></div>
-<div class="table-wrap"><table>
-<thead><tr><th>測試句</th><th>v1 · Custom Agent</th><th>v2 · + Subagent</th><th>v3 · + Handoff</th></tr></thead>
-<tbody>
+<tr><td><strong>meeting-ops 手上的工具</strong></td><td>讀、編輯、<strong>整類終端機</strong>、Learn</td><td>讀、編輯、Learn、派工<br>(終端機下放給 wbs-builder,削成 <code>runInTerminal</code>)</td><td>同 v2</td></tr>
+<tr><td><strong>「下一步」誰決定</strong></td><td>模型,依 body 指令</td><td>模型,決定要不要派 subagent(幾乎看不到)</td><td><strong>人,按按鈕(輸入框換人,擺在眼前)</strong></td></tr>
 <tr><td><strong>T1</strong> 都做一做</td><td>穩定只做摘要</td><td>同左</td><td>同左</td></tr>
 <tr><td><strong>T2</strong> 整理 + 拆 WBS</td><td>摘要 + WBS,終端機輸出塞滿主對話</td><td>WBS 變成 subagent 呼叫,主對話只收摘要</td><td>同 v2,底下多一顆 Ground-check 按鈕</td></tr>
-<tr><td><strong>T3</strong> 摘要 + WBS + 查證</td><td>模型自己接著查</td><td>模型自己接著查</td><td><strong>停在 WBS,用按鈕把下一步交給人;範圍也由人送出前決定</strong></td></tr>
+<tr><td><strong>T3</strong> 摘要 + WBS + 查證</td><td>模型自己接著查</td><td>模型自己接著查</td><td><strong>停在 WBS,下一步交給人;範圍也由人送出前決定</strong></td></tr>
 <tr><td><strong>T4</strong> Jira</td><td>拒絕(🧱 + 🪧)</td><td>拒絕</td><td>拒絕</td></tr>
 <tr><td><strong>T4</strong> pytest</td><td><strong>會想去執行</strong>(只剩 🪧)</td><td><strong>明講沒有終端機工具,請自行執行</strong>(🧱)</td><td>同 v2</td></tr>
 </tbody></table></div>
 <p>T4-pytest 那一列,就是 🧱 與 🪧 差別最赤裸的證據:同一句話、同一份 body 規則,差別只在 <code>tools</code> 裡有沒有那個工具。</p>
-<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">兩個 agent,兩種設定:模型能派的 vs. 一定要人按的</span></div><div class="adm-body">
+<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">三個 agent,三種叫法:誰能選、誰能派、誰只能按</span></div><div class="adm-body">
 <div class="table-wrap"><table>
-<thead><tr><th>Agent</th><th>怎麼被叫到</th><th><code>disable-model-invocation</code></th><th>tools</th></tr></thead>
+<thead><tr><th>Agent</th><th>怎麼被叫到</th><th><code>user-invocable</code></th><th><code>disable-model-invocation</code></th><th>tools</th></tr></thead>
 <tbody>
-<tr><td><code>wbs-builder</code></td><td>meeting-ops 當 subagent 派(模型決定)</td><td>不設</td><td><code>read</code>、<code>edit</code>、<code>runInTerminal</code></td></tr>
-<tr><td><code>grounding-checker</code></td><td>handoff 按鈕(人決定)</td><td><code>true</code></td><td><code>read</code>、<code>microsoft-learn/*</code></td></tr>
+<tr><td><code>meeting-ops</code></td><td>使用者從選單選(入口)</td><td>不設(預設 true)</td><td>不設</td><td><code>read</code>、<code>edit</code>、<code>agent</code>、<code>microsoft-learn/*</code></td></tr>
+<tr><td><code>wbs-builder</code></td><td>只能被 meeting-ops 派工(模型決定)</td><td><strong><code>false</code></strong></td><td>不設</td><td><code>read</code>、<code>edit</code>、<code>runInTerminal</code></td></tr>
+<tr><td><code>grounding-checker</code></td><td>handoff 按鈕(人決定)</td><td>不設</td><td><strong><code>true</code></strong></td><td><code>read</code>、<code>microsoft-learn/*</code></td></tr>
 </tbody></table></div>
-<p>哪些能力可以讓模型自己派、哪些一定要人決定——這條線今天就畫在這裡。M11 的起點是 v2 留下的那個問題:<strong>已放行的工具被 Skill 拿去打外部系統時,誰來擋?</strong></p>
-</div></div>
-<div class="adm adm-check"><div class="adm-head"><span class="adm-ico">✅</span><span class="adm-title">完成檢核(v2 / v3)</span></div><div class="adm-body">
-<ul>
-<li>三個 agent 的 <code>tools</code> <strong>都有 <code>read</code></strong>,而且輸出格式符合各自 Skill 的規範。</li>
-<li>v2:T2 的 WBS 由 subagent 執行,主對話只收到路徑、工作項清單、被排除項目;context 用量比 v1 低。</li>
-<li>v2:<code>wbs-builder</code> 的 tools 是 <code>runInTerminal</code> 而不是整類 <code>execute</code>。</li>
-<li>v2:T4-pytest,<code>@meeting-ops</code> 明講沒有終端機工具、請自行執行——對照 v1 那次它會想去跑。</li>
-<li>v3:T2 產出 WBS 後出現「Ground-check」按鈕;按下後輸入框上方變成 <code>@grounding-checker</code>,prompt 預填但未送出。</li>
-<li>v3:你把「查證範圍」改成 1.1 送出,它只查了那一節。</li>
-<li>v3:T3 不再讓 <code>@meeting-ops</code> 自己接著查。</li>
-<li>你能用一句話說出:「路由和 subagent 是模型決定、handoff 是人決定;所以要人審核的下一步該走 handoff。」</li>
-</ul>
+<p><code>user-invocable</code> 防「使用者直接選到它」,<code>disable-model-invocation</code> 防「模型把它拉去當 subagent」,兩個方向各管各的。後者在 <code>SKILL.md</code> 上也有同名欄位,防的是 Skill 被自動選中——今天三個 Skill 都唯讀,鎖了沒差;哪種 Skill 非鎖不可,M11 讓你踩出來。</p>
+<p>M11 的起點是 v2 留下的那個問題:<strong>已放行的工具被 Skill 拿去打外部系統時,誰來擋?</strong></p>
 </div></div>
 
 
@@ -716,7 +641,7 @@ model: &lt;講師指定的模型&gt;
 <div class="code-block"><div class="code-head"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>python -m uvicorn mock_jira_server:app --reload --port 9000</code></pre></div>
 <p>套件課前已在共用 venv 裝好,這裡不需要 <code>pip install</code>;執行前確認終端機提示字元有 <code>(.venv)</code>——VS Code 外的 PowerShell 也可以。Mock Jira 不驗 token,今天沒有認證這一步;真實 Jira 要 token 時放使用者層級環境變數或 secret store,<strong>不要寫進 SKILL.md</strong>——M13 / M14 會把整個 <code>.github/</code> 推上 GitHub。</p>
 <h4>第一輪:用(naive 版跑起來,看似正常)</h4>
-<p>先把天真版放進專案,再用 Agent mode 下一句明確的指令——這一輪要的是「它真的建出票來」。</p>
+<p>先把天真版放進專案,再用 Agent mode 下一句明確的指令——這一輪要的是「它真的建出Ticket來」。</p>
 <div class="code-block"><div class="code-head"><span class="code-lang">PowerShell · 放置 naive 版</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>mkdir .github\skills\action-item-to-jira
 copy m11-jira-integration-skill\skills\action-item-to-jira\SKILL-naive.md `
      .github\skills\action-item-to-jira\SKILL.md</code></pre></div>
@@ -804,7 +729,7 @@ copy m11-jira-integration-skill\skills\action-item-to-jira\SKILL-naive.md `
 <tr><td><strong>C · handoff 按鈕</strong></td><td>Skill 同 B 設硬鎖;另建一個只有 Jira 相關工具的 <code>@jira-clerk</code>;<code>@meeting-ops</code> 用 <code>handoffs:</code> 給一顆「Create-Jira (建立 Jira 工單)」按鈕,<code>send: false</code></td><td>整理完就看到按鈕,一按一改一送</td><td>低:沒人按就不會發生;按了也是在一個工具邊界最小的 agent 裡發生</td><td><strong>人,而且是在對的時機被提醒</strong></td></tr>
 </tbody></table></div>
 <div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">三種整合方式都合法,差別在誰握有觸發權</span></div><div class="adm-body">
-<p>A 是「模型決定」,B 是「人決定但沒人提醒」,C 是「人決定,而且在對的時機被提醒」。今天做 C,不是因為 C 是準則,而是它把 M10 學的 handoff 用在它最有價值的地方:<strong>有寫入副作用的下一步</strong>。回你們公司,如果 Jira 是測試環境、或工單本來就允許重複,A 也許就夠;如果開錯單要寫事故報告,B 或 C。</p>
+<p>A 是「模型決定」,B 是「人決定但沒人提醒」,C 是「人決定,而且在對的時機被提醒」。</p>
 </div></div>
 <h4>動手:做出選項 C</h4>
 <p>這一段是<strong>應用,不是新機制</strong>:按鈕按下去三件事、<code>send: false</code>、label 要有英數字元,M10 v3 都做過了;這裡只是把同一顆按鈕接到一個有寫入副作用的下一步上,十分鐘內做完。新的東西只有一件——接完之後那張「三道東西各自擋什麼」的疊層表。</p>
@@ -872,39 +797,20 @@ disable-model-invocation: true          # 不讓任何 coordinator 把我當 sub
 <li><strong>按下去</strong>:切到 <code>@jira-clerk</code>,prompt 預填。送出 → 它先列兩個清單 → 你說「確認」→ <code>curl.exe http://127.0.0.1:9000/debug/issues</code> 驗證:只有新的、沒有重複。</li>
 <li><strong>對照組</strong>:同一句丟給預設 Agent Mode。因為硬鎖是 Skill 自帶的,它同樣不會自動開單——差別在預設模式沒有按鈕、沒有排除語句,它可能自行用終端機直接呼叫 API,也可能什麼都不做。</li>
 </ol>
-<div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title">誠實時刻:這三道東西各自擋什麼</span></div><div class="adm-body">
-<div class="table-wrap"><table><thead><tr><th>防線</th><th>層</th><th>性質</th><th>擋掉什麼</th><th>擋不住什麼</th></tr></thead><tbody>
-<tr><td><code>disable-model-invocation: true</code></td><td>Skill</td><td>🧱 牆</td><td>任何 agent 底下的自動語意觸發</td><td>使用者自己手動 / 叫用(這是設計目的)</td></tr>
-<tr><td><code>@meeting-ops</code> 的 <code>tools</code> 白名單</td><td>Agent</td><td>🧱 牆</td><td>M10 你已把 <code>execute</code> 下放到 wbs-builder 並削成 <code>runInTerminal</code>,所以 <code>@meeting-ops</code> 現在<strong>物理上叫不到終端機</strong>——curl 打 REST 這條路對它是關的。未來 Jira 若改走 MCP,不列入白名單同樣攔得住</td><td>繞道:它仍能呼叫 wbs-builder,而 wbs-builder 有 <code>runInTerminal</code>。擋這條路靠的是 wbs-builder 的 body 只路由 wbs-generator(🪧)+ Skill 側硬鎖(🧱)。若你當天沒做 M10、<code>@meeting-ops</code> 仍有 <code>execute</code>,這道牆對本 Skill 就沒有攔截力</td></tr>
-<tr><td>handoff(<code>send: false</code>)</td><td>Agent</td><td>🧱 牆(對「自動發生」而言)</td><td>沒人按就不會切過去;切過去也在 <code>@jira-clerk</code> 的最小工具邊界內</td><td>人按錯;VS Code 以外的執行面不一定有這顆按鈕</td></tr>
-<tr><td>body 排除語句</td><td>Agent</td><td>🪧 路標</td><td>讓拒絕是「明講交還」而不是沉默,並提示下一步</td><td>理論上仍可能漂——所以它不能單獨扛</td></tr>
-</tbody></table></div>
-</div></div>
-<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">決策點:寫入型 Skill 上線前,誰要看過?</span></div><div class="adm-body">
-<div class="table-wrap"><table><thead><tr><th>選項</th><th>代價</th><th>跟今天哪次事故有關</th></tr></thead><tbody>
-<tr><td>不用,能動就上</td><td>你在第一輪看過:naive 版「能動」,所以它會上線</td><td>踩 A/B 兩次</td></tr>
-<tr><td>PR review 順便看(一個人、一次)</td><td>幾分鐘;需要 Skill 住在 repo 裡</td><td>去重這條規則,任何看過 debug/issues 的人都會要求</td></tr>
-<tr><td>指定 Owner + 狀態欄(團隊自己維護一張 Skill 登記表)</td><td>要有人「擁有」這件事;適合 Skill 數量 &gt; 10 的團隊</td><td>—</td></tr>
-</tbody></table></div>
-<p>今天不替你們選。但注意:第二個選項的成本幾乎是零,而它擋掉的是「別人的 Jira 裡多了你沒要的工單」。</p>
-</div></div>
-<div class="adm adm-check"><div class="adm-head"><span class="adm-ico">✅</span><span class="adm-title">完成檢核(M11 整體)</span></div><div class="adm-body">
-<ul>
-<li>踩 A 親眼看過(重複工單出現在 debug/issues);踩 B 測過,能說出「寫入型為什麼不能賭觸發機率」。</li>
-<li>防呆後三項驗收全過;version 已升 0.2.0。</li>
-<li><code>@meeting-ops</code> 踩線測試:整理照做、開單明講交還、出現「Create-Jira」按鈕;按下後 <code>@jira-clerk</code> 先列清單再等確認。</li>
-<li>能對「誰有權觸發 Jira 開單」說出三種整合方式的觸發者與代價——並說出你們公司大概會選哪一種、為什麼。</li>
-</ul>
-</div></div>
 
-
-
-<h2 id="n-m12">M12 · 翻車④:OpenAPI → FastAPI Scaffolding——型別漂移(講師示範)+ applyTo instructions</h2>
+<!--
+  M12 更新版
+  本段新增 Mermaid 流程圖（<pre class="mermaid">），頁面需載入 mermaid.js，例如放在 </body> 前：
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true });
+  </script>
+-->
+<h2 id="n-m12">M12 · 翻車④:OpenAPI → FastAPI Scaffolding——型別漂移(你自己翻)+ applyTo instructions</h2>
 <p>這是今天技術密度最高的一段,對應企業導入 Copilot 最常見的具體需求:「從 API Spec 產生 Controller 骨架」。而這份規格<strong>就是 Portal 自己的後端 API</strong>——做完這一步,M0 demo 裡的前端終於有真正的後端可以接,故事線閉環。</p>
 <div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">本堂最重要的一個觀念</span></div><div class="adm-body">
 <p>最穩的 scaffolding Skill,<strong>通常不是叫 LLM 純手寫,而是讓步驟去「包一個既有的決定性工具」、再疊上團隊規範與品質自檢</strong>。這裡用 <code>datamodel-codegen</code> 從 OpenAPI 規格產生 Pydantic model,Skill 負責「呼叫工具 + 套 router 慣例 + 自檢」。</p>
-<p>這句話今天不用你相信——講師會把對照組投影出來:同一份規格純手刻兩次的 diff;然後你自己用包工具的 Skill 跑,看它為什麼穩。你在上半場 M3 已經看過偏離預期這個模式,只是這次換了一個層次:<strong>輕則類別命名、enum member 大小寫不一致(換一次產出,呼叫端的 <code>Sentiment.positive</code> 可能直接 <code>AttributeError</code>),重則型別本身對不上</strong>——不是格式難看那種一眼看得出來的偏離,是「兩份看起來都對,但兜不起來」的型別漂移。</p>
-<p><strong>適用前提</strong>:這個做法假設 OpenAPI spec <strong>已經定案</strong>(治理委員會審過、或對外合約規格)。</p>
+
 </div></div>
 
 <div class="table-wrap"><table>
@@ -932,124 +838,443 @@ disable-model-invocation: true          # 不讓任何 coordinator 把我當 sub
 <td><strong>包工具</strong>:datamodel-codegen 產 model → 依 tag 分 router → 每個 operationId 一個函式骨架</td>
 </tr>
 <tr>
-<td>品質規則</td>
-<td>endpoint 無遺漏、response_model 對齊、骨架內不可夾帶幻覺商業邏輯、uvicorn 能啟動、<strong>重跑不覆蓋已有實作</strong></td>
+<td>重跑策略</td>
+<td>目標檔已存在時,<strong>已有實作的 function 跳過不覆蓋</strong>,只補 spec 新增的 endpoint;完成回報必須列出被跳過的清單——<strong>M14 你會看到為什麼這條這麼重要</strong></td>
 </tr>
 </tbody>
 </table></div>
-<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">品質規則最後一條為什麼存在(講給你聽,今天不撞)</span></div><div class="adm-body">
-<p>「重跑不覆蓋已有實作」防的是另一種真實事故:spec 改版後重跑 scaffold,把同事上週手寫好的商業邏輯<strong>靜默蓋回骨架</strong>,而且 git diff 裡看起來就像一次普通的重新生成。今天不實測它;但請記住這條規則的來歷——M14 雲端 agent 接手這份骨架時,它會變得很具體——<strong>Skill 的品質規則,最有價值的那幾條,往往來自事故,不是來自想像</strong>。</p>
-</div></div>
-<h3 id="n-m12-applyto">前置(5 分):先建 applyTo instructions——碰到 <code>app/</code> 才注入的規則</h3>
+
+<h3 id="n-m12-flow">本堂流程一覽</h3>
+<p>M12 做的事比較多,先看全貌。📋 = 這一步會自動注入 <code>fastapi.instructions.md</code>;⛔ = 輸出路徑不在 glob 內,不會注入;橘色虛線框 = M12 刻意留下、交給 M14 補的缺口。</p>
+<div class="mermaid-wrap">
+<pre class="mermaid">
+flowchart TD
+    A["建立 fastapi.instructions.md<br/>applyTo: app/** + tests/**"] --> B["試跑:summaries router 骨架<br/>輸出 app/routers/<br/>📋 instructions 注入・骨架規則生效"]
+
+    B --> R1
+
+    subgraph R1["Lab 第一輪・純手刻(6 分)"]
+        C1["Session 1<br/>→ app_manual_1/models.py<br/>⛔ 不在 glob 內"]
+        C2["Session 2<br/>→ app_manual_2/models.py<br/>⛔ 不在 glob 內"]
+        C1 --> D1["眼睛看:差不多吧"]
+        C2 --> D1
+        D1 --> E1["git diff:型別漂移 ❌"]
+    end
+
+    E1 -->|"換上包工具的 Skill"| R2
+
+    subgraph R2["Lab 第二輪・包工具 Skill(12 分)"]
+        F1["Session 3:Skill → app/<br/>datamodel-codegen 產 model<br/>📋 instructions 注入"]
+        F1 --> G["uvicorn /docs<br/>endpoint 都在,呼叫全部 NotImplementedError"]
+        G --> F2["Session 4:Skill → app_verify/<br/>⛔ 不在 glob 內"]
+        F2 --> H["git diff + SHA256<br/>byte-level 一致 ✅"]
+    end
+
+    H --> P["python -m pytest<br/>no tests ran"]
+    P --> I["commit + push<br/>app/ + .github/"]
+    I ==> M14["M14 /delegate<br/>雲端 coding agent"]
+
+    X1["缺口①:函式體全是<br/>NotImplementedError"]
+    X2["缺口②:沒有 tests/<br/>pytest 跑出 0 個測試"]
+    X3["缺口③:instructions「實作階段」<br/>還沒用上,且與骨架規則衝突"]
+
+    G -.- X1
+    P -.- X2
+    A -.- X3
+    X1 -.-> M14
+    X2 -.-> M14
+    X3 -.-> M14
+
+    classDef gap fill:#fff4e5,stroke:#e67700,stroke-dasharray:5 5,color:#7a4100
+    classDef nope fill:#f1f3f5,stroke:#868e96,color:#495057
+    class X1,X2,X3 gap
+    class C1,C2,F2 nope
+</pre>
+</div>
+
+<h3 id="n-m12-applyto">先建 applyTo instructions——碰到 <code>app/</code> 才注入的規則 <span class="badge badge-l">5 分</span></h3>
 <p>上半場 M4 說過三種「何時被讀」:AGENTS.md 每次注入、Prompt File 手動叫用、Skill 模型判斷相關才載入。這裡補第四種——<strong>Custom Instructions(<code>applyTo</code>):對話涉及符合 glob 的檔案時才注入</strong>,所以可以寫得很具體,不必擔心每次請求都付這段 token。它會在等一下產骨架、以及 M14 雲端 agent 實作時,在你沒提的情況下自動套用。</p>
 <ol class="steps" type="1">
-<li>建立 <code>.github/instructions/fastapi.instructions.md</code>,frontmatter 用 <code>applyTo: "app/**"</code>。</li>
-<li>驗證它「平常不在、碰到才在」:先問一個跟 <code>app/</code> 無關的問題,references 裡不應該有它;再把 <code>openapi/meeting-portal-api.yaml</code> 拖進來問「依這份規格幫我在 app/routers/ 下寫 summaries router 的骨架」——這次 references 裡就要有它。</li>
+<li>建立 <code>.github/instructions/fastapi.instructions.md</code>,frontmatter 用 <code>applyTo: "**/app/**,**/tests/**"</code>。</li>
+<li>把 <code>openapi/meeting-portal-api.yaml</code> 拖進來問「依這份規格幫我在 app/routers/ 下寫 summaries router 的骨架」。</li>
 </ol>
 <div class="code-block"><div class="code-head"><span class="code-lang">.github/instructions/fastapi.instructions.md(完成版)</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>---
-applyTo: "app/**"
+applyTo: "**/app/**,**/tests/**"
 ---
-# FastAPI 慣例(只在處理 app/ 底下檔案時套用)
+# FastAPI 慣例(處理 app/ 與 tests/ 底下檔案時套用)
 
-- 每個 OpenAPI tag 一個 router 檔:app/routers/&lt;tag&gt;.py;每個 operationId 一個函式。
+## 骨架階段
+- 每個 OpenAPI tag 一個 router 檔:app/routers/<tag>.py;每個 operationId 一個函式。
 - Pydantic model 只放在 app/models/schemas.py,router 不得自行定義 model。
-- 骨架階段的函式體只能是 `raise NotImplementedError(&quot;&lt;operationId&gt;&quot;)`,不得補上猜測的商業邏輯。
-- 實作階段:每個 router 必須有對應的 tests/test_&lt;tag&gt;.py,用 FastAPI TestClient;測試要涵蓋 200 與至少一個 4xx。
+- 函式體只能是 `raise NotImplementedError("<operationId>")`,不得補上猜測的商業邏輯。
+
+## 實作階段
+- 每個 router 必須有對應的 tests/test_<tag>.py,用 FastAPI TestClient。
+- 每個測試檔至少涵蓋一個成功狀態碼(200 或 201)與一個 4xx;
+  spec 沒有定義 4xx 的 endpoint,用 FastAPI 的 422 驗證錯誤(例如 /search 不帶 q)。
+- stub 只回傳符合 response_model 的假資料,不得自行補上規格沒有的商業邏輯。
+
+## 兩個階段都適用
 - 不要修改 app/models/schemas.py——它是由 datamodel-codegen 產生的,改規格請改 openapi/*.yaml 後重跑。</code></pre></div>
+<div class="adm adm-tip"><div class="adm-head"><span class="adm-ico">💡</span><span class="adm-title">兩個細節值得多看三秒</span></div><div class="adm-body">
+<p><strong>① glob 要蓋到「規則管的所有路徑」。</strong> 測試那條規則管的是 <code>tests/</code>,所以 glob 不能只寫 <code>app/**</code>——不然 agent 在建 <code>tests/test_meetings.py</code> 的時候,這份檔案根本不會被注入。規則寫給誰看,glob 就要蓋到誰。</p>
+<p><strong>② 這份檔案裡有一半的規則,今天會被載入、但用不上。</strong> 「實作階段」那一段在 M12 也會跟著注入——只是今天的任務只產骨架,不寫 stub、不建測試,那些規則<strong>沒有東西可以約束</strong>。它真正派上用場是在 <strong>M14 的雲端 agent</strong>,因為那時的任務才碰得到它。</p>
+<p>再多埋一個伏筆:仔細看「骨架階段」第三條跟「實作階段」第三條——<strong>一條說函式體只能 raise,一條說要回假資料</strong>。今天你在場,不會混淆;但 M14 派出去之後你就不在場了。<strong>M14 派任務之前,你會回來修這裡。</strong></p>
+</div></div>
 <div class="labchip"><span class="labchip-ico">📄</span><code>m12-openapi-fastapi-scaffold/instructions/fastapi.instructions.md</code><span class="labchip-desc">— 完成版(這一份可直接複製)</span></div>
 
-<h3 id="n-m12-lab">Lab 12:講師 diff 示範 + 你執行包工具的那一輪 <span class="badge badge-l">Lab ★</span></h3>
-<p>這個 Lab 分兩半:<strong>型別漂移的那一半由講師事先執行、現場投影 diff;穩定的那一半你自己執行。</strong>要證明的事情是同一件——同一份規格、同一句指令,純手刻兩次長得不一樣,包工具兩次 byte-level 一致。</p>
-<h4>講師示範(8 分):兩份純手刻,diff 攤開</h4>
-<p>講師課前用同一句指令、兩個乾淨 session 各手刻一次(步驟在 <code>instructor-demo/README.md</code>),現場只投影一件事:</p>
-<div class="code-block"><div class="code-head"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>git --no-pager diff --no-index app_llm_run1/models.py app_llm_run2/models.py</code></pre></div>
-<p>要學員盯的不是「哪份對」,是<strong>「兩份都看起來對,但兜不起來」</strong>:enum 類別名一次 <code>SentimentEnum</code> 一次 <code>Sentiment</code>、member 一次小寫一次大寫——任何呼叫端寫了 <code>Sentiment.positive</code>,換一份產出就直接 <code>AttributeError</code>。規格裡其他容易出錯的型別(nullable 的 <code>dueDate</code>、date-time 的 <code>generatedAt</code>、camelCase alias)講師有踩到就順便指,沒踩到就一句話帶過:「這次運氣好,不代表下次也好」。</p>
-<h4>學員動手(15 分):包工具的 Skill,跑一次,看它為什麼穩</h4>
-<ol class="steps" type="1">
-<li>把完成版 SKILL.md 複製到 <code>.github/skills/openapi-to-fastapi-scaffold/SKILL.md</code>,快速讀一遍步驟:model 那一段不是「請產生 Pydantic model」,而是明確指定呼叫 <code>datamodel-codegen</code>(帶 <code>--disable-timestamp</code>,不然檔頭會有時間戳)。</li>
-<li>新開 session,下指令:<strong>「依照這份 OpenAPI 規格,幫我產生 FastAPI 的 router 骨架跟 Pydantic model,輸出到 app/ 目錄下。」</strong>——注意 references 裡應該出現你剛建的 <code>fastapi.instructions.md</code>(因為輸出在 <code>app/**</code>)。</li>
-<li>啟動並開 <code>http://127.0.0.1:8000/docs</code>:所有 endpoint 都在;呼叫任一個得到 <code>NotImplementedError</code>——這是預期行為,骨架正確、邏輯留白。
-<div class="code-block"><div class="code-head"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>python -m uvicorn app.main:app --reload</code></pre></div></li>
-<li>(有時間的人)再開新 session 跑到 <code>app_verify/</code>,diff 兩份 <code>models/schemas.py</code>——<strong>畫面上什麼都不會印出來,這正是預期結果</strong>:型別轉換那一段根本不是 LLM 在做。</li>
-<li><strong>commit 這份骨架並 push</strong>。M14 的雲端 agent 會從這裡接手。</li>
-</ol>
-<div class="adm adm-check"><div class="adm-head"><span class="adm-ico">✅</span><span class="adm-title">完成檢核</span></div><div class="adm-body">
+<h3 id="n-m12-lab">Lab 12:兩輪、四個 session、兩次 diff <span class="badge badge-l">Lab ★</span></h3>
+<p>這個 Lab 的結構是一個對照實驗,<strong>兩輪都由你自己執行</strong>:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th></th>
+<th>第一輪 · 純手刻</th>
+<th>第二輪 · 包工具 Skill</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>做法</td>
+<td>禁用任何 code generation 工具,叫 LLM 直接寫 model</td>
+<td>Skill 明確指定呼叫 <code>datamodel-codegen</code></td>
+</tr>
+<tr>
+<td>跑幾次</td>
+<td>2 個乾淨 session,同一句指令</td>
+<td>2 個乾淨 session,同一句指令</td>
+</tr>
+<tr>
+<td>驗收</td>
+<td><code>git diff --no-index</code> 兩份產出</td>
+<td><code>git diff --no-index</code> 兩份產出</td>
+</tr>
+<tr>
+<td>你會看到</td>
+<td>?</td>
+<td>?</td>
+</tr>
+</tbody>
+</table></div>
+<div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title">開始前的兩個前提</span></div><div class="adm-body">
 <ul>
-<li><code>fastapi.instructions.md</code> 在不相干的問題裡不出現、在涉及 <code>app/</code> 的問題裡出現。</li>
-<li>Swagger UI 看得到所有 endpoint;所有函式是乾淨骨架;uvicorn 正常啟動。</li>
-<li>references 裡出現 <code>fastapi.instructions.md</code>——你剛寫的規則在你沒提的情況下生效了。</li>
-<li>能用一句話回答:「這個 Skill 裡,哪些交給決定性工具、哪些交給 LLM,為什麼這樣切?」</li>
-<li>骨架已 commit 並 push 到 GitHub。</li>
+<li>確認終端機提示字元有 <code>(.venv)</code>。套件(含 <code>datamodel-code-generator</code>)已由共用 venv 裝好,<strong>不需要 <code>pip install</code></strong>;lab 包裡的 <code>requirements.txt</code> 只是對照用。</li>
+<li>以下所有步驟的工作目錄都是<strong>你自己的 Portal 專案 repo 根目錄</strong>,<code>app_manual_1/</code>、<code>app_manual_2/</code>、<code>app/</code>、<code>app_verify/</code> 都產在那裡。</li>
 </ul>
 </div></div>
 
+<h4>第一輪(6 分):純手刻兩次,先用眼睛看,再用 diff 看</h4>
+<ol class="steps" type="1">
+<li>新開一個乾淨 session,把 <code>openapi/meeting-portal-api.yaml</code> 拖進來,下這句指令:
+<div class="code-block"><div class="code-head"><span class="code-lang">Prompt(第一次)</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>依照這份 OpenAPI 規格,不要使用任何 code generation 工具,直接手寫
+MeetingSummary 和 ActionItem 這兩個 Pydantic model,輸出到 app_manual_1/models.py。
+只要 model,不要 router、不要 main.py。</code></pre></div></li>
+<li><strong>另外開一個新 session</strong>(同一個 session 重跑會參考自己上一次的輸出,漂移會被遮住),同一句指令,輸出目錄改成 <code>app_manual_2/</code>。</li>
+<li><strong>先用眼睛看。</strong> 把兩份檔案並排打開,花 30 秒掃過去,心裡回答一句:「這兩份一樣嗎?」——多數人的答案是「差不多吧」。</li>
+<li><strong>再用 diff 看。</strong>
+<div class="code-block"><div class="code-head"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>git --no-pager diff --no-index app_manual_1/models.py app_manual_2/models.py</code></pre></div></li>
+</ol>
+<p>要盯的不是「哪份對」,是<strong>「兩份都看起來對,但兜不起來」</strong>。這份 spec 埋了幾個必踩的點:</p>
+<div class="table-wrap"><table>
+<thead>
+<tr>
+<th>spec 裡長這樣</th>
+<th>兩次產出常見的分歧</th>
+<th>踩到會怎樣</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sentiment: [positive, neutral, negative]</code></td>
+<td>類別名 <code>Sentiment</code> / <code>SentimentEnum</code>;member 大小寫不一</td>
+<td>呼叫端 <code>Sentiment.positive</code> 換一份就 <code>AttributeError</code></td>
+</tr>
+<tr>
+<td><code>priority: [High, Medium, Low]</code></td>
+<td>同一個檔案裡跟 sentiment 大小寫慣例相反,LLM 很容易「順手統一」</td>
+<td>同上,而且更難發現</td>
+</tr>
+<tr>
+<td><code>dueDate</code>:<code>format: date</code> + <code>nullable: true</code></td>
+<td><code>Optional[date]</code> / <code>date | None</code> / <code>Optional[str]</code> / 漏掉 nullable</td>
+<td>塞 <code>null</code> 進去直接 ValidationError</td>
+</tr>
+<tr>
+<td><code>generatedAt</code>:<code>format: date-time</code></td>
+<td><code>datetime</code> 還是 <code>str</code></td>
+<td>序列化格式不同,前端解析失敗</td>
+</tr>
+<tr>
+<td>camelCase 欄位名</td>
+<td>有沒有 alias、有沒有 <code>populate_by_name</code></td>
+<td>JSON 欄位名對不上</td>
+</tr>
+</tbody>
+</table></div>
+<p>連<strong>檔案裡類別的排列順序、有沒有 <code>__init__.py</code></strong> 都可能不一樣——這些單看任一份都沒錯,合起來就是不可重現。沒全踩到也沒關係:<strong>「這次剛好對」不等於「下次也對」,只要有機率漂,就不該是可信的工程步驟。</strong></p>
 
 
-<h2 id="n-m13">M13 · Copilot CLI:同一組資產,在終端機跑一次</h2>
-<p>上半場所有東西都住在 <code>.github/</code> 底下。現在要證明一件事:<strong>它們是 repo 的資產,不是 VS Code 的功能。</strong></p>
+<h4>第二輪(12 分):換上包工具的 Skill,同樣跑兩次、同樣 diff</h4>
+<ol class="steps" type="1">
+<li>把完成版 SKILL.md 複製到 <code>.github/skills/openapi-to-fastapi-scaffold/SKILL.md</code>,快速讀一遍步驟——model 那一段不是「請產生 Pydantic model」,而是明確指定呼叫 <code>datamodel-codegen</code>,並且一定要帶 <code>--disable-timestamp</code>(不然每次產出的檔頭時間戳都不同,重跑就不可能 byte-level 一致)。</li>
+<li>新開一個乾淨 session,下指令:
+<div class="code-block"><div class="code-head"><span class="code-lang">Prompt(第二輪,兩次都用同一句)</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>依照這份 OpenAPI 規格,幫我產生 FastAPI 的 router 骨架跟 Pydantic model,輸出到 app/ 目錄下。</code></pre></div>
+注意 references 裡應該出現你剛建的 <code>fastapi.instructions.md</code>——因為輸出在 <code>app/**</code>,你沒提它也會被套用。</li>
+<li>啟動並開 <code>http://127.0.0.1:8000/docs</code>:所有 endpoint 都在;呼叫任一個得到 <code>NotImplementedError</code>——這是預期行為,骨架正確、邏輯留白。
+<div class="code-block"><div class="code-head"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>python -m uvicorn app.main:app --reload</code></pre></div>
+<strong>記住這個畫面:每個 endpoint 都在,每個都回 500。誰來把它們填起來?M14。</strong></li>
+<li><strong>再開一個新 session,同一句指令,輸出目錄改成 <code>app_verify/</code></strong>——跟第一輪完全一樣的做法,只是換了一個 Skill。</li>
+<li>第二次 diff:
+<div class="code-block"><div class="code-head"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>git --no-pager diff --no-index app/models/schemas.py app_verify/models/schemas.py</code></pre></div></li>
+<li>最後對一下全班的 hash:
+<div class="code-block"><div class="code-head"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>certutil -hashfile app\models\schemas.py SHA256</code></pre></div>
+三十台機器、三十個獨立 session,同一個 hash。<strong>因為型別轉換那一段根本不是 LLM 在做。</strong></li>
+<li><strong>commit 之前,先跑一次測試</strong>——看看你手上還缺什麼:
+<div class="code-block"><div class="code-head"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>python -m pytest</code></pre></div>
+應該會看到 <code>no tests ran</code>(exit code 5)。<code>tests/</code> 根本還不存在——instructions 裡「每個 router 必須有對應的測試檔」那條,到現在一條都沒兌現。<strong>這不是你漏做,是 M12 的範圍本來就停在這裡。</strong></li>
+<li><strong>commit 這份骨架並 push</strong>。M14 的雲端 agent 會從這裡接手——它接到的是可重現的介面,不是某一次的運氣。
+<div class="code-block"><div class="code-head"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>git add app .github
+git commit -m "scaffold: FastAPI skeleton from OpenAPI"
+git push</code></pre></div>
+<strong><code>.github/</code> 一定要一起 push</strong>——M14 的雲端 agent 讀不到你本機的檔案,它只看得到 repo 上的。</li>
+</ol>
+<div class="labchip"><span class="labchip-ico">📄</span><code>m12-openapi-fastapi-scaffold/skills/openapi-to-fastapi-scaffold/SKILL.md</code><span class="labchip-desc">— 完成版(複製到 .github/skills/ 下)</span></div>
+
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📦</span><span class="adm-title">交接給 M14:你現在手上有什麼、還缺什麼</span></div><div class="adm-body">
+<div class="table-wrap"><table>
+<thead><tr><th></th><th>現況</th><th>M14 誰來補</th></tr></thead>
+<tbody>
+<tr><td>Pydantic model</td><td>✅ 可重現,全班同一個 hash</td><td>不補,<strong>而且不准動</strong>(checklist a)</td></tr>
+<tr><td>router 函式</td><td>⚠️ 全是 <code>NotImplementedError</code>,呼叫回 500</td><td>雲端 agent 填成假資料 stub</td></tr>
+<tr><td>測試</td><td>❌ <code>tests/</code> 不存在,<code>pytest</code> 0 個測試</td><td>雲端 agent 依 instructions 建立</td></tr>
+<tr><td>instructions「實作階段」</td><td>⏸️ 已寫好,今天沒被用上;有一條跟骨架規則字面衝突</td><td><strong>你先修</strong>,再讓雲端 agent 在你沒提的情況下讀走</td></tr>
+</tbody>
+</table></div>
+<p>M12 產出的是<strong>可重現的介面</strong>,M14 要做的是<strong>可驗收的實作</strong>。</p>
+</div></div>
+
+
+<h2 id="n-m13">M13 · Copilot CLI:同一組資產,在終端機跑一次 <span class="badge badge-l">動手 20 分</span></h2>
+<p>上半場所有東西都住在 <code>.github/</code> 底下。現在要證明一件事:<strong>它們是 repo 的資產,不是 VS Code 的功能。</strong>——以及,更誠實的下半句:<strong>可攜性不是一個開關,是一個光譜。</strong></p>
 <div class="labchip"><span class="labchip-ico">📄</span><code>m13-copilot-cli/README.md</code><span class="labchip-desc">— 安裝、登入、以及這 15 分鐘的每一步</span></div>
 <ol class="steps" type="1">
-<li>在 repo 根目錄開終端機,執行 <code>copilot</code>。第一次會要你 <code>/login</code>。</li>
-<li><code>/agent</code>——你應該在清單裡看到 <code>meeting-ops</code>、<code>wbs-builder</code>、<code>grounding-checker</code>、<code>jira-clerk</code>。CLI 會讀 <code>.github/agents/</code>,跟 VS Code 同一份檔案;repo 根目錄的 <code>AGENTS.md</code> 也會被自動載入——這就是上半場 M4 選它而不選 copilot-instructions.md 的原因。選 <code>meeting-ops</code>。</li>
-<li>把 <code>sample-transcript.txt</code> 的路徑丟給它:「幫我整理這場會議的紀錄,逐字稿在 labs-part1/m06-meeting-summary-skill/sample-transcript.txt」。<strong>比對 VS Code 的輸出</strong>:四個區塊、日期、Owner——應該一致,因為它用的是同一份 SKILL.md。</li>
+<li><strong>在 repo 根目錄</strong>開終端機,執行 <code>copilot</code>。第一次會要你 <code>/login</code>。<br>
+<em>路徑會影響後面每一步:CLI 的相對路徑都是相對於你執行 <code>copilot</code> 的這個目錄。</em></li>
+<li><code>/agent</code>——你應該在清單裡看到 <code>meeting-ops</code>、<code>wbs-builder</code>、<code>grounding-checker</code>、<code>jira-clerk</code>。CLI 會讀 <code>.github/agents/</code>,跟 VS Code 同一份檔案;repo 根目錄的 <code>AGENTS.md</code> 也會被自動載入。選 <code>meeting-ops</code>。</li>
+
+<li>把逐字稿的路徑丟給它。<strong>路徑相對於你剛才執行 <code>copilot</code> 的目錄</strong>(也就是 repo 根目錄);
+
+<div class="code-block"><div class="code-head"><span class="code-lang">Copilot CLI</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>幫我整理這場會議的紀錄,逐字稿在 labs-part1/m03-drift-experiment/sample-transcript.txt</code></pre></div>
+<p>注意這裡是<strong>純文字路徑,不是 VS Code 的 <code>#file:</code></strong>——那是 UI 機制,不跟著 repo 走。路徑用正斜線寫比反斜線安全。</p>
+<p><strong>比對 VS Code 的輸出</strong>:四個區塊、日期、Owner——應該一致,因為它用的是同一份 SKILL.md。</p></li>
 <li><code>/usage</code>:看這一輪用了多少。<strong>這是今天第一次有人把「一個 Skill 跑一次」對到一個數字。</strong>換到 <code>/model</code> 選 Auto、再跑一次、再看一次——上半場附錄 B 講的 Auto 折扣,現在是數字。</li>
-<li>試著找 handoff 按鈕——CLI 沒有 VS Code 那種 UI 按鈕,handoff 在 CLI 的呈現以當天版本為準。<strong>但注意 <code>@meeting-ops</code> 對「開單」的拒絕跟 VS Code 一樣</strong>:因為硬鎖在 Skill 上、排除語句在 body 裡,這兩個走到哪都在。這就是 M11 把護欄蓋到 Skill 自己身上的意思:按鈕會隨介面消失,Skill 硬鎖不會。</li>
-<li>(選做)<code>/mcp</code> 看 MCP server 清單——<code>microsoft-learn</code> 不在裡面。CLI 的 MCP 設定跟 VS Code 的 <code>.vscode/mcp.json</code> 是分開的:<code>.github/agents/grounding-checker.agent.md</code> 跟過來了,它要用的 Learn server 卻沒有。用 <code>/mcp add</code> 把上半場的 Microsoft Learn MCP 加一次,體感一下「資產可攜、但連線設定要各自做」。</li>
+<li><strong>handoff:CLI 不支援。</strong>
+<div class="adm adm-note" style="margin-top:10px"><div class="adm-head"><span class="adm-ico">📐</span><span class="adm-title">明說一次,省下你翻選單的時間</span></div><div class="adm-body">
+<p><code>handoffs</code> 是 <strong>VS Code 專屬的 frontmatter 欄位</strong>,Copilot CLI 目前不支援(連同 <code>model</code>、<code>argument-hint</code>)。所以<strong>這裡沒有 handoff 按鈕可以找</strong>,步驟 2 那個警告講的就是這件事。參見 <a href="https://github.com/github/copilot-cli/issues/1377" target="_blank" rel="noopener">copilot-cli #1377</a>。</p>
+
+</div></div></li>
+<li><strong>再確認一件走到哪都在的事</strong>:叫 <code>@meeting-ops</code>「順便幫我把這些 Action Item 開成 Jira 票」。<strong>它的拒絕跟 VS Code 一模一樣</strong>——因為那是硬鎖在 Skill 上(<code>disable-model-invocation</code>)、排除語句寫在 agent 的 body 裡,這兩個都是檔案內容,不是介面功能。<strong>這就是 M11 把護欄蓋到 Skill 自己身上的意思:按鈕會隨介面消失,Skill 硬鎖不會。</strong></li>
+<li>(選做)<strong>MCP:agent 跟過來了,它要用的連線沒有。</strong>
+<p><strong>① 先看現況</strong>:<code>/mcp</code>——清單裡只有內建的 <code>github-mcp-server</code>(<code>/login</code> 就有,不靠任何設定檔),<code>microsoft-learn</code> 不在。<code>.github/agents/grounding-checker.agent.md</code> 跟過來了,它要用的 Learn server 卻沒有:<strong>Copilot CLI 不讀 VS Code 的 <code>.vscode/mcp.json</code></strong>(早期版本曾嘗試讀,後來明確移除)。</p>
+
+<p><strong>② 為 CLI 另寫一份</strong>:在 repo 建 <code>.github/mcp.json</code>(或根目錄的 <code>.mcp.json</code>)。<strong>不能直接複製 <code>.vscode/mcp.json</code>——格式不一樣:</strong></p>
+<div class="table-wrap"><table>
+<thead><tr><th></th><th>VS Code</th><th>Copilot CLI</th></tr></thead>
+<tbody>
+<tr><td>檔案位置</td><td><code>.vscode/mcp.json</code></td><td>個人:<code>~/.copilot/mcp-config.json</code><br>repo:<code>.github/mcp.json</code> 或 <code>.mcp.json</code></td></tr>
+<tr><td>頂層 key</td><td><code>servers</code></td><td><code>mcpServers</code></td></tr>
+<tr><td><code>type</code> 欄位</td><td>可省略</td><td><strong>必填</strong>:遠端 <code>"http"</code>、本機指令 <code>"local"</code></td></tr>
+<tr><td>輸入變數</td><td><code>${input:...}</code> 會跳輸入框</td><td>沒有這套機制,請改填實際值</td></tr>
+</tbody>
+</table></div>
+<div class="code-block"><div class="code-head"><span class="code-lang">.github/mcp.json</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>{
+  "mcpServers": {
+    "microsoft-learn": {
+      "type": "http",
+      "url": "https://learn.microsoft.com/api/mcp"
+    }
+  }
+}</code></pre></div>
+<p>內建的 <code>github-mcp-server</code> 已經連上,<strong>不要再另外加一個 GitHub MCP</strong>——會重複,而且沒帶 token 也連不上。</p>
+
+<p><strong>③ 改完要 <code>/exit</code> 再進</strong>:MCP 設定只在 CLI 啟動時載入,session 裡改檔不會生效。在 <strong>repo 根目錄</strong>重新執行 <code>copilot</code>,出現信任資料夾的提示要選信任,再 <code>/mcp</code> 看一次。</p>
+
+<div class="adm adm-note" style="margin-top:10px"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title">已知問題:repo 層的 MCP 設定可能沒被自動讀到</span></div><div class="adm-body">
+<p>官方文件寫 CLI 會自動載入 <code>.github/mcp.json</code> / <code>.mcp.json</code>,但<strong>實測 1.0.87 與 1.0.88 都沒讀到</strong>:檔案位置、格式、編碼都正確,<code>copilot mcp list</code> 卻只列出 Builtin servers,沒有 Workspace 分組。症狀同 <a href="https://github.com/github/copilot-cli/issues/4832" target="_blank" rel="noopener">copilot-cli #4832</a>、<a href="https://github.com/github/copilot-cli/issues/4542" target="_blank" rel="noopener">#4542</a>。</p>
+<p><strong>今天的做法:啟動時明確指定設定檔</strong>,繞過自動探索:</p>
+<div class="code-block"><div class="code-head"><span class="code-lang">Terminal(Windows)</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>copilot --additional-mcp-config @.github\mcp.json</code></pre></div>
+<div class="code-block"><div class="code-head"><span class="code-lang">Terminal(macOS / Linux)</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>copilot --additional-mcp-config @.github/mcp.json</code></pre></div>
+<p>進去後 <code>/mcp</code>,<code>microsoft-learn</code> 應顯示 connected。<strong>加參數讀得到、不加讀不到</strong>,就證明檔案沒問題、是自動探索沒生效。</p>
+<p>想先排查:在 session 外執行 <code>copilot mcp list</code>——有 <em>Workspace</em> 分組才代表 repo 設定被發現了。</p>
+</div></div>
+
+<p><strong>④ 驗證</strong>:切到 <code>@grounding-checker</code> 跑一次需要查 Learn 的檢查,確認它真的呼叫了 <code>microsoft-learn</code>。體感一下:<strong>資產可攜,連線設定要各自做,而且「放對位置」不等於「讀到了」——<code>/mcp</code> 才是驗證。</strong></p>
+</li>
 </ol>
 <div class="adm adm-tip"><div class="adm-head"><span class="adm-ico">💡</span><span class="adm-title">CLI 的 slash 是另一套</span></div><div class="adm-body">
-<p>注意:CLI 的 <code>/</code> 是操作 CLI 本身——<code>/model</code>(換模型)、<code>/agent</code>(切 agent)、<code>/mcp</code>、<code>/usage</code>、<code>/clear</code>、<code>/delegate</code>(M14)。你的 prompt file <code>/meeting-quickcheck</code> 在 CLI 裡是否出現在 <code>/</code> 選單,以當天版本為準;Skill 用 <code>/skills</code> 列。三件事的通則:<strong>frontmatter 檔案(agents / skills / instructions)可攜性最高;UI 機制(handoff 按鈕、工具勾選清單)最低;連線設定(MCP)要各自做一次。</strong></p>
+<p>注意:CLI 的 <code>/</code> 是操作 CLI 本身——<code>/model</code>(換模型)、<code>/agent</code>(切 agent)、<code>/mcp</code>、<code>/usage</code>、<code>/clear</code>、<code>/delegate</code>(M14)。你的 prompt file <code>/meeting-quickcheck</code> 在 CLI 裡是否出現在 <code>/</code> 選單,以當天版本為準;Skill 用 <code>/skills</code> 列。</p>
+</div></div>
+<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">今天這一段真正的結論:可攜性是光譜,不是開關</span></div><div class="adm-body">
+<div class="table-wrap"><table>
+<thead><tr><th>可攜程度</th><th>是什麼</th><th>今天的證據</th></tr></thead>
+<tbody>
+<tr><td><strong>高</strong>:檔案內容</td><td>SKILL.md 的 SOP、agent body 的路由與邊界、<code>AGENTS.md</code>、instructions</td><td>同一份 SKILL.md 跑出同樣四個區塊;<code>@meeting-ops</code> 對開單的拒絕兩邊一致</td></tr>
+<tr><td><strong>中</strong>:frontmatter 欄位</td><td>同一份檔案讀得到,但<strong>個別欄位不保證支援</strong></td><td><code>handoffs</code>、<code>model</code>、<code>argument-hint</code> 在 CLI 被標為 unsupported</td></tr>
+<tr><td><strong>低</strong>:UI 機制</td><td>handoff 按鈕、工具勾選清單、<code>#file:</code> 語法</td><td>CLI 沒有按鈕,指檔要用純文字路徑</td></tr>
+<tr><td><strong>零</strong>:連線設定</td><td>MCP server 設定</td><td><code>.vscode/mcp.json</code> 不跟過來;CLI 要另寫一份(<code>mcpServers</code> + <code>type</code>),而且 repo 層的自動載入目前不穩,得用 <code>--additional-mcp-config</code> 明確指定</td></tr>
+</tbody>
+</table></div>
+<p>所以「把資產寫進 repo」買到的是<strong>最上面那一層</strong>——也就是最值錢、最難重寫的那一層(SOP、邊界、團隊意志)。下面三層要各自處理,而且會隨版本變動。<strong>設計跨介面的 agent 時,把非跑不可的規則寫進 body,而不是寄望某個 frontmatter 欄位到處都在。</strong></p>
 </div></div>
 <div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">決策點:三個執行面,你們的哪類工作放哪裡?</span></div><div class="adm-body">
 <div class="table-wrap"><table><thead><tr><th></th><th>VS Code Agent Mode</th><th>Copilot CLI(含 autopilot)</th><th>雲端 coding agent</th></tr></thead><tbody>
 <tr><td>在哪跑</td><td>你的機器,看得到每一步</td><td>你的機器,終端機;autopilot 可免逐步同意</td><td>GitHub 的環境,背景跑,產 PR</td></tr>
 <tr><td>同步/非同步</td><td>同步</td><td>同步(可背景)</td><td>非同步,機器關了也繼續</td></tr>
-<tr><td>讀哪些資產</td><td><code>AGENTS.md</code> + <code>.github/</code> 全部 + UI 機制(handoff 按鈕、tool set)</td><td><code>AGENTS.md</code> + <code>.github/</code> agents / skills / instructions;<code>~/.copilot/</code> 個人層</td><td><code>AGENTS.md</code> + repo 內 <code>.github/</code>(instructions、agents、skills);MCP 要在 repo 設定裡另設</td></tr>
+<tr><td>讀哪些資產</td><td><code>AGENTS.md</code> + <code>.github/</code> 全部 + UI 機制(handoff 按鈕、tool set)+ <code>.vscode/mcp.json</code></td><td><code>AGENTS.md</code> + <code>.github/</code> agents / skills / instructions(部分 frontmatter 欄位不支援);<code>~/.copilot/</code> 個人層;MCP 讀自己的 <code>mcp.json</code>(格式不同)</td><td><code>AGENTS.md</code> + repo 內 <code>.github/</code>(instructions、agents、skills);MCP 要在 repo 設定裡另設</td></tr>
 <tr><td>適合</td><td>探索、看著改、要來回討論的</td><td>腳本化、CI 前檢查、不想離開終端機的</td><td>定義清楚、可測試、可以等的</td></tr>
 <tr><td>計費單位</td><td>每個 prompt</td><td>每個 prompt / session</td><td>每個 session(你的 prompt 算,它自己的工具呼叫不算)</td></tr>
 </tbody></table></div>
+<p>這張表比的是「三個執行面讀得到哪些資產」;<strong>M14 會接著回答下一個問題:手上這個任務,該不該進最右邊那一欄。</strong></p>
 </div></div>
+
 
 <h2 id="n-m14">M14 · /delegate:把 M12 的骨架派給雲端 coding agent,review 它的 PR</h2>
 <p>M12 結束時你 commit 了一份全是 <code>NotImplementedError</code> 的骨架。現在把「填進去」這件事派出去——<strong>不是派給同事,是派給雲端 coding agent</strong>。它會在 GitHub 上開分支、做事、開 draft PR、請你 review。你 M12 寫的 <code>fastapi.instructions.md</code> 會在你沒提的情況下被它讀走。</p>
+
+<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">本段最重要的一個觀念:可信度的來源換了</span></div><div class="adm-body">
+<p>M12 的結論是「確定性的轉換交給工具,因為它<strong>可重現</strong>」——跑兩次,byte-level 一模一樣。</p>
+<p>M14 是這句話的下半場。這次的工作<strong>本質上不可重現</strong>:同一段 prompt 派兩次,你一定會拿到兩份不一樣的 PR——stub 的假資料不同、測試寫法不同、commit 訊息不同。那沒關係,因為<strong>這次的驗收標準不是「兩次一樣」,是「這一次過得了 checklist」</strong>。</p>
+<p><strong>可重現</strong> 和 <strong>可驗收</strong>,是同一個問題(我憑什麼相信這段程式碼)的兩種答案,對應兩種性質的工作。今天你學的是後者,而它的代價寫在下面這句話裡:</p>
+<p class="lead"><strong>instructions 是路標,不是牆。</strong> 你事前寫的規則只提高它遵守的機率,不保證。所以你需要第二道防線——<strong>事後的 review checklist</strong>。派出去的那段時間,你對過程完全沒有控制權;你剩下的,就是事前的路標和事後的牆。</p>
+</div></div>
+
 <div class="labchip"><span class="labchip-ico">📄</span><code>m14-delegate-cloud-agent/README.md</code><span class="labchip-desc">— 前置檢查、任務 prompt、review checklist</span></div>
 <div class="labchip"><span class="labchip-ico">📄</span><code>m14-delegate-cloud-agent/task-prompt.md</code><span class="labchip-desc">— 派出去的那一段話(全班同一段)</span></div>
+<div class="labchip"><span class="labchip-ico">📄</span><code>m14-delegate-cloud-agent/review-checklist.md</code><span class="labchip-desc">— 檢查項目 + 每項沒過的留言範本</span></div>
 <div class="labchip"><span class="labchip-ico">📄</span><code>m14-delegate-cloud-agent/app-skeleton/</code><span class="labchip-desc">— 沒做完 M12 的人用這份骨架</span></div>
+
+<h3 id="n-m14-fix">派之前:先把路標寫清楚 <span class="badge badge-l">3 分</span></h3>
+<p>M12 埋過一個伏筆。打開 <code>.github/instructions/fastapi.instructions.md</code>,把這兩條並排看:</p>
+<div class="table-wrap"><table>
+<thead><tr><th>區段</th><th>規則</th></tr></thead>
+<tbody>
+<tr><td>骨架階段</td><td>函式體<strong>只能是</strong> <code>raise NotImplementedError(...)</code></td></tr>
+<tr><td>實作階段</td><td>stub 只回傳符合 <code>response_model</code> 的假資料</td></tr>
+</tbody>
+</table></div>
+<p>雲端 agent 動到 <code>app/**</code> 和 <code>tests/**</code>,會把<strong>整份檔案</strong>一起讀走——這兩條會<strong>同時</strong>出現在它眼前,字面上互相矛盾。它要判斷「現在是實作階段」,唯一的依據是你 <code>/delegate</code> 的那段話。今天全班用同一段寫得很明確的 prompt,大概率沒事;但你回到自己的專案,換成一句「幫我把 router 做完」,它就可能被骨架那條拉回去,留著 <code>raise</code> 不動,或者只做一半。</p>
+<p><strong>M12 的時候你在場,可以靠上下文補;現在要派出去,你不在場了。寫給不在場的 agent,適用條件要寫進規則本身,不能靠它猜。</strong></p>
 <ol class="steps" type="1">
-<li><strong>前置</strong>:<code>git status</code> 乾淨、骨架已 push;<code>gh auth status</code> 正常。在 CLI 裡切回預設 agent(不要用 <code>@meeting-ops</code> 派程式任務——它的 tools 邊界不是為這件事設的)。</li>
-<li><strong>派出去</strong>:在 Copilot CLI 輸入(或用 <code>&amp;</code> 前綴):
-<div class="code-block"><div class="code-head"><span class="code-lang">Copilot CLI</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>/delegate 把 app/routers/ 底下所有 raise NotImplementedError 的函式實作成回傳符合 response_model 的假資料 stub;
-為每個 router 建立 tests/test_&lt;tag&gt;.py(FastAPI TestClient,涵蓋 200 與至少一個 4xx);
-不要修改 app/models/schemas.py;遵守 repo 內 AGENTS.md 與 .github/instructions/fastapi.instructions.md。
-完成後在 PR 描述列出你套用了哪些 instructions 檔案。</code></pre></div>
-CLI 會問你要不要把未提交的變更 commit 成 checkpoint,然後給你一個 PR 連結和 agent session 連結。</li>
-<li><strong>看它工作</strong>(5–10 分,這段時間講師講下面的決策點):打開 session 連結,看它讀了哪些檔案——<strong>找 <code>AGENTS.md</code> 和 <code>fastapi.instructions.md</code> 有沒有出現</strong>。它跑測試了沒?測試掛了它有沒有自己修?</li>
-<li><strong>review PR</strong>,照 README 的 checklist:(a) <code>schemas.py</code> 有沒有被動到——不該;(b) 每個 router 有沒有對應測試、測試有沒有 4xx;(c) 有沒有「順手」補上規格沒有的商業邏輯;(d) PR 描述有沒有列出 instructions。</li>
-<li><strong>用 PR comment 叫它改</strong>:挑一個沒過的 checklist 項目,在 PR 留言 <code>@copilot</code> 說明,看它在同一個 PR 上補 commit。這是你跟雲端 agent 的迭代迴圈——不是重派一次。</li>
-<li>(選做)在 VS Code 的 chat 裡也有「Delegate to cloud agent」的入口;GitHub 上把 issue assign 給 Copilot 也是同一個 agent。三個入口,同一個後端,同一組 <code>.github/</code>。</li>
+
+
+<li>打開檔案,<strong>只改下面三處</strong>,其他內容一個字都不用動:
+<div class="table-wrap"><table>
+<thead><tr><th>#</th><th>找到這一行(修改前)</th><th>改成(修改後)</th></tr></thead>
+<tbody>
+<tr>
+<td>①</td>
+<td><code>## 骨架階段</code></td>
+<td><code>## 骨架階段(任務是「從 OpenAPI 產生或更新骨架」時才適用)</code></td>
+</tr>
+<tr>
+<td>②</td>
+<td><code>## 實作階段</code></td>
+<td><code>## 實作階段(任務明確要求實作既有的 NotImplementedError 函式時才適用)</code></td>
+</tr>
+<tr>
+<td>③</td>
+<td>(新增一行,放在 ② 的標題正下方、「每個 router 必須有對應的 tests…」那行之前)</td>
+<td><code>- 本階段不適用上方「函式體只能是 raise」一條;router 分檔與 model 位置的規則照舊。</code></td>
+</tr>
+</tbody>
+</table></div>
+改完後,「實作階段」開頭應該長這樣:
+<div class="code-block"><div class="code-head"><span class="code-lang">修改後(節錄)</span></div><pre><code>## 實作階段(任務明確要求實作既有的 NotImplementedError 函式時才適用)
+- 本階段不適用上方「函式體只能是 raise」一條;router 分檔與 model 位置的規則照舊。
+- 每個 router 必須有對應的 tests/test_&lt;tag&gt;.py,用 FastAPI TestClient。
+...</code></pre></div>
+<em>想直接覆蓋整份檔案的人,用下方 labchip 的修正版。</em></li>
+<li>注意 ③ 的後半句「router 分檔與 model 位置的規則照舊」:只解除<strong>一條</strong>,不是整段骨架規則作廢。解除的範圍寫得越窄,agent 越不會順手把其他規則也當成不算數。</li>
+
+<li>commit 並 push——雲端 agent 只看得到 repo 上的版本:
+<div class="code-block"><div class="code-head"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>git add .github/instructions/fastapi.instructions.md
+git commit -m "instructions: scope stage rules explicitly"
+git push</code></pre></div></li>
 </ol>
-<div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title">兩個常見翻車</span></div><div class="adm-body">
+
+<div class="labchip"><span class="labchip-ico">📄</span><code>m14-delegate-cloud-agent/instructions/fastapi.instructions.md</code><span class="labchip-desc">— 修正版(可直接複製覆蓋)</span></div>
+
+<div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title">前置:派之前先確認三件事</span></div><div class="adm-body">
+<p><strong>① 骨架與 <code>.github/</code>(含剛才的修正)都已經在 <code>main</code> 上,<code>git status</code> 乾淨。</strong></p>
+<div class="code-block"><div class="code-head"><span class="code-lang">bash</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>git status                                        # 要看到 working tree clean
+git log origin/main --oneline -- app/models/schemas.py   # 要看得到至少一筆 commit
+git log origin/main --oneline -- .github/              # 最上面一筆應該是 "instructions: scope stage rules explicitly"</code></pre></div>
+<p><strong>為什麼這條不能省:</strong>如果骨架還沒 push,<code>/delegate</code> 會問你要不要把未提交的變更 commit 成 checkpoint——答應的話,<strong>你的骨架會跟 agent 的改動一起進同一個 PR</strong>。PR diff 裡 <code>schemas.py</code> 會顯示成整份新增(<code>+67 -0</code>),你就再也分不出那是你寫的還是 agent 改的,checklist 第 a 項直接無法判定。<strong>看到 CLI 問你要不要 checkpoint,就是前置沒做好的訊號:先停下來 push。</strong></p>
+<p><strong>② <code>gh auth status</code> 正常。</strong></p>
+<p><strong>③ 組織已開通 Copilot coding agent。</strong>沒開通<strong>不影響你學到這一段的重點</strong>——本段的核心是 review,不是派任務。兩個 Plan B:</p>
 <ul>
-<li><strong>它沒讀到 instructions</strong>:多半是 <code>.github/</code> 沒 push 上去、或 <code>applyTo</code> glob 跟實際路徑對不上(<code>app/**</code> vs <code>src/app/**</code>)。看 session 紀錄,不要猜。</li>
-<li><strong>它改了 <code>schemas.py</code></strong>:instructions 是 🪧 路標,不是牆。這正是 review checklist 存在的理由——以及為什麼「重跑不覆蓋已有實作」這條 M12 的規則,在雲端 agent 時代更重要。</li>
+<li>跟鄰座併機,兩個人看同一個 PR,各自獨立跑一次 checklist,再對答案(這其實比自己跑更有收穫)。</li>
+<li>用講師的 PR 連結做 review,步驟 4 之後完全一樣。</li>
 </ul>
 </div></div>
-<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">決策點:什麼該派出去、什麼留在本機?</span></div><div class="adm-body">
+
+<ol class="steps" type="1">
+<li><strong>切回預設 agent</strong>。在 CLI 裡不要用 M13 選的 <code>@meeting-ops</code> 派程式任務——它的 tools 邊界是為會議紀錄設的,不是為這件事設的。</li>
+
+<li><strong>派出去</strong>:在 Copilot CLI 輸入(或用 <code>&amp;</code> 前綴):
+<div class="code-block"><div class="code-head"><span class="code-lang">Copilot CLI</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>/delegate 把 app/routers/ 底下所有 raise NotImplementedError 的函式實作成回傳符合 response_model 的假資料 stub;
+為每個 router 建立 tests/test_&lt;tag&gt;.py(FastAPI TestClient),每個測試檔涵蓋一個成功狀態碼(200 或 201)
+與一個 4xx;spec 沒有定義 4xx 的 endpoint,用 FastAPI 的 422 驗證錯誤;
+不要修改 app/models/schemas.py;遵守 repo 內 AGENTS.md 與 .github/instructions/fastapi.instructions.md。
+完成後在 PR 描述列出你套用了哪些 instructions 檔案。</code></pre></div>
+CLI 會顯示一張<strong>任務卡片</strong>:標題、狀態(Processing)、變更的檔案清單,以及<strong>一條</strong> <code>github.com/copilot/tasks/pull/…?session_id=…</code> 的網址。<strong>這一條就是入口</strong>——打開後同時看得到 agent 的工作紀錄和它開的 draft PR,不用再找第二條連結。</li>
+
+<li><strong>看它工作</strong>(5–20 分,視佇列而定;這段時間講師講下面的決策點):打開那條網址(或 PR 頁面上的 <strong>View session</strong> 按鈕),看四件事:
+<ul>
+<li>它讀了哪些檔案——<strong>找 <code>AGENTS.md</code> 和 <code>fastapi.instructions.md</code> 有沒有出現</strong>。</li>
+<li>它有沒有把 <code>raise NotImplementedError</code> <strong>全部</strong>換掉——這就是剛才那個修正在保護的地方;有漏的,回頭看它是不是被骨架規則拉回去了。</li>
+<li>它跑 <code>pytest</code> 了沒?</li>
+<li>測試掛了,它有沒有自己讀錯誤、修 code、再跑一次?</li>
+</ul>
+<strong>什麼時候算做完:</strong>PR 時間軸出現 <em>Copilot finished work</em> 和 <em>requested a review from 你</em>,標題的 <code>[WIP]</code> 被拿掉。看到這兩行就不用再等,直接進步驟 4。</li>
+
+<li><strong>review PR</strong>,照 <code>review-checklist.md</code> 逐項打勾。<strong>a、b、c、d1 是必過的</strong>;d2、e、f 視專案而定。順序照 checklist 的心法走:
+<ol type="a">
+<li>先看<strong>檔案清單</strong>(Files changed)——<code>schemas.py</code> 有沒有出現?有的話,點 agent 自己那個 commit,確認是不是<strong>它</strong>動的。</li>
+<li>再看<strong>新增了什麼</strong>——router 裡有沒有規格沒有的邏輯、有沒有新增套件。</li>
+<li>最後才看<strong>寫得好不好</strong>——測試檔齊不齊、狀態碼對不對、測試過不過。</li>
+</ol>
+checklist 還沒跑完之前,<strong>不要按 Ready for review,更不要 merge。</strong></li>
+
+<li><strong>用 PR comment 叫它改</strong>:挑一個沒過的項目,在 PR 最下方留言,開頭寫 <code>@copilot</code>,說明哪裡不符合、要它怎麼改(<code>review-checklist.md</code> 每項都有留言範本)。<strong>這是你跟雲端 agent 的迭代迴圈——不是重派一次。</strong>重派會得到另一份不相干的 PR,你剛才 review 的功夫就白費了。
+<ul>
+<li><strong>留言後「好像沒動靜」?</strong>看你的留言底下有沒有出現 <strong>👀</strong> 反應——那是 Copilot 接單的訊號。等一兩分鐘<strong>重新整理頁面</strong>(時間軸不一定自動更新),會看到新的一輪:<em>started work</em> → 新 commit → <em>finished work</em> → 再次請你 review。</li>
+<li><strong>六項全過,沒得挑?</strong>那就提一個合理的小修改(例如「每個測試加 docstring」)。目的是走一次這個迴圈,不是找碴。</li>
+</ul></li>
+
+<li>(選做)VS Code chat 的「Delegate to cloud agent」入口、GitHub 上把 issue assign 給 Copilot,都是同一個後端、同一組 <code>.github/</code>——M13 那張表最右欄的三種進入方式。</li>
+</ol>
+
+
+<div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title">三個常見翻車</span></div><div class="adm-body">
+<ul>
+<li><strong>PR 裡出現整份骨架</strong>(每個檔案都是 <code>+N -0</code>,連空的 <code>__init__.py</code> 都在):骨架沒先 push,被 checkpoint 一起帶進 PR 了。見前置 ①。這種 PR 的 a 項無法判定——<strong>不要叫 agent revert <code>schemas.py</code>,那會把你自己的 model 刪掉。</strong></li>
+<li><strong>它沒讀到 instructions</strong>:多半是 <code>.github/</code> 沒 push 上去、或 <code>applyTo</code> glob 跟實際路徑對不上(<code>app/**</code> vs <code>src/app/**</code>,或忘了把 <code>tests/**</code> 納進來)。<strong>看 session 紀錄,不要猜。</strong>如果紀錄裡看不到明確的讀檔動作,不一定代表沒讀(instructions 可能是直接載入 context 的)——這時改看<strong>行為證據</strong>:產出有沒有遵守某條只寫在 instructions、沒寫在 prompt 裡的規則。</li>
+<li><strong>它改了 <code>schemas.py</code></strong>:instructions 是路標,不是牆。這正是 review checklist 存在的理由——以及為什麼 M12 那條「重跑不覆蓋已有實作」的規則,在雲端 agent 時代更重要:<strong>會來改你檔案的,已經不只你自己了。</strong></li>
+</ul>
+</div></div>
+
+<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🎯</span><span class="adm-title">決策點:什麼該派出去、什麼留在本機?(今天最該帶回公司的一張表)</span></div><div class="adm-body">
+<p>M13 那張表比的是「三個執行面讀得到哪些資產」;這張表回答下一個問題:<strong>手上這個任務,該不該進最右邊那一欄。</strong></p>
 <div class="table-wrap"><table><thead><tr><th>派給雲端 agent</th><th>留在本機(VS Code / CLI)</th></tr></thead><tbody>
 <tr><td>驗收標準寫得出來、有測試能驗</td><td>還在探索、需要來回討論的</td></tr>
 <tr><td>可以等 10–30 分鐘的</td><td>要立刻看到結果的</td></tr>
 <tr><td>影響範圍被 instructions 跟 review 圈住的</td><td>會碰到秘密、生產設定、或沒有測試保護的</td></tr>
 <tr><td>你願意用 PR review 當最後一道牆的</td><td>你需要每一步都同意的</td></tr>
 </tbody></table></div>
-<p>今天的任務刻意選了左欄全中的:骨架 → stub + 測試。你們回去第一個派出去的任務,建議也是這種。</p>
+<p>左欄四條其實是同一句話的四種說法:<strong>你能不能把「做對了」定義成一組別人可以檢查的條件</strong>。定義得出來就能派,定義不出來就留著自己做。今天的任務刻意選了左欄全中的:骨架 → stub + 測試。<strong>你們回去第一個派出去的任務,建議也是這種。</strong></p>
 </div></div>
-<div class="adm adm-check"><div class="adm-head"><span class="adm-ico">✅</span><span class="adm-title">完成檢核</span></div><div class="adm-body">
-<ul>
-<li>雲端 agent 開了 draft PR;session 紀錄裡看得到它讀了 <code>fastapi.instructions.md</code>。</li>
-<li>PR 通過 checklist 至少 3/4;沒過的那項你用 <code>@copilot</code> 留言請它補,它在同一個 PR 上補了 commit。</li>
-<li><code>app/models/schemas.py</code> 沒被動到(或被動到了,而你抓到了——兩種都算學到)。</li>
-<li>你能說出:「同一組 <code>.github/</code>,VS Code、CLI、雲端 agent 三個地方都讀得到;不同的是 UI 機制跟連線設定。」</li>
-</ul>
-</div></div>
+
 
 <h2 id="n-wrap">總回顧 + 回去之後的第一步</h2>
 <h3 id="n-wrap-recap">今天做出來 / 經歷了什麼</h3>
@@ -1064,31 +1289,7 @@ CLI 會問你要不要把未提交的變更 commit 成 checkpoint,然後給你�
 <tr><td>M12</td><td>翻車④(講師示範):型別漂移 → applyTo instructions + 包決定性工具的 FastAPI 骨架</td></tr>
 <tr><td>M13 / M14</td><td>同一組 <code>.github/</code> 在 CLI 跑、派給雲端 agent 開 PR;<code>/usage</code> 看到錢</td></tr>
 </tbody></table></div>
-<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">今天留給你們的四個決策點——沒有 workshop 的標準答案,只有你們 repo 的答案</span></div><div class="adm-body">
-<ol type="1">
-<li><strong>誰有權觸發 Jira 開單?</strong>(M11)A 模型(放進路由)/ B 人(完全排除)/ C 人(handoff 按鈕)</li>
-<li><strong>寫入型 Skill 上線前誰看過?</strong>(M11)不用 / PR review 順便看 / 指定 Owner + 狀態欄</li>
-<li><strong>哪類工作放哪個執行面?</strong>(M13)VS Code / CLI / 雲端 agent</li>
-<li><strong>第一個派給雲端 agent 的任務是什麼?</strong>(M14)照左欄挑:驗收標準寫得出來、有測試能驗、可以等、影響範圍被 instructions 與 review 圈住</li>
-</ol>
-<p>每一題的理由欄,都要能指出今天哪一次翻車讓你這樣選。帶回去給會被這些決定影響的人(Jira 管理員、平台團隊、你的主管)——不是要他們接受 workshop 的準則,是要他們替空白欄選一個。</p>
-</div></div>
-<h3 id="n-wrap-first">回去第一個 Skill(5 分鐘,離場前寫下來)</h3>
-<p>Workshop 的成敗,不是看今天做完幾個 Lab,而是看兩週後你有沒有真的在自己的 repo 開 <code>.github/skills/</code>。離場前,用今天的判準在你自己的場景上走一遍:</p>
-<ol class="steps" type="1">
-<li><strong>選題</strong>:一個你團隊真實存在、重複發生、做法已成熟的痛點(M3 的 Consistency Gap)。</li>
-<li><strong>description 草稿</strong>:對比句法——做什麼、何時用、不是什麼、關鍵詞(M6 教的、M11 踩 B 踩過的)。</li>
-<li><strong>混淆檢查</strong>:跟鄰座交換,互問「你的 description 跟今天五個 Skill 的哪一個最容易混淆?什麼指令會選錯?」</li>
-<li><strong>風險判定</strong>:它是唯讀還是寫入型?寫入型 → 當場標記「需要 <code>disable-model-invocation: true</code> + 上線前有人看過」(M11 踩出來的)。</li>
-</ol>
-<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📌</span><span class="adm-title">回去之後的下一步</span></div><div class="adm-body">
-<ul>
-<li>把上面的 description 草稿寫成真正的 SKILL.md,放進自己 repo 的 <code>.github/skills/</code>;順手把 <code>AGENTS.md</code>(或既有的 <code>copilot-instructions.md</code>)寫短短五條 commit 進去——這兩件事是兩週內最重要的。</li>
-<li>拿一場真實會議逐字稿,在 CLI 跑一次今天的 Skill,<code>/usage</code> 記下數字——那是你跟財務談 credits 時的第一個真實數據。</li>
-<li>第一個派給雲端 agent 的任務,照 M14 決策點左欄挑;PR review checklist 用 <code>m14-delegate-cloud-agent/review-checklist.md</code> 那份改。</li>
-<li>把 action-item-to-jira 換成真實 Jira——在你們選定「上線前誰看過」之後。</li>
-<li>要跨 repo 共用、或想知道「這版跟上版差在哪」時,再去看 <code>gh skill</code>(preview / install --pin)與 Enterprise-Managed Plugins——今天刻意不講,兩三個 Skill、一個團隊、同一個 repo,直接 commit 進 repo 就是最好的分發。</li>
-</ul>
+
 <p>謝謝大家一整天的參與,Q&A 時間開始。</p>
 </div></div>
 
@@ -1199,5 +1400,9 @@ window.addEventListener('scroll',onScroll,{passive:true});window.addEventListene
 links.forEach(function(l){l.addEventListener('click',function(){if(window.innerWidth<=880){document.getElementById('sidebar').classList.add('collapsed');}})});})();
 
 </script>
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({ startOnLoad: true });
+  </script>
 </body>
 </html>

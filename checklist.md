@@ -5,8 +5,6 @@
 > 環境假設：**Windows + VS Code + PowerShell**。命令以 PowerShell 與 `curl.exe` 為主。
 >
 
-
-
 ---
 
 ## ① Copilot 與工作區
@@ -53,7 +51,7 @@ git --version
 
 ## ② 本機執行環境與套件
 
-工作坊會使用 Python 產生檔案、建立 API 服務並執行本機服務。**Lab 素材壓縮檔於上課當天提供**，課程套件也是當天由素材附的腳本一次裝好；**課前只需建好上課用的資料夾與共用 venv**。
+工作坊會使用 Python 產生檔案、建立 API 服務並執行本機服務。**Lab 素材壓縮檔於上課當天提供**，課程套件也是當天由素材附的腳本一次裝好；**課前只需建好上課用的資料夾、共用 venv，並把它變成一個 git repository**。
 
 ### Node.js 與 npm（選配）
 
@@ -86,14 +84,12 @@ python --version
 ```powershell
 cd C:\ghcp-workshop        # 換成你自己建立的資料夾
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-python -m pip install --no-cache-dir --force-reinstall pip
-python -m pip --version
+.\.venv\Scripts\python.exe -m pip install --no-cache-dir --force-reinstall pip
+.\.venv\Scripts\python.exe -m pip --version
 ```
 
 - [ ] 上課用資料夾已建立。
 - [ ] `python -m venv .venv` 成功，資料夾中出現 `.venv`（沒有被防毒軟體或資料夾權限擋住）。
-- [ ] PowerShell 提示字元出現 `(.venv)`，代表共用 venv 已啟用。
 - [ ] 出現 `Successfully installed pip-…`，代表能連到 PyPI 下載並安裝（沒有逾時、Proxy 或 SSL 憑證錯誤）。
 - [ ] `pip --version` 顯示的路徑落在該資料夾的 `.venv` 裡，代表裝進 venv 而非全域。
 - [ ] **不要刪掉這個 `.venv`**，上課當天會直接沿用它，不會重建。
@@ -104,7 +100,107 @@ python -m pip --version
 >
 > 若出現 SSL 憑證錯誤或逾時，通常是公司 Proxy 或 TLS 檢查所致，請先與 IT 確認 `pypi.org` 與 `files.pythonhosted.org` 可通行——**這是課前最需要提早排除的一項**。
 
-### localhost 服務
+### 把上課資料夾變成 git repository（本機部分）
+
+工作坊全程都以這個資料夾當作 repo 根目錄：上半場產出的 `AGENTS.md`、`.github/` 會 commit 在這裡，下半場的雲端 coding agent 則**只讀得到已經 push 到 GitHub 的內容**，讀不到你本機的任何檔案。
+
+**第一步：先建 `.gitignore`。這一步不能跳過**——`.venv` 已經在資料夾裡（數百 MB），必須先有忽略清單再 `git add`，否則會被一起 commit 進去，事後很難清乾淨。
+
+在上課資料夾根目錄建立檔名為 `.gitignore` 的檔案，內容：
+
+```gitignore
+.venv/
+__pycache__/
+*.pyc
+
+# 課程當天會產生的暫存實驗資料夾，不需要進版控
+app_manual_*/
+app_verify/
+```
+
+**第二步：初始化並做第一次 commit。**
+
+```powershell
+cd C:\ghcp-workshop        # 換成你自己建立的資料夾
+git init -b main
+git add .
+git commit -m "chore: workshop baseline"
+```
+
+- [ ] `.gitignore` 已建立，且**在第一次 `git add` 之前**就存在。
+- [ ] `git status` 顯示乾淨。
+- [ ] `git status` 的待提交清單裡**沒有** `.venv/`（若不慎已 commit，請執行 `git rm -r --cached .venv` 後重新 commit）。
+
+> 推上 GitHub 的步驟在 ③，需要先完成 `gh auth login`。
+
+---
+## ③ GitHub repository、CLI 與雲端 coding agent
+
+本節請**依序**完成：
+
+1. 確認 GitHub CLI 使用正確帳號。
+2. 將 Git 傳輸協定固定為 HTTPS。
+3. 把 ② 建好的本機 repository 推上 GitHub。
+4. 最後再安裝 Copilot CLI。
+
+> 本課程統一使用 HTTPS，不使用 SSH，避免因 SSH key、SSO 授權或企業政策造成 `git push` 失敗。
+
+---
+
+### 3-1. GitHub CLI 與帳號身分
+
+```powershell
+winget install GitHub.cli    # 尚未安裝時才需要執行
+gh --version
+gh auth login                # 未登入時執行；選 github.com → HTTPS → 瀏覽器授權
+gh auth status
+
+### 3-3. 雲端 coding agent 政策
+
+- [ ] 所屬組織已開通 **GitHub Copilot coding agent**；若未開通，請先請組織管理員確認政策。
+
+> 未開通**不影響上半場與 M9–M13**，只影響 M14「把任務派出去」那一步；當天可改用併機或講師的 PR 進行 review，學習內容不受影響。
+
+---
+
+### 3-4. Copilot CLI
+
+```powershell
+winget install GitHub.Copilot    # 尚未安裝時；也可用 npm install -g @github/copilot
+copilot --version
+copilot                          # 進入 CLI 後執行 /login，再用 /exit 離開
+```
+
+- [ ] `copilot --version` 有正常輸出。
+- [ ] 已在 Copilot CLI 完成 `/login`。
+- [ ] 所屬組織已開通 **Copilot CLI** 政策。
+
+> Copilot CLI 的登入與 `gh` 是**各自獨立**的，兩邊都要完成；請確認 `/login` 用的是同一個上課帳號。
+---
+
+## ④ MCP 連線前置
+
+### MCP 真實設定體驗（三選一）
+
+工作坊會使用 MCP；CalendarTools 不可用時，可改走 GitHub remote MCP 或免登入的 Microsoft Learn MCP。課前不需建立設定檔，只需確認至少一條路徑可行：
+
+- [ ] **路徑一：CalendarTools**。已有 M365 Copilot 授權，並已提前查好 Entra ID 租戶 ID（`tenant_id`）：
+
+  ```powershell
+  # 用公司網域換取租戶 ID，不需登入或任何權限
+  (Invoke-RestMethod "https://login.microsoftonline.com/<你的公司網域>/v2.0/.well-known/openid-configuration").issuer
+  ```
+
+  回傳的 `issuer` 格式為 `https://login.microsoftonline.com/<tenant_id>/v2.0`，中間的 GUID 即為 `tenant_id`。
+
+- [ ] **路徑二：GitHub remote MCP**。沒有 CalendarTools 授權，但可用 GitHub 帳號完成 OAuth；server URL 為 `https://api.githubcopilot.com/mcp/`。
+- [ ] **路徑三：Microsoft Learn MCP**。不方便使用前兩者時，採免登入、免 OAuth 路徑；server URL 為 `https://learn.microsoft.com/api/mcp`。
+
+> 不需要在課前建立 MCP 設定檔或準備任何範例資料。
+
+---
+
+## localhost 服務
 
 這項測試是確認電腦允許 Python 在 localhost 啟動服務，且另一個程式可以連線。工作坊會用本機 Mock API 模擬企業系統（例如 Jira）；Agent 會啟動這個 API，再透過 HTTP 呼叫它。若公司端點防護或防火牆阻擋本機服務，相關實作就無法進行。
 
@@ -130,69 +226,6 @@ curl.exe -I http://127.0.0.1:9000
 - [ ] 驗證完成後，回到視窗 1 按 `Ctrl+C` 停止測試服務。
 
 > 若公司端點防護或防火牆阻擋 Python 監聽 localhost port `9000`，請先與 IT 確認。
-
----
-
-## ③ GitHub repository、CLI 與雲端 coding agent
-
-### GitHub repository 權限
-
-- [ ] 擁有一個自己可寫入的 GitHub repository，或有權限建立新 repository。
-- [ ] 能在任一測試 repository 完成 clone、commit 與 push。
-- [ ] 所屬組織已開通 **GitHub Copilot coding agent**；若未開通，請先請組織管理員確認政策。
-
-```powershell
-git status
-git remote -v
-```
-
-> 上述命令請在自己現有的測試 repository 內執行，不需要工作坊教材。
-
-### Copilot CLI
-
-```powershell
-winget install GitHub.Copilot    # 尚未安裝時；也可用 npm install -g @github/copilot
-copilot --version
-copilot                          # 進入 CLI 後執行 /login，再用 /exit 離開
-```
-
-- [ ] `copilot --version` 有正常輸出。
-- [ ] 已在 Copilot CLI 完成 `/login`。
-- [ ] 所屬組織已開通 **Copilot CLI** 政策。
-
-### GitHub CLI
-
-```powershell
-winget install GitHub.cli    # 尚未安裝時
-gh --version
-gh auth status              # 未登入請執行 gh auth login
-```
-
-- [ ] `gh auth status` 顯示已登入預計上課使用的 GitHub 帳號。
-
-> 請確認登入的帳號對預計使用的 repository 有寫入權限。
-
----
-
-## ④ MCP 連線前置
-
-### MCP 真實設定體驗（三選一）
-
-工作坊會使用 MCP；CalendarTools 不可用時，可改走 GitHub remote MCP 或免登入的 Microsoft Learn MCP。課前不需建立設定檔，只需確認至少一條路徑可行：
-
-- [ ] **路徑一：CalendarTools**。已有 M365 Copilot 授權，並已提前查好 Entra ID 租戶 ID（`tenant_id`）：
-
-  ```powershell
-  # 用公司網域換取租戶 ID，不需登入或任何權限
-  (Invoke-RestMethod "https://login.microsoftonline.com/<你的公司網域>/v2.0/.well-known/openid-configuration").issuer
-  ```
-
-  回傳的 `issuer` 格式為 `https://login.microsoftonline.com/<tenant_id>/v2.0`，中間的 GUID 即為 `tenant_id`。
-
-- [ ] **路徑二：GitHub remote MCP**。沒有 CalendarTools 授權，但可用 GitHub 帳號完成 OAuth；server URL 為 `https://api.githubcopilot.com/mcp/`。
-- [ ] **路徑三：Microsoft Learn MCP**。不方便使用前兩者時，採免登入、免 OAuth 路徑；server URL 為 `https://learn.microsoft.com/api/mcp`。
-
-> 不需要在課前建立 MCP 設定檔或準備任何範例資料。
 
 ---
 
@@ -227,6 +260,15 @@ curl.exe -s -o NUL -w "learn-mcp=%{http_code}`n" https://learn.microsoft.com/api
 
 ---
 
+## 開課前最後確認（三題自問）
+
+1. 我的上課資料夾在哪裡？（路徑記得住，而且沒有中文與空白）
+2. 它已經是一個 GitHub repository 了嗎？（`git remote -v` 看得到 `origin`）
+3. `(.venv)`、`copilot`、`gh` 三個都能用嗎？
+
+三題都是，課前就緒。
+
+---
 
 ## 參考資料
 

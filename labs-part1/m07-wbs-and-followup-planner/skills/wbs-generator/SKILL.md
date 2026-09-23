@@ -1,6 +1,6 @@
 ---
 name: wbs-generator
-description: 依會議逐字稿或使用者描述的專案範圍,產生結構化 WBS(Work Breakdown Structure),輸出為 Excel 檔案(.xlsx),包含任務階層大綱群組、負責人、狀態欄位,並套用篩選與凍結窗格。是「專案範圍分解成 Excel 檔案」,不是會議摘要(那是 meeting-summary),也不是替既有項目查證依據(那是 tech-grounding-checker)。關鍵詞:WBS、work breakdown structure、任務分解、專案分解、拆解、排程。
+description: 依會議逐字稿或使用者描述的專案範圍,產生結構化 WBS(Work Breakdown Structure),輸出為 Excel 檔案(.xlsx),包含任務階層大綱群組、負責人、狀態欄位,並套用篩選與凍結窗格。是「專案範圍分解成 Excel 檔案」,不是會議摘要(那是 meeting-summary),也不是本週跟進規劃(那是 weekly-followup-planner)。關鍵詞:WBS、work breakdown structure、任務分解、專案分解、拆解、排程。
 disable-model-invocation: false
 user-invocable: true
 version: 0.1.0
@@ -11,7 +11,7 @@ version: 0.1.0
 - 適用:使用者提供專案範圍描述、逐字稿內容,或已整理好的待辦事項,並要求拆解成 WBS、產生任務分解結構。
 - 不適用:例行進度會議,內容裡沒有範圍界定或任務分解的討論依據——不要勉強套用,先反問使用者要拆解的範圍是什麼。
 - 不適用:使用者要的是會議摘要或待辦清單 → 改用 `meeting-summary`。
-- 不適用:使用者手上已經有拆好的項目清單,要的是替每一項補上官方文件依據 → 改用 `tech-grounding-checker`。
+- 不適用:使用者要的是看本週空檔、安排跟進未結事項 → 改用 `weekly-followup-planner`。
 
 ## ② 需要的輸入
 1. 專案範圍描述,或已有的逐字稿/待辦事項清單(必要)——可以直接沿用 `meeting-summary` 產出的 Action Items 當作輸入的一部分。

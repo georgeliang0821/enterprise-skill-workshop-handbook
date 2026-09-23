@@ -1,0 +1,55 @@
+{
+  "_說明": "這份檔案模擬『團隊過去執行 action-item-extractor 後累積下來的記錄』。在真正的企業場景裡,這會是一個資料庫(例如 EAA 架構裡的 skills DB 或獨立的 action-items store);今天的 Lab 環境沒有真的資料庫,所以用這份 JSON 當作 weekly-followup-planner 查詢的『內部資料來源』。weekly-followup-planner 的步驟裡,查詢這個檔案時只能讀取、不能寫入或修改。",
+  "actionItems": [
+    {
+      "id": "AI-2026-06-20-01",
+      "meetingId": "2026-06-20-kickoff",
+      "meetingTitle": "AI Meeting Intelligence Portal 專案啟動會議",
+      "owner": "David",
+      "action": "整理三個模型選項(自建開源、通用 LLM API、Azure OpenAI)的初步比較表",
+      "dueDate": "2026-06-27",
+      "priority": "Medium",
+      "status": "done"
+    },
+    {
+      "id": "AI-2026-06-20-02",
+      "meetingId": "2026-06-20-kickoff",
+      "meetingTitle": "AI Meeting Intelligence Portal 專案啟動會議",
+      "owner": "Mary",
+      "action": "確認採購流程是否需要走資訊安全審查",
+      "dueDate": "2026-07-04",
+      "priority": "Medium",
+      "status": "open"
+    },
+    {
+      "id": "AI-2026-07-08-01",
+      "meetingId": "2026-07-08-portal-eval",
+      "meetingTitle": "AI Meeting Intelligence Portal 導入評估會議",
+      "owner": "David",
+      "action": "PoC 架構設計初稿(含 Azure OpenAI 資源配置與現有 Portal 前端串接方式)",
+      "dueDate": "2026-07-10",
+      "priority": "Medium",
+      "status": "open"
+    },
+    {
+      "id": "AI-2026-07-08-02",
+      "meetingId": "2026-07-08-portal-eval",
+      "meetingTitle": "AI Meeting Intelligence Portal 導入評估會議",
+      "owner": "Mary",
+      "action": "三情境(低/中/高用量)成本評估",
+      "dueDate": null,
+      "priority": "Medium",
+      "status": "open"
+    },
+    {
+      "id": "AI-2026-07-08-03",
+      "meetingId": "2026-07-08-portal-eval",
+      "meetingTitle": "AI Meeting Intelligence Portal 導入評估會議",
+      "owner": "George",
+      "action": "資安需求確認(資料落地地區設定與存取權限最小化盤點)",
+      "dueDate": "2026-07-15",
+      "priority": "Medium",
+      "status": "open"
+    }
+  ]
+}
