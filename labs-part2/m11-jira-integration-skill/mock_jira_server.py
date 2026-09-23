@@ -11,7 +11,7 @@ mock_jira_server.py
 啟動方式(套件已在工作坊共用 venv 中,不需要 pip install):
     python -m uvicorn mock_jira_server:app --reload --port 9000
 """
-from fastapi import FastAPI, Query, Header, HTTPException
+from fastapi import FastAPI, Query
 from pydantic import BaseModel
 import itertools
 
@@ -19,14 +19,6 @@ app = FastAPI(title="Mock Jira Server (課堂練習用)")
 
 _issue_seq = itertools.count(101)
 _issues = []  # 每筆: {"key": "MIP-101", "summary": "...", "assignee": "...", "duedate": "...", "priority": "..."}
-
-FAKE_VALID_TOKEN = "mock-jira-token-classroom-only"
-
-
-def verify_token(authorization: str = Header(None)):
-    """課堂用的最基本假 token 驗證:token 不符就回 401,讓「認證失敗」情境可以被實際觸發與測試。"""
-    if authorization != f"Bearer {FAKE_VALID_TOKEN}":
-        raise HTTPException(status_code=401, detail="Unauthorized: missing or invalid token")
 
 
 class CreateIssueRequest(BaseModel):
@@ -38,20 +30,18 @@ class CreateIssueRequest(BaseModel):
 
 
 @app.get("/rest/api/2/search")
-def search_issues(jql: str = Query(..., description="極簡化 JQL,課堂練習只支援 summary ~ \"關鍵字\" 這種寫法"), authorization: str = Header(None)):
+def search_issues(jql: str = Query(..., description="極簡化 JQL,課堂練習只支援 summary ~ \"關鍵字\" 這種寫法")):
     """
     真實 Jira 的 JQL 語法複雜得多,這裡只做課堂需要的簡化比對:
     從 jql 字串裡抓出雙引號包住的關鍵字,對 summary 做包含比對。
     """
-    verify_token(authorization)
     keyword = jql.split('"')[1] if '"' in jql else ""
     matches = [i for i in _issues if keyword and keyword in i["summary"]]
     return {"total": len(matches), "issues": matches}
 
 
 @app.post("/rest/api/2/issue")
-def create_issue(req: CreateIssueRequest, authorization: str = Header(None)):
-    verify_token(authorization)
+def create_issue(req: CreateIssueRequest):
     key = f"{req.project_key}-{next(_issue_seq)}"
     issue = {
         "key": key,
@@ -73,7 +63,7 @@ def list_all_issues():
 @app.post("/debug/reset")
 def reset_all_issues():
     """課堂除錯用:清空所有假票。翻車輪(naive 版)結束後、硬化輪開始前呼叫,
-    讓兩輪的驗證結果不互相污染。不需要 token——這是課堂工具,不是被模擬的 Jira API。"""
+    讓兩輪的驗證結果不互相污染。這是課堂工具,不是被模擬的 Jira API。"""
     count = len(_issues)
     _issues.clear()
     return {"cleared": count}

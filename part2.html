@@ -423,9 +423,7 @@ Skill,你只負責路由、補齊必要輸入、守住邊界。
 <li><strong>Custom Agent 不是 selection 正確性的保證</strong>:路由規則是強力行為準則,但 description 對比句(M6 / M7 寫的)還是要寫好——疊加才有穩定行為。</li>
 </ul>
 
-<!-- ============================================================
-     M10 · Subagent(v2)與 Handoff(v3)
-     ============================================================ -->
+
 <!-- ============================================================
      M10 · Subagent(v2)與 Handoff(v3)
      ============================================================ -->
@@ -517,6 +515,21 @@ model: &lt;講師指定的模型&gt;
 
 <h3 id="n-m10-handoff">v3 · Handoff:把「下一步」做成一顆按鈕,交給人按</h3>
 <p>在 v2 上跑一次 <strong>T3</strong>:WBS 做完,它還是會依 body 那條串接規則自己接著查證——「下一步」仍然是模型決定的。M1 表格提過 Custom Agent 可串 handoff(Plan → Implement → Review),現在把它做出來。</p>
+
+<div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title">開始之前:把 Session Target 切到 Local,不然按鈕不會出現</span></div><div class="adm-body">
+<p>新版 VS Code(本講義實測 1.139)的 Chat 預設 Session Target 已經從 <strong>Local</strong> 改成 <strong>Copilot</strong>(走 Copilot CLI 的 agent 引擎)。而 Copilot harness <strong>目前不支援 <code>handoffs</code></strong>:下面的步驟照做,frontmatter 也寫對,按鈕還是不會出現,而且<strong>不會有任何錯誤訊息</strong>。所以開始前先手動切換:</p>
+<ol>
+<li>點 Chat 輸入框下方最左邊顯示 <strong>Copilot</strong> 的那個選單,改選 <strong>Local</strong>(同一個選單裡還有 Cloud、Claude)。</li>
+<li>切換後重新從 agent 下拉選單選 <code>meeting-ops</code>。</li>
+</ol>
+<p>照做了還是沒看到按鈕,依序檢查:</p>
+<ul>
+<li>agent 是<strong>從下拉選單選的</strong>,而不是把 <code>.agent.md</code> 拖進對話當附件。當附件只是讓模型讀到那份檔案,frontmatter 不會生效。</li>
+<li>按鈕要等回應<strong>完全結束</strong>才會出現。</li>
+<li><code>handoffs</code> 裡的 <code>agent:</code> 要跟目標 agent 的 <code>name</code> 完全一致。</li>
+</ul>
+</div></div>
+
 <div class="adm adm-note"><div class="adm-head"><span class="adm-ico">📐</span><span class="adm-title">handoff 按鈕按下去會發生什麼事</span></div><div class="adm-body">
 <p>不是執行,是<strong>交棒</strong>。按下去的瞬間:</p>
 <ol>
