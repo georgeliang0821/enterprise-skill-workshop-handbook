@@ -734,6 +734,10 @@ copy m11-jira-integration-skill\skills\action-item-to-jira\SKILL-naive.md `
 
 <h3 id="n-m11-decision">決策點:誰有權觸發 Jira 開單?——三種整合方式,把 M10 的 handoff 接到寫入型 Skill 上 <span class="badge badge-l">護欄型 Custom Agent ★</span></h3>
 <p>到這裡,<code>action-item-to-jira</code> 已經把去重與自動觸發鎖好。Skill 內部安全了,下一個風險不在 Skill 裡,而在<strong>誰可以啟動這個寫入副作用</strong>。把它接回 M9 建的 <code>@meeting-ops</code> 時,就必須回答:觸發權交給模型,還是留在人手上?</p>
+<div class="adm adm-note"><div class="adm-head"><span class="adm-ico">🔁</span><span class="adm-title">M10 已經做過 handoff,為什麼這裡又一次?</span></div><div class="adm-body">
+<p><strong>機制一樣,押的注不同。</strong>M10 的 Ground-check 接的是<strong>唯讀</strong>的下一步:按錯了頂多浪費時間,按鈕的價值是「看得見、送出前能改範圍」。這裡的 Create-Jira 接的是<strong>有寫入副作用</strong>的下一步:按錯會汙染團隊的 Jira——同一顆按鈕,從「方便」變成「必要」。</p>
+<p>但按鈕只保證「人觸發」,擋不住「觸發之後重複寫入」;後者靠的是第三輪加在 Skill 身上的去重,M9 / M10 任何一道 agent 層的牆都碰不到它。所以這一段要看的不是按鈕本身,而是<strong>按鈕、Skill 硬鎖、去重疊在一起之後,各自擋住了什麼</strong>。</p>
+</div></div>
 <div class="table-wrap"><table>
 <thead><tr><th>選項</th><th>做法</th><th>方便度</th><th>風險</th><th>誰握有觸發權</th></tr></thead>
 <tbody>
@@ -745,13 +749,13 @@ copy m11-jira-integration-skill\skills\action-item-to-jira\SKILL-naive.md `
 <p>A 是「模型決定」,B 是「人決定但沒人提醒」,C 是「人決定,而且在對的時機被提醒」。</p>
 </div></div>
 <h4>動手:做出選項 C</h4>
-<p>這一段是<strong>應用,不是新機制</strong>:按鈕按下去三件事、<code>send: false</code>、label 要有英數字元,M10 v3 都做過了;這裡只是把同一顆按鈕接到一個有寫入副作用的下一步上,十分鐘內做完。新的東西只有一件——接完之後那張「三道東西各自擋什麼」的疊層表。</p>
+<p>這一段是<strong>應用,不是新機制</strong>:按鈕按下去三件事、<code>send: false</code>、label 要有英數字元,M10 v3 都做過了;這裡只是把同一顆按鈕接到一個有寫入副作用的下一步上,十分鐘內做完。新的東西只有一件——接完之後那張「每一道護欄各自擋什麼」的疊層表。</p>
 <div class="labchip"><span class="labchip-ico">📄</span><code>m11-jira-integration-skill/agents/jira-clerk.agent.md</code><span class="labchip-desc">— 完成版</span></div>
 <div class="labchip"><span class="labchip-ico">📄</span><code>m11-jira-integration-skill/agents/meeting-ops.agent.md</code><span class="labchip-desc">— <strong>v4</strong> 完成版(M10 v3 + Create-Jira handoff)</span></div>
 <div class="adm adm-note"><div class="adm-head"><span class="adm-ico">🗺️</span><span class="adm-title">同一個檔案,第四個版本</span></div><div class="adm-body"><p>M9 給了 v1(人設 + tools 白名單)、M10 給了 v2(subagent)與 v3(第一顆 handoff 按鈕)。這一輪做的是 <strong>v4</strong>:在 v3 上<strong>只多加一顆按鈕</strong>——tools、<code>agents</code>、第一顆 Ground-check 按鈕、「邊界」那一段<strong>全部不動</strong>。下面的 before/after 就是為了讓你看清楚:多一個 handoff 到底只動了哪幾行。</p></div></div>
 <ol class="steps" type="1">
 <li><strong>確認硬鎖在</strong>:打開 <code>action-item-to-jira/SKILL.md</code>,<code>disable-model-invocation: true</code>(第三輪加的)。這是三個選項裡 B 跟 C 共用的那道牆——它長在 Skill 自己身上,走到哪都在。</li>
-<li><strong>建 <code>@jira-clerk</code></strong>:<code>.github/agents/jira-clerk.agent.md</code>。人設只做一件事:「拿一份 Action Items,呼叫 action-item-to-jira 開單,回報每一筆結果」。tools 只留 <code>read</code>(讀 SKILL.md 與 Action Items)跟 <code>runInTerminal</code>(它要 curl,同 wbs-builder 削到只剩這一項);<strong>不給 edit</strong>——它不該改你任何檔案。body 明寫:只用 <code>/action-item-to-jira</code>,開單前先列出將建立的清單等使用者確認。
+<li><strong>建 <code>@jira-clerk</code></strong>:<code>.github/agents/jira-clerk.agent.md</code>。人設只做一件事:「拿一份 Action Items,呼叫 action-item-to-jira 開單,回報每一筆結果」。tools 只留 <code>read</code>(讀 SKILL.md 與 Action Items)跟 <code>runInTerminal</code>(它要 curl,同 wbs-builder 削到只剩這一項);<strong>不給 edit</strong>——它不該改你任何檔案。body 明寫:只依 action-item-to-jira 的步驟與端點呼叫 Jira,開單前先列出將建立的清單等使用者確認。
 <div class="code-block"><div class="code-head"><span class="code-lang">.github/agents/jira-clerk.agent.md(骨架)</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>---
 name: jira-clerk
 description: 只負責把已整理好的 Action Items 同步成 Jira 工單。不整理會議、不改任何檔案。由 @meeting-ops 的「Create-Jira」按鈕帶進來,或用 @jira-clerk 明確叫用。
@@ -765,11 +769,12 @@ disable-model-invocation: true          # 不讓任何 coordinator 把我當 sub
 你只做一件事:把使用者提供的 Action Items 依 action-item-to-jira Skill 同步到 Jira。
 
 ## 規則
-- 一律使用 /action-item-to-jira 的步驟(去重);不要自己用 curl 拼 API。
+- 依 action-item-to-jira Skill 的步驟(含去重)呼叫 Jira;只呼叫 Skill 列出的端點與參數,
+  不要自行增加其他 API 呼叫。
 - 開單前先列出「將建立 / 將略過(已存在)」兩個清單,等使用者說「確認」再執行。
 - 執行後逐筆回報結果(建立的 key、略過的原因、失敗的原因)。
 - 不修改任何檔案;不整理會議內容——那是 @meeting-ops 的事。</code></pre></div></li>
-<li><strong>改 <code>@meeting-ops</code> 的 frontmatter:加第二顆按鈕</strong>。<code>tools</code> 與 <code>agents</code> 一個字都不改——<strong>handoff 不需要把目標 agent 放進 <code>agents</code> 陣列</strong>(那是 subagent 的白名單;按鈕走的是另一條路)。這也是 <code>jira-clerk</code> 不在 <code>agents</code> 裡卻按得到的原因。
+<li><strong>改 <code>@meeting-ops</code> 的 frontmatter:加第二顆按鈕</strong>。<code>tools</code> 與 <code>agents</code> 一個字都不改——<strong>handoff 不需要把目標 agent 放進 <code>agents</code> 陣列</strong>(那是 subagent 的白名單;按鈕走的是另一條路)。這也是 <code>jira-clerk</code> 不在 <code>agents</code> 裡卻按得到的原因。而且<strong>不能放</strong>:M10 講過,明確列進 <code>agents</code> 會覆蓋目標 agent 自己的 <code>disable-model-invocation: true</code>——放了,jira-clerk 身上那道鎖就失效。
 <div class="code-block"><div class="code-head"><span class="code-lang">diff · frontmatter v3 → v4</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>- description: 會議逐字稿的下游營運助手。…「Ground-check」按鈕交給你按。…
 + description: 會議逐字稿的下游營運助手。整理摘要/決議/風險/待辦;拆 WBS 派給 wbs-builder;「Ground-check」「Create-Jira」兩顆按鈕交給你按。不建 Jira 工單、不寫入任何外部系統、不改應用程式原始碼。用 @meeting-ops 明確叫用。
   tools: ['read', 'edit', 'agent', 'microsoft-learn/*']   # 同 M10 v3:沒有 execute(下放到 wbs-builder)
@@ -784,9 +789,9 @@ disable-model-invocation: true          # 不讓任何 coordinator 把我當 sub
       send: false
 +   - label: Create-Jira (建立 Jira 工單)                  # label 至少要有一個英數字元(M10 那條)
 +     agent: jira-clerk
-+     prompt: 把上面的 Action Items 同步到 Jira 專案 MIP。先列出將建立/略過的清單,等我確認。
++     prompt: 把上面的 Action Items 同步到 Jira 專案 MIP(base URL:http://127.0.0.1:9000)。先列出將建立/略過的清單,等我確認。
 +     send: false</code></pre></div>
-<p>整個 frontmatter <strong>只多了 4 行</strong>(加上 description 那一句)——這就是「應用,不是新機制」的具體長相。<code>send: false</code> 同樣不能省:這是有寫入副作用的下一步,送出前人還要能改專案代碼、能刪掉不送。</p></li>
+<p>整個 frontmatter <strong>只多了 4 行</strong>(加上 description 那一句)——這就是「應用,不是新機制」的具體長相。<code>send: false</code> 同樣不能省:這是有寫入副作用的下一步,送出前人還要能改專案代碼、能刪掉不送。prompt 裡一併帶上專案代碼與 base URL:這兩個正是 action-item-to-jira ② 的必要輸入。沒帶的話,jira-clerk 會自己去翻整個 repo 找端點——能找到,但這已經超出「只做一件事」的範圍。</p></li>
 <li><strong>改 <code>@meeting-ops</code> 的路由規則</strong>(「邊界」那一段仍然不動——v1 就寫好的「需要寫入外部系統時明講超出範圍、交還使用者」照留)。
 <div class="code-block"><div class="code-head"><span class="code-lang">BEFORE · v3 的路由規則</span><button class="copy-btn" onclick="copyCode(this)">複製</button></div><pre><code>## 路由規則(只負責判斷該找誰做事,不重寫 SOP)
 你只使用 meeting-summary 這一個 Skill;WBS 交給 subagent,查證交給按鈕:
@@ -810,6 +815,32 @@ disable-model-invocation: true          # 不讓任何 coordinator 把我當 sub
 <li><strong>按下去</strong>:切到 <code>@jira-clerk</code>,prompt 預填。送出 → 它先列兩個清單 → 你說「確認」→ <code>curl.exe http://127.0.0.1:9000/debug/issues</code> 驗證:只有新的、沒有重複。</li>
 <li><strong>對照組</strong>:同一句丟給預設 Agent Mode。因為硬鎖是 Skill 自帶的,它同樣不會自動開單——差別在預設模式沒有按鈕、沒有排除語句,它可能自行用終端機直接呼叫 API,也可能什麼都不做。</li>
 </ol>
+
+<h4>疊層表:每一道護欄各自擋什麼</h4>
+<p>把 M9 到 M11 蓋的東西放在同一張表上。重點不是「有幾道」,而是<strong>每一道只擋一件事,而且長在不同的地方</strong>。</p>
+<div class="table-wrap"><table>
+<thead><tr><th>護欄</th><th>長在哪</th><th>擋什麼</th><th>類型</th></tr></thead>
+<tbody>
+<tr><td>Skill <code>disable-model-invocation: true</code></td><td><code>SKILL.md</code> frontmatter</td><td>模型憑語意自動載入 Skill(踩 B)</td><td>🧱</td></tr>
+<tr><td>Skill ③ 去重</td><td><code>SKILL.md</code> body</td><td>同一份清單重複建票(踩 A)</td><td>🧱 agent 層碰不到</td></tr>
+<tr><td>handoff 按鈕 + <code>send: false</code></td><td><code>meeting-ops</code> frontmatter</td><td>沒人按就不會發生;送出前人能改、能不送</td><td>🧱</td></tr>
+<tr><td>jira-clerk 的 <code>disable-model-invocation: true</code>,且 meeting-ops 的 <code>agents</code> 不列它</td><td>兩個 agent 的 frontmatter</td><td>被 coordinator 當 subagent 自動派去開單</td><td>🧱</td></tr>
+<tr><td>jira-clerk 的 tools 不給 edit</td><td><code>jira-clerk</code> frontmatter</td><td>開單途中順手改你的檔案</td><td>🧱</td></tr>
+<tr><td>jira-clerk「先列清單,等確認」</td><td><code>jira-clerk</code> body</td><td>寫入前多一次人工確認</td><td>🪧</td></tr>
+<tr><td>meeting-ops「明確排除 action-item-to-jira」</td><td><code>meeting-ops</code> body</td><td>讓拒絕變成「明講交還 + 指向按鈕」</td><td>🪧</td></tr>
+</tbody></table></div>
+<div class="adm adm-key"><div class="adm-head"><span class="adm-ico">🔑</span><span class="adm-title">Skill 的硬鎖管的是「觸發」,不是「存取」</span></div><div class="adm-body">
+<p>加上 <code>disable-model-invocation: true</code> 之後,這個 Skill 會從模型看得到的 Skill 清單上消失——模型<strong>不會自己想到</strong>要用它。那 jira-clerk 為什麼用得到?因為它的 body <strong>點名</strong>了 action-item-to-jira,它再用 <code>read</code> 把 <code>SKILL.md</code> 當一般檔案讀進來。這不是繞過,而是設計:<strong>模型自己想到的被擋下,agent 作者明確指定的被放行。</strong></p>
+</div></div>
+<div class="adm adm-warn"><div class="adm-head"><span class="adm-ico">⚠️</span><span class="adm-title">回到開頭的問題:wbs-builder 手上那台終端機,拿去打 Jira 呢?</span></div><div class="adm-body">
+<p>這張表裡沒有一道擋得住。Skill 硬鎖只讓 wbs-builder <strong>不會自己想到</strong>要用 action-item-to-jira(它的 Skill 清單裡看不到);但終端機一旦放行,被明確要求時它照樣能用 curl 打 API,剩下的只有 meeting-ops 那條「不要把開單包裝成 WBS 任務」的 🪧。</p>
+<p>原因很單純:M9 到 M11 蓋的牆,全都在 agent 與 Skill 這兩層。真正的 🧱 要往外蓋:</p>
+<ul>
+<li><strong>執行層</strong>:每條終端機指令都要人按 Allow,不開自動核准;或用 hook 攔截特定指令(例如打向 Jira 端點的請求)。</li>
+<li><strong>系統層</strong>:這個環境根本拿不到能寫入 Jira 的憑證。</li>
+</ul>
+<p>企業裡的最後一道牆,永遠是<strong>被寫入的那個系統自己的權限</strong>,而不是 AI 這一側的設定。</p>
+</div></div>
 
 <!--
   M12 更新版
